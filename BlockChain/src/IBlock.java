@@ -1,6 +1,6 @@
 public interface IBlock {
     public IBlockHeader getHeader();
-    public void setTransacions(ITransaction [] ts);
+    public void setTransactions(ITransaction [] ts);
     public ITransaction[] getTransactions();
     public void setPrevBlock(IBlock block);
     public IBlock getPrevBlock();
