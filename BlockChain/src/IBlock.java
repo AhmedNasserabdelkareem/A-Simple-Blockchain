@@ -8,4 +8,18 @@ public interface IBlock {
     public int getBlockHash();
 
 
+    public boolean verifyBlockHash();
+
+    public boolean verifyPrevHash();
+
+    public boolean verifySignature();
+
+    public String calculateHash();
+
+
+    public byte[] getClientSignature();
+
+    public void setClientSignature(byte[] clientSignature);
+
+
 }

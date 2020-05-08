@@ -1,7 +1,7 @@
 public interface IBlockHeader {
     public void createTimeStamp();
     public void createPrevBlockHash(IBlock prevBlock);
-    public  void createTransactionsHash(ITransaction [] ts );
+    public  void createTransactionsHash(ITransaction [] ts ); // Merkle root hash
     public  void setPOW( int pow); // -1 by default
     public boolean isSet();//returns true if the prevBlock and transactions' hash are set
     public  int getTimeStamp();
