@@ -1,12 +1,17 @@
+package interfaces;
+
+import java.util.ArrayList;
+
 public interface IBlock {
+
     public IBlockHeader getHeader();
-    public void setTransactions(ITransaction [] ts);
-    public ITransaction[] getTransactions();
+    public void setTransactions(ArrayList<ITransaction> ts);
+    public ArrayList<ITransaction> getTransactions();
     public void setPrevBlock(IBlock block);
     public IBlock getPrevBlock();
     public void setAgreementMethod(IAgreementMethod method); //must be set to create  the header nonce
-    public int getBlockHash();
-
+    public String getBlockHash();
+    public ITransaction getTransactionByID(int id);
 
     public boolean verifyBlockHash();
 

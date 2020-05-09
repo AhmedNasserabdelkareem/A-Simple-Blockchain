@@ -1,3 +1,5 @@
+package interfaces;
+
 public interface IMessagePool {
 
     public void addMessage(IMessage message);

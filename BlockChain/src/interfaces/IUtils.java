@@ -1,10 +1,13 @@
+package interfaces;
+
 import java.security.Key;
 import java.security.PublicKey;
 import java.util.ArrayList;
 
 public interface IUtils {
+
     //Applies Sha256 to a string and returns the result.
-    public String applySha256(String input);
+    public String  applySha256(String input);
 
     public String getMerkleRoot(ArrayList<ITransaction> transactions);
 
@@ -16,5 +19,6 @@ public interface IUtils {
     //This method takes in the signature, public key and string data and returns true or false if
     // the signature is valid.
     public boolean verifyECDSASig(PublicKey publicKey, String data, byte[] signature);
+    public  String getPublicKeyFromID(int id);
 
     }

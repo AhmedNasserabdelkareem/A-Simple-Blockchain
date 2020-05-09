@@ -1,3 +1,5 @@
+package interfaces;
+
 /**
  * should have 2 concrete classes Pow and BFT
  */

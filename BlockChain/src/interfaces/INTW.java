@@ -1,3 +1,5 @@
+package interfaces;
+
 public interface INTW {
     public void setNode(INode node);
     public void listenForNewConnections(); //listens for any new node request and add it to peers List

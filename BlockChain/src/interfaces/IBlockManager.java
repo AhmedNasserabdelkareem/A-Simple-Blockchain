@@ -1,3 +1,5 @@
+package interfaces;
+
 public interface IBlockManager {
 
     public void initiateNewBlockMessage();

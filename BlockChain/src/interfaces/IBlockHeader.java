@@ -1,13 +1,23 @@
+package interfaces;
+
+import java.util.ArrayList;
+
 public interface IBlockHeader {
-    public void createTimeStamp();
+
+    public void resetTimeStamp();
     public void createPrevBlockHash(IBlock prevBlock);
-    public  void createTransactionsHash(ITransaction [] ts ); // Merkle root hash
-    public  void setPOW( int pow); // -1 by default
+    public  void createTransactionsHash(ArrayList<ITransaction> ts ); // Merkle root hash
+    public  void setNonce( int nonce); // -1 by default
+
+
     public boolean isSet();//returns true if the prevBlock and transactions' hash are set
-    public  int getTimeStamp();
-    public int getTransactionsHash();
-    public int getPrevBlockHash();
-    public int getPow();
+
+
+
+    public  long getTimeStamp();
+    public String getTransactionsHash();
+    public String getPrevBlockHash();
+    public int getNonce();
 
 
 }

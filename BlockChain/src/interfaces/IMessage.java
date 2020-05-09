@@ -1,3 +1,5 @@
+package interfaces;
+
 import java.security.PublicKey;
 
 public interface IMessage {

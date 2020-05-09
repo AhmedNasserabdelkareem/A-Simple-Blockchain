@@ -1,5 +1,6 @@
+package interfaces;
+
 import java.security.PublicKey;
-import java.util.ArrayList;
 
 public interface INode {
     public void setConfigs(int maxNumTransactions, IAgreementMethod method, String[] IPsOfOtherPeers, int nodeType);//0 for client , 1 for miner
