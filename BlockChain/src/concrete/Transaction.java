@@ -4,10 +4,16 @@ import java.nio.charset.StandardCharsets;
 
 import java.security.*;
 import java.util.ArrayList;
+import java.io.Serializable;
+import java.security.PublicKey;
+import java.util.ArrayList;
 
 
-public class Transaction implements ITransaction {
-    public static void main(String [] args){
+
+
+
+public class Transaction implements ITransaction, Serializable {
+    public static void testParsing(String [] args){
         ITransaction t = ITransaction.parseTransaction("49\tintput:0\tvalue:79.121956\toutput:49");
         try {
             //System.out.println(t.hash());

@@ -19,7 +19,7 @@ public interface INode {
 
     // agree/disagree on a block coming from the ntw..send the decision to the ntw and add/not to the chain
     // use th agreementmethod (BFT/pow) to agree/not
-    public void receiveBlock(IBlock block, INTW ntw, int flag);//flag : 0 block , 1 response
+    public void receiveBlock(IBlock block);//flag : 0 block , 1 response
 
     public void addToChain(IBlock block);
 

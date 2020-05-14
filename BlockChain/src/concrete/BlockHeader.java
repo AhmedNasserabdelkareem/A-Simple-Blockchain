@@ -1,9 +1,10 @@
 package concrete;
 import interfaces.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class BlockHeader implements IBlockHeader{
+public class BlockHeader implements IBlockHeader, Serializable {
     private long timeStamp = 0;
     private int nonce = -1;
     private String prevBlockHash = null;

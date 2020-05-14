@@ -1,9 +1,10 @@
 package concrete;
 import interfaces.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Block implements IBlock {
+public class Block implements IBlock, Serializable {
     private IBlockHeader header;
     private ArrayList<ITransaction> ts;
     private IBlock prevBlock=null;

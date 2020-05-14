@@ -4,19 +4,26 @@ import interfaces.*;
 import java.security.PublicKey;
 import java.security.Signature;
 
+import interfaces.*;
+
+import java.security.PublicKey;
+
 public class Node implements INode {
     @Override
     public void setConfigs(int maxNumTransactions, IAgreementMethod method, String[] IPsOfOtherPeers, int nodeType) {
 
     }
+
     @Override
     public void setNTW(INTW ntw) {
 
     }
+
     @Override
     public int getNodeType() {
         return 0;
     }
+
     @Override
     public void addTransaction(ITransaction t) {
 
@@ -55,6 +62,7 @@ public class Node implements INode {
     @Override
     public boolean verifyTransaction(ITransaction t) {
         return verifyTransactionSign(t) && verifyTransactionVal(t);
+
     }
 
     @Override
@@ -63,7 +71,7 @@ public class Node implements INode {
     }
 
     @Override
-    public void receiveBlock(IBlock block, INTW ntw, int flag) {
+    public void receiveBlock(IBlock block) {
 
     }
 
