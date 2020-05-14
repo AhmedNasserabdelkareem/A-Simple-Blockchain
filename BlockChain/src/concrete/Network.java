@@ -1,6 +1,8 @@
 package concrete;
 
+import interfaces.IBlock;
 import interfaces.INTW;
+import jdk.internal.util.xml.impl.Pair;
 
 import java.io.*;
 import java.net.*;
@@ -42,17 +44,19 @@ public class Network implements INTW {
 
     @Override
     public void issueTransaction(Transaction transaction) throws IOException {
-        Socket socket = new Socket(destination, PORT);
-        outputStream = new ObjectOutputStream(socket.getOutputStream());
-        outputStream.writeObject(transaction);
-        outputStream.flush();
-        outputStream.close();
-        socket.close();
+        for (String peer:peers) {
+            Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+            outputStream = new ObjectOutputStream(socket.getOutputStream());
+            outputStream.writeObject(transaction);
+            outputStream.flush();
+            outputStream.close();
+            socket.close();
+        }
     }
 
     @Override
-    public void shareBlock(Block block) throws IOException {
-        Socket socket = new Socket(destination, PORT);
+    public void shareBlock(IBlock block, String peer) throws IOException {
+        Socket socket = new Socket(InetAddress.getByName(peer), PORT);
         outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(block);
         outputStream.flush();
@@ -100,12 +104,41 @@ public class Network implements INTW {
                 listenForTransactions((Transaction) t);
             }else if (t instanceof Block){
                 listenForBlocks((Block) t);
-            }else if ( t instanceof Response){
+            }else if ( t instanceof Response) {
                 listenForResponses((Response) t);
+            }else if (t instanceof ArrayList){
+                setPublicKeys((ArrayList<Pair>) t);
             }else{
                 listenForNewConnections((String) t);
             }
         }
 
+    }
+
+    public void setPublicKeys(ArrayList<Pair> t) {
+        node.setPublicKeys(t);
+    }
+
+    @Override
+    public void broadcastlock(IBlock block) throws IOException {
+        for (String peer:peers) {
+            shareBlock(block,peer);
+        }
+    }
+
+    @Override
+    public void broadcastPK(ArrayList<Pair> keys) throws IOException {
+        for (String peer:peers) {
+            sharepublickeys(keys,peer);
+        }
+    }
+
+    public void sharepublickeys(ArrayList<Pair> keys, String peer) throws IOException {
+        Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+        outputStream = new ObjectOutputStream(socket.getOutputStream());
+        outputStream.writeObject(keys);
+        outputStream.flush();
+        outputStream.close();
+        socket.close();
     }
 }

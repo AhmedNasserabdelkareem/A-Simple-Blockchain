@@ -1,9 +1,13 @@
 package interfaces;
 
+import jdk.internal.util.xml.impl.Pair;
+
+import java.io.IOException;
 import java.security.PublicKey;
+import java.util.ArrayList;
 
 public interface INode {
-    public void setConfigs(int maxNumTransactions, IAgreementMethod method, String[] IPsOfOtherPeers, int nodeType);//0 for client , 1 for miner
+    public void setConfigs(int maxNumTransactions, IAgreementMethod method, ArrayList<String> IPsOfOtherPeers, int nodeType);//0 for client , 1 for miner
 
     public void setNTW(INTW ntw);
 
@@ -21,7 +25,7 @@ public interface INode {
     public void resetUnspent();
     //called if the block was accepted to decrease the values to be equal to availabl
     public void commitUnspent();
-    public void shareBlock(IBlock block, INTW ntw); //share the block over the network
+    public void shareBlock(IBlock block) throws IOException; //share the block over the network
 
     // agree/disagree on a block coming from the ntw..send the decision to the ntw and add/not to the chain
     // use th agreementmethod (BFT/pow) to agree/not
@@ -102,5 +106,7 @@ public interface INode {
 
     public void broadCastMessage(IMessage message);
 
+    public void broadCastPublicKeys(ArrayList<Pair> keys) throws IOException;
 
+    void setPublicKeys(ArrayList<Pair> t);
 }
