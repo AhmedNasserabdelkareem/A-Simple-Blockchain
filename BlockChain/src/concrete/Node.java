@@ -4,11 +4,11 @@ import interfaces.*;
 import java.security.PublicKey;
 import java.security.Signature;
 
-import interfaces.*;
-
-import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Node implements INode {
+    HashMap<Integer,ITransaction> TrsWithAvOps = new HashMap<>();
     @Override
     public void setConfigs(int maxNumTransactions, IAgreementMethod method, String[] IPsOfOtherPeers, int nodeType) {
 
@@ -50,19 +50,59 @@ public class Node implements INode {
 
     private boolean verifyTransactionVal(ITransaction t){
         int prevID = t.getPrevID();
-        //ITransaction prev =
+        ITransaction prev =getUnspentTransactionByID(prevID);
+        if(prev == null ){
+            return false;
+        }
+        int out = t.getOutIndex();
+        float totalPayed =0;
+        for (ITransaction.OutputPair p : t.getOPs()){
+            totalPayed+=p.value;
+        }
+        ArrayList<ITransaction.OutputPair>ops =  prev.getOPs();
+        boolean av = prev.getOPs().get(out).available >= totalPayed;
+        if(!av){
+            return false;
+        }
+        prev.getOPs().get(out).available -= totalPayed ;
+
         return  true;
     }
 
-    @Override
-    public ITransaction getTransactionByID(int id) {
-        return null;
-    }
+
 
     @Override
     public boolean verifyTransaction(ITransaction t) {
         return verifyTransactionSign(t) && verifyTransactionVal(t);
+    }
 
+    @Override
+    public void resetUnspent() {
+        for (ITransaction t : TrsWithAvOps.values()){
+            for (ITransaction.OutputPair o : t.getOPs()){
+                o.available = o.committedVal;
+            }
+        }
+    }
+
+    @Override
+    public void commitUnspent() {
+        for (ITransaction t : TrsWithAvOps.values()) {
+            float totAv =0;
+            for (ITransaction.OutputPair p : t.getOPs()) {
+                totAv += p.available;
+                p.committedVal = p.available;
+            }
+            if(totAv <=0){
+                TrsWithAvOps.remove(t.getID());
+            }
+        }
+    }
+
+
+    @Override
+    public ITransaction getUnspentTransactionByID(int id) {
+        return  TrsWithAvOps.get(id);
     }
 
     @Override

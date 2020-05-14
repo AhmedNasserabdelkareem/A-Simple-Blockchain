@@ -15,6 +15,12 @@ public interface INode {
 
     public boolean verifyTransaction(ITransaction t);
 
+    //returns the tr with that id if it still has values !=0 , null otherwise
+    public ITransaction getUnspentTransactionByID(int id);
+    //called if the block was rejected to reset the available to be equal to the original value
+    public void resetUnspent();
+    //called if the block was accepted to decrease the values to be equal to availabl
+    public void commitUnspent();
     public void shareBlock(IBlock block, INTW ntw); //share the block over the network
 
     // agree/disagree on a block coming from the ntw..send the decision to the ntw and add/not to the chain
@@ -33,7 +39,9 @@ public interface INode {
 
     public void setBlockManager(IBlockManager blockManager);
 
-    public ITransaction getTransactionByID(int id);
+
+
+
     public int getSeqNum();
 
     public void setSeqNum(int seqNum);

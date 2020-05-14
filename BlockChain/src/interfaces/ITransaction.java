@@ -9,9 +9,10 @@ public interface ITransaction {
     public class OutputPair{
         public int id;
         public float value;
+        public float committedVal;
         public float available ;
         OutputPair(int id, float value){
-            this.id=id;this.value=value;this.available=value;
+            this.id=id;this.value=value;this.available=value;this.committedVal=value;
         }
     }
     /**@return true if there are witnesses*/
