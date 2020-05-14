@@ -2,7 +2,11 @@ package concrete;
 import interfaces.*;
 import jdk.internal.util.xml.impl.Pair;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.PublicKey;
 import java.security.Signature;
 
@@ -21,14 +25,25 @@ public class Node implements INode {
     private IBlock currentBlock;
     private ArrayList<IBlock> blockChain;
     private ArrayList<Pair> id2keys;
+    private final String CONFIG_FILE;
 
 
-    public Node() {
+    public Node(String config_file) throws IOException {
+        CONFIG_FILE = config_file;
         peers = new ArrayList<>();
         transactions = new ArrayList<>();
         blockChain = new ArrayList<>();
         id2keys = new ArrayList<>();
+        readConfiguration();
+    }
+
+    public void readConfiguration() throws IOException {
         //TODO read from remote file >> config
+        URL conf = new URL(CONFIG_FILE);
+        BufferedReader in = new BufferedReader(new InputStreamReader(conf.openStream()));
+        String res = in.readLine();
+        //TODO Split file
+        //setConfigs();
     }
 
     @Override
@@ -148,7 +163,7 @@ public class Node implements INode {
 
     @Override
     public void shareBlock(IBlock block) throws IOException {
-        network.shareBlock(block, peer);
+        network.broadcastlock(block);
     }
 
     @Override

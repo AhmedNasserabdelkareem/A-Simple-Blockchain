@@ -3,6 +3,7 @@ package interfaces;
 import jdk.internal.util.xml.impl.Pair;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.security.PublicKey;
 import java.util.ArrayList;
 
@@ -109,4 +110,6 @@ public interface INode {
     public void broadCastPublicKeys(ArrayList<Pair> keys) throws IOException;
 
     void setPublicKeys(ArrayList<Pair> t);
-}
+    public void readConfiguration() throws IOException;
+
+    }
