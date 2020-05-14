@@ -1,5 +1,6 @@
 package interfaces;
 import concrete.Transaction;
+import java.security.*;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -8,8 +9,9 @@ public interface ITransaction {
     public class OutputPair{
         public int id;
         public float value;
+        public float available ;
         OutputPair(int id, float value){
-            this.id=id;this.value=value;
+            this.id=id;this.value=value;this.available=value;
         }
     }
     /**@return true if there are witnesses*/
@@ -32,12 +34,14 @@ public interface ITransaction {
     public int getPrevID();
     public int getOutIndex();
     public IBlock getBlock();
-
+    public byte[] getSignedHash();
+    public  PublicKey getPayerPK();
     //to set the data of the transaction ... the concrete class provides a constructor sets that as well
     public void setTransaction(int id , int prevID,ArrayList<Integer>ip,ArrayList<OutputPair>op);
     public void setTransaction(int id , int prevID,ArrayList<Integer>ip,ArrayList<OutputPair>op,ArrayList<Integer>witnesses);
 
     public String hash();
+    public void signTransaction(PrivateKey key, PublicKey publicKey);
     public static ITransaction parseTransaction(String line){
         try {
             ITransaction t = new Transaction();

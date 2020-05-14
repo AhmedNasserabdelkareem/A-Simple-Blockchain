@@ -25,8 +25,6 @@ public interface INode {
 
     public IBlock getLastBlock();
 
-
-
     public PublicKey getPrimaryId();
 
     public void setPrimaryId(PublicKey primaryId);
@@ -35,6 +33,7 @@ public interface INode {
 
     public void setBlockManager(IBlockManager blockManager);
 
+    public ITransaction getTransactionByID(int id);
     public int getSeqNum();
 
     public void setSeqNum(int seqNum);
