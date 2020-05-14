@@ -74,7 +74,6 @@ public class Block implements IBlock {
 
     @Override
     public void setClientSignature(byte[] clientSignature) {
-
     }
 
     @Override

@@ -16,9 +16,9 @@ public class Utils implements IUtils{
         }
         return u;
     }
+
     @Override
     public  String applySha256(String input) {
-
         try {
             // Static getInstance method is called with hashing SHA
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -44,7 +44,6 @@ public class Utils implements IUtils{
             e.printStackTrace();
             return null;
         }
-
     }
 
     @Override

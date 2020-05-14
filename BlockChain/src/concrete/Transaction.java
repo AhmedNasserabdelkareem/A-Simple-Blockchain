@@ -1,18 +1,37 @@
 package concrete;
 import interfaces.*;
-import java.security.PublicKey;
+import java.nio.charset.StandardCharsets;
+
+import java.security.*;
 import java.util.ArrayList;
 
 
 public class Transaction implements ITransaction {
-    public static void testParsing(String [] args){
+    public static void main(String [] args){
         ITransaction t = ITransaction.parseTransaction("49\tintput:0\tvalue:79.121956\toutput:49");
+        try {
+            //System.out.println(t.hash());
+            KeyPair pair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+            t.signTransaction(pair.getPrivate(),pair.getPublic());
+            //System.out  .println(new String (t.getSignedHash()));
+            Signature s = Signature.getInstance("SHA1WithRSA");
+            s.initVerify(pair.getPublic());
+            s.update(t.hash().getBytes());
+            boolean b =s.verify(t.getSignedHash());
+
+            System.out.println("sig ,, "+b);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        System.out.println();
         System.out.println(t.getIPs());
         System.out.println(t.getOPs().get(0).value);
 
         System.out.println(t.getID());
         System.out.println(t.getPrevID());
         System.out.println(t.getOutIndex());
+
     }
     protected boolean containsWitnesses = false ;
     private ArrayList<Integer> ips;
@@ -25,9 +44,23 @@ public class Transaction implements ITransaction {
     private int outputIndex=-1;
     private IBlock block = null;
     private String hash = null ;
+    private byte[] signedHash ;
+    private PublicKey payerKey = null;
+    private float[] available;
     public Transaction(){
     }
-    public Transaction( int id,int prevID ,ArrayList<Integer>ip, ArrayList<OutputPair>op ){
+
+    @Override
+    public PublicKey getPayerPK() {
+        return this.payerKey;
+    }
+
+    @Override
+    public byte[] getSignedHash() {
+        return this.signedHash;
+    }
+
+    public Transaction(int id, int prevID , ArrayList<Integer>ip, ArrayList<OutputPair>op ){
         this.setTransaction( id, prevID ,ip,op);
         this.id =id;
         this.prevTrasactionID = prevID;
@@ -161,6 +194,25 @@ public class Transaction implements ITransaction {
             sb.append(String.valueOf(i.value));
         }
         this.hash =Utils.getInstance().applySha256(sb.toString());
+        System.out.println("transaction hashed ..");
         return this.hash;
+    }
+
+
+    @Override
+    public void signTransaction(PrivateKey key ,PublicKey pub) {
+        this.payerKey = pub;
+        try {
+            if (this.hash == null){
+                hash();
+            }
+            Signature s = Signature.getInstance("SHA1WithRSA");
+            s.initSign(key);
+            s.update(this.hash.getBytes());
+            this.signedHash = s.sign();
+            System.out.println("transaction signed ..");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }
