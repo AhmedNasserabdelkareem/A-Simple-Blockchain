@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Node implements INode {
-    HashMap<Integer,ITransaction> TrsWithAvOps = new HashMap<>();
+    HashMap<Integer,ITransaction> AvOps = new HashMap<>();
+    ArrayList<Integer> newAddedTs = new ArrayList<>();
     @Override
     public void setConfigs(int maxNumTransactions, IAgreementMethod method, String[] IPsOfOtherPeers, int nodeType) {
 
@@ -26,6 +27,8 @@ public class Node implements INode {
 
     @Override
     public void addTransaction(ITransaction t) {
+        newAddedTs.add(t.getID());
+        AvOps.put(t.getID(),t);
 
     }
 
@@ -78,23 +81,27 @@ public class Node implements INode {
 
     @Override
     public void resetUnspent() {
-        for (ITransaction t : TrsWithAvOps.values()){
+        for (ITransaction t : AvOps.values()){
             for (ITransaction.OutputPair o : t.getOPs()){
                 o.available = o.committedVal;
             }
         }
+        for (int i : newAddedTs){
+            AvOps.remove(i);
+        }
+        //TODO remove all the transactions added to the hashmap in the last round
     }
 
     @Override
     public void commitUnspent() {
-        for (ITransaction t : TrsWithAvOps.values()) {
+        for (ITransaction t : AvOps.values()) {
             float totAv =0;
             for (ITransaction.OutputPair p : t.getOPs()) {
                 totAv += p.available;
                 p.committedVal = p.available;
             }
             if(totAv <=0){
-                TrsWithAvOps.remove(t.getID());
+                AvOps.remove(t.getID());
             }
         }
     }
@@ -102,7 +109,7 @@ public class Node implements INode {
 
     @Override
     public ITransaction getUnspentTransactionByID(int id) {
-        return  TrsWithAvOps.get(id);
+        return  AvOps.get(id);
     }
 
     @Override

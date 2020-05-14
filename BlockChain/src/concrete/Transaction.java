@@ -191,7 +191,7 @@ public class Transaction implements ITransaction, Serializable {
         sb.append(this.block.getTransactionByID(this.prevTrasactionID).hash());
         for (Integer i:this.ips) {
             sb.append("-");
-            sb.append(Utils.getInstance().getPublicKeyFromID(i));
+            sb.append(this.payerKey);
         }
         for (OutputPair i:this.ops) {
             sb.append("-");
