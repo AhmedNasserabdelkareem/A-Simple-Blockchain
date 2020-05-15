@@ -69,19 +69,19 @@ public interface INode {
     public IMessagePool getChangeViewPool();
 
 
-    public void generateNewBlockMessage();
+    public void generateNewBlockMessage() throws IOException;
 
-    public void generateViewChangeMessage(int newViewNum);
+    public void generateViewChangeMessage(int newViewNum) throws IOException;
 
-    public void generateViewChangedMessage();
+    public void generateViewChangedMessage() throws IOException;
 
-    public void generatePreprepareMessage();
+    public void generatePreprepareMessage() throws IOException;
 
-    public void generatePrepareMessage();
+    public void generatePrepareMessage() throws IOException;
 
-    public void generateCommitMessage();
+    public void generateCommitMessage() throws IOException;
 
-    public void broadcastMessage(IMessage message);
+    public void broadcastMessage(IMessage message) throws IOException;
     public void addTransaction(ArrayList<ITransaction> ledger);
     public void broadCastPublicKeys(ArrayList<Pair> keys) throws IOException;
 
@@ -99,5 +99,5 @@ public interface INode {
     public void insertChangeViewMessageInPool(ArrayList<IMessage> changeViewMessages);
     public void checkTruthyOfNewView(IMessage viewChangedMessage);
     public boolean verifyNewViewPool(IMessagePool messagePool);
-
+    public INode getPrimaryNode(int nodeIndex);
 }

@@ -1,11 +1,14 @@
 package concrete;
 
 import interfaces.IBlock;
+import interfaces.IMessage;
 import interfaces.INTW;
+import interfaces.INode;
 import jdk.internal.util.xml.impl.Pair;
 
 import java.io.*;
 import java.net.*;
+import java.security.PublicKey;
 import java.util.ArrayList;
 
 public class Network implements INTW {
@@ -140,5 +143,34 @@ public class Network implements INTW {
         outputStream.flush();
         outputStream.close();
         socket.close();
+    }
+
+    @Override
+    public PublicKey getPrimaryID(int viewNum) {
+        return null;
+    }
+
+    @Override
+    public INode getPrimaryNode(int nodeIndex) {
+        return null;
+    }
+
+    @Override
+    public void shareMessage(IMessage message,String peer) throws IOException {
+        Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+        outputStream = new ObjectOutputStream(socket.getOutputStream());
+        outputStream.writeObject(message);
+        outputStream.flush();
+        outputStream.close();
+        socket.close();
+    }
+
+    @Override
+    public void broadcastMessage(IMessage message) throws IOException {
+        for (String p:peers
+             ) {
+            shareMessage(message,p);
+        }
+
     }
 }

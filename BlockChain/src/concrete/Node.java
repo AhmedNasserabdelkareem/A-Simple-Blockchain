@@ -287,7 +287,7 @@ public class Node implements INode {
 
     /*this is only for the primary which will let the client to sent the block*/
     @Override
-    public void generateNewBlockMessage() {
+    public void generateNewBlockMessage() throws IOException {
         this.validator = new Validator(this.primaryNodePublicKey, this.seqNum, this.viewNum, this.maxMaliciousNodes);
         this.validator.initiateNewBlockMessage(getLastBlock(), getBlockTransactions());
         // timer
@@ -299,7 +299,7 @@ public class Node implements INode {
     /*this is for the primary node it's the only one who can generate the pre-prepare message
      * and broadcast it to all nodes*/
     @Override
-    public void generatePreprepareMessage() {
+    public void generatePreprepareMessage() throws IOException {
         IMessage prePrepareMessage = new Message("pre-prepare", this.primaryNodePublicKey, this.seqNum, this.viewNum, this.nodeSignature, this.nodePublicKey, this.newBlock);
         broadcastMessage(prePrepareMessage);
     }
@@ -331,7 +331,7 @@ public class Node implements INode {
     /*All nodes except the primary will generate this message and broadcasts it to all the network
      * the node has to finish the pre-prepare state before entering prepare state*/
     @Override
-    public void generatePrepareMessage() {
+    public void generatePrepareMessage() throws IOException {
         if (this.state.equals("pre-prepare")) {
             IMessage prepareMessage = new Message("prepare", this.primaryNodePublicKey, this.seqNum, this.viewNum, this.nodeSignature, this.block, this.nodePublicKey);
             this.preparePool.insertMessage(prepareMessage);
@@ -389,7 +389,7 @@ public class Node implements INode {
 
     /*All nodes including primary will broadcast a commit message all other nodes*/
     @Override
-    public void generateCommitMessage() {
+    public void generateCommitMessage() throws IOException {
         if (this.state.equals("prepare")) {
             IMessage commitMessage = new Message("commit", this.primaryNodePublicKey, this.seqNum, this.viewNum, this.nodeSignature, this.block, this.nodePublicKey);
             this.commitPool.insertMessage(commitMessage);
@@ -438,7 +438,7 @@ public class Node implements INode {
     /*the asks to change the view which means
      it asks to change the primary node as the primary node is malicious*/
     @Override
-    public void generateViewChangeMessage(int newViewNum) {
+    public void generateViewChangeMessage(int newViewNum) throws IOException {
         IMessage changeViewMessage = new Message("change view", this.primaryNodePublicKey, this.seqNum, this.viewNum, this.nodeSignature, this.block, this.newViewNum, this.nodePublicKey);
         this.viewChangePool.insertMessage(changeViewMessage);
 
@@ -487,7 +487,7 @@ public class Node implements INode {
 
     /*the new primary will generate it to be broadcasted to all the network */
     @Override
-    public void generateViewChangedMessage() {
+    public void generateViewChangedMessage() throws IOException {
         IMessage viewChangedMessage = new Message("view changed", this.primaryNodePublicKey, this.seqNum, this.newViewNum, this.nodeSignature, this.block, this.viewChangePool);
         broadcastMessage(viewChangedMessage);
     }
@@ -524,8 +524,14 @@ public class Node implements INode {
     }
 
     @Override
-    public void broadcastMessage(IMessage message) {
-        this.network.shareMessage(message);
+    public INode getPrimaryNode(int nodeIndex) {
+        return null;
+    }
+
+
+    @Override
+    public void broadcastMessage(IMessage message) throws IOException {
+        this.network.broadcastMessage(message);
     }
 
 
