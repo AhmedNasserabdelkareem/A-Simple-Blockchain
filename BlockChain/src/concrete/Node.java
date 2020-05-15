@@ -54,6 +54,9 @@ public class Node implements INode {
     private IAgreementMethod method;
     private String[] IPsOfOtherPeers;
     private boolean isPow;
+    private ArrayList<IMessage> changeViewMessages;
+    private ArrayList<IMessage> commitMessages;
+    private ArrayList<IMessage> prePrepareMessages;
 
 
     public Node(String config_file) throws IOException {
@@ -62,6 +65,9 @@ public class Node implements INode {
         transactions = new ArrayList<>();
         blockChain = new ArrayList<>();
         id2keys = new ArrayList<>();
+        prePrepareMessages = new ArrayList<>();
+        commitMessages = new ArrayList<>();
+        changeViewMessages = new ArrayList<>();
         readConfiguration();
         generateKeyPair();
     }
@@ -274,8 +280,8 @@ public class Node implements INode {
     public void setNewBlock(IMessage newBlockMessage) {
         if (newBlockMessage.getMessageType().equals("new block") &&
                 newBlockMessage.getPrimaryPublicKey() == primaryNodePublicKey &&
-                newBlockMessage.getSeqNum() == this.seqNum && newBlockMessage.getViewNum() == this.viewNum
-                ) { // i mean by block signature -> transaction signature
+                newBlockMessage.getSeqNum() == this.seqNum && newBlockMessage.getViewNum() == this.viewNum){
+        //        && newBlockMessage.getBlock().verifySignature()) { // i mean by block signature -> transaction signature
             this.newBlock = newBlockMessage.getBlock();
         }
         generateNodeSignature();
@@ -286,7 +292,7 @@ public class Node implements INode {
     @Override
     public void generateNewBlockMessage() throws IOException {
         this.validator = new Validator(this.primaryNodePublicKey, this.seqNum, this.viewNum, this.maxMaliciousNodes);
-        this.validator.initiateNewBlockMessage(getLastBlock(),block.getTransactions());
+        this.validator.initiateNewBlockMessage(getLastBlock(), block.getTransactions());
         // timer
         IMessage newBlockMessage = validator.finalizeBlock();
         broadcastMessage(newBlockMessage);
@@ -429,12 +435,39 @@ public class Node implements INode {
     }
 
 
-    public void receiveMessage() {
+    public void receiveMessage(IMessage t) throws IOException {
+        String type = t.getMessageType();
+        switch (type){
+            case "new block":
+                insertPreprepareMessage(t);
+            case "config":
+                network.setPrimary(t.isPrimary());
+            case "change view":
+                changeViewMessages.add(t);
+                if(changeViewMessages.size() == network.getsizeofPeers()){
+                    insertChangeViewMessageInPool(changeViewMessages);
+                    changeViewMessages.clear();
+                }
+            case "commit":
+                commitMessages.add(t);
+                if(commitMessages.size() == network.getsizeofPeers()){
+                    insertCommitMessageInPool(commitMessages);
+                    commitMessages.clear();
+                }
+            case "PrePrepare":
+                prePrepareMessages.add(t);
+                if(prePrepareMessages.size() == network.getsizeofPeers()){
+                    insertPrepareMessageInPool(prePrepareMessages);
+                    prePrepareMessages.clear();
+                }
+            default:
+                System.out.println("No Type");
+        }
+        //roundrobin(index);
+    }
 
-        // take type{pre-prepare,}
-        //collect message
-        //pre-prepare
-
+    public void roundrobin(int index) {
+        network.roundrobin(index);
     }
 
 

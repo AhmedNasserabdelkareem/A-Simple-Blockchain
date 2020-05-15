@@ -18,6 +18,12 @@ public class Message implements IMessage {
     private PublicKey nodePublicKey;
     private IMessagePool messagePool;
     private int maxMaliciousNodes;
+
+    public boolean isPrimary() {
+        return isPrimary;
+    }
+
+
     private boolean isPrimary;
 
     //config
