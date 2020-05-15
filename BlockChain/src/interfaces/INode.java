@@ -101,5 +101,5 @@ public interface INode {
     public boolean verifyNewViewPool(IMessagePool messagePool);
     public INode getPrimaryNode(int nodeIndex);
     public void receiveMessage(IMessage t) throws IOException;
-    public void roundrobin(int index);
+    public void sendConfigMessage(IMessage m) throws IOException;
     }

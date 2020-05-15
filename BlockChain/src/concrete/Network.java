@@ -6,6 +6,7 @@ import interfaces.INTW;
 import interfaces.INode;
 import jdk.internal.util.xml.impl.Pair;
 
+import java.awt.*;
 import java.io.*;
 import java.net.*;
 import java.security.PublicKey;
@@ -34,15 +35,23 @@ public class Network implements INTW {
         return peers.size();
     }
 
-    @Override
-    public void roundrobin(int index) {
-        if(isPrimary){
-            sendConfigMessage();
+    public void sendConfigMessage(IMessage m) throws IOException {
+        for (String peer:peers) {
+            if (peer == getNextPrimary()){
+                m.setisPrimary(true);
+            }
+            Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+            outputStream = new ObjectOutputStream(socket.getOutputStream());
+            outputStream.writeObject(m);
+            outputStream.flush();
+            outputStream.close();
+            socket.close();
         }
+
     }
 
-    public void sendConfigMessage() {
-
+    public String getNextPrimary() {
+        return null;
     }
 
     private boolean isPrimary=false;

@@ -463,11 +463,10 @@ public class Node implements INode {
             default:
                 System.out.println("No Type");
         }
-        //roundrobin(index);
     }
 
-    public void roundrobin(int index) {
-        network.roundrobin(index);
+    public void sendConfigMessage(IMessage m) throws IOException {
+        network.sendConfigMessage(m);
     }
 
 

@@ -23,6 +23,11 @@ public class Message implements IMessage {
         return isPrimary;
     }
 
+    @Override
+    public void setisPrimary(boolean b) {
+        this.isPrimary=b;
+    }
+
 
     private boolean isPrimary;
 

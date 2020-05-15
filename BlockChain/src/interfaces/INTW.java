@@ -7,6 +7,7 @@ import concrete.Transaction;
 import jdk.internal.util.xml.impl.Pair;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.security.PublicKey;
 import java.util.ArrayList;
 
@@ -39,6 +40,6 @@ public interface INTW {
     public void setPrimary(boolean primary);
     public int getsizeofPeers();
 
-    public void roundrobin(int index);
-    public void sendConfigMessage();
+    public void sendConfigMessage(IMessage m) throws IOException;
+    public String getNextPrimary();
     }
