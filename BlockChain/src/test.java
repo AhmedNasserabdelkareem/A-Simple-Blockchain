@@ -13,7 +13,7 @@ public class test {
         InetAddress e = InetAddress.getByName("8888.0.0.1");
         ArrayList<InetAddress> addresses  =new ArrayList<>();
         addresses.add(a);addresses.add(b);addresses.add(c);addresses.add(d);addresses.add(e);
-        Collections.sort(addresses);
+        //Collections.sort(addresses);
 
     }
 }

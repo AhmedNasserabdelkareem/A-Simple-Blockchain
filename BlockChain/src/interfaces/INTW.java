@@ -7,7 +7,6 @@ import concrete.Transaction;
 import jdk.internal.util.xml.impl.Pair;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,10 +23,10 @@ public interface INTW {
     public void listenForBlocks(Block b); //listen for any shared blocks and calls agreeOnBlock (only if node type is 1 in pow)
     public String getExternalIP() throws IOException;
     public void startServer() throws IOException, ClassNotFoundException;
-    public void setPublicKeys(ArrayList<Pair> t);
+    public void setPublicKeys(HashMap<Integer,PublicKey> t);
     public void broadcastlock(IBlock block) throws IOException;
     public void broadcastPK(HashMap<Integer,PublicKey> keys) throws IOException;
-    public void sharepublickeys(ArrayList<Pair> keys, String peer) throws IOException;
+    public void sharepublickeys(HashMap<Integer, PublicKey> keys, String peer) throws IOException;
 
     public PublicKey getPrimaryID(int viewNum); //return the public key of the primary for the given view number
 

@@ -1,9 +1,6 @@
 package interfaces;
 
-import jdk.internal.util.xml.impl.Pair;
-
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,7 +83,7 @@ public interface INode {
     public void addTransaction(ArrayList<ITransaction> ledger);
     public void broadCastPublicKeys(HashMap<Integer,PublicKey> keys) throws IOException;
 
-    void setPublicKeys(ArrayList<Pair> t);
+    void setPublicKeys(HashMap<Integer, PublicKey> t);
     public void readConfiguration() throws IOException;
 
 

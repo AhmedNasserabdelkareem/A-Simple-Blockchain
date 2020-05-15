@@ -6,11 +6,11 @@ import interfaces.INTW;
 import interfaces.INode;
 import jdk.internal.util.xml.impl.Pair;
 
-import java.awt.*;
 import java.io.*;
 import java.net.*;
 import java.security.PublicKey;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Network implements INTW {
     private ArrayList<String> peers = new ArrayList<>();
@@ -144,8 +144,8 @@ public class Network implements INTW {
                 listenForBlocks((Block) t);
             }else if ( t instanceof Response) {
                 listenForResponses((Response) t);
-            }else if (t instanceof ArrayList){
-                setPublicKeys((ArrayList<Pair>) t);
+            }else if (t instanceof HashMap){
+                setPublicKeys((HashMap<Integer, PublicKey>) t);
             }else if (t instanceof Message) {
                 listenForMessages((IMessage) t);
             }else {
@@ -159,7 +159,7 @@ public class Network implements INTW {
         node.receiveMessage(t);
     }
 
-    public void setPublicKeys(ArrayList<Pair> t) {
+    public void setPublicKeys(HashMap<Integer,PublicKey> t) {
         node.setPublicKeys(t);
     }
 
@@ -171,13 +171,13 @@ public class Network implements INTW {
     }
 
     @Override
-    public void broadcastPK(ArrayList<Pair> keys) throws IOException {
+    public void broadcastPK(HashMap<Integer, PublicKey> keys) throws IOException {
         for (String peer:peers) {
             sharepublickeys(keys,peer);
         }
     }
 
-    public void sharepublickeys(ArrayList<Pair> keys, String peer) throws IOException {
+    public void sharepublickeys(HashMap<Integer, PublicKey> keys, String peer) throws IOException {
         Socket socket = new Socket(InetAddress.getByName(peer), PORT);
         outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(keys);
@@ -208,8 +208,7 @@ public class Network implements INTW {
 
     @Override
     public void broadcastMessage(IMessage message) throws IOException {
-        for (String p:peers
-             ) {
+        for (String p:peers) {
             shareMessage(message,p);
         }
 

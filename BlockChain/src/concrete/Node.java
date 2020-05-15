@@ -3,7 +3,6 @@ import interfaces.*;
 import jdk.internal.util.xml.impl.Pair;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.*;
 
@@ -24,7 +23,7 @@ public class Node implements INode {
     private ArrayList<ITransaction> transactions;
     private IBlock currentBlock;
     private ArrayList<IBlock> blockChain;
-    private ArrayList<Pair> id2keys;
+    private HashMap<Integer,PublicKey> id2keys;
     private String CONFIG_FILE;
     private PublicKey nodePublicKey;
     private PrivateKey nodePrivateKey;
@@ -69,7 +68,7 @@ public class Node implements INode {
         peers = new ArrayList<>();
         transactions = new ArrayList<>();
         blockChain = new ArrayList<>();
-        id2keys = new ArrayList<>();
+        id2keys = new HashMap<>();
         prePrepareMessages = new ArrayList<>();
         commitMessages = new ArrayList<>();
         changeViewMessages = new ArrayList<>();
@@ -297,7 +296,7 @@ public class Node implements INode {
     }
 
     @Override
-    public void setPublicKeys(ArrayList<Pair> t) {
+    public void setPublicKeys(HashMap<Integer, PublicKey> t) {
         this.id2keys = t;
     }
 
