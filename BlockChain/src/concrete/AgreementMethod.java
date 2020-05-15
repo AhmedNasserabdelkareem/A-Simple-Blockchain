@@ -51,24 +51,24 @@ public class AgreementMethod implements IAgreementMethod, Serializable {
             currentNode.setPrimaryId(this.primaryNode.getPrimaryId());
             currentNode.setMaxMaliciousNodes(this.maxMaliciousNodes);
         }
+        try {
 
+            /*initialize new block then broadcast it*/
+            this.primaryNode.generateNewBlockMessage();
 
-        /*initialize new block then broadcast it*/
-        this.primaryNode.generateNewBlockMessage();
+            /*primary will generate the pre-prepare message and broadcast it to all other nodes*/
+            this.primaryNode.generatePreprepareMessage();
 
-        /*primary will generate the pre-prepare message and broadcast it to all other nodes*/
-        this.primaryNode.generatePreprepareMessage();
+            /*secondary nodes will receive pre-prepare message from the primary*/
+            //nasser
 
-        /*secondary nodes will receive pre-prepare message from the primary*/
-        //nasser
-
-        /*prepare phase*/
-        for (int i =0;i<nodes.size();i++){
-            currentNode = nodes.get(i);
-            if(currentNode.getNodePublicKey()!=this.primaryNode.getNodePublicKey()){
-                currentNode.generatePrepareMessage();
+            /*prepare phase*/
+            for (int i = 0; i < nodes.size(); i++) {
+                currentNode = nodes.get(i);
+                if (currentNode.getNodePublicKey() != this.primaryNode.getNodePublicKey()) {
+                    currentNode.generatePrepareMessage();
+                }
             }
-        }
 
         /*Secondary nodes will receive prepare messages from each other*/
         //nasser
@@ -80,6 +80,7 @@ public class AgreementMethod implements IAgreementMethod, Serializable {
 
         }
 
+        }catch (Exception e){e.printStackTrace();}
 
         /*All nodes will receive commit messages from each other*/
         //nasser
