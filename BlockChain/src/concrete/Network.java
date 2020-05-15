@@ -21,6 +21,32 @@ public class Network implements INTW {
     private static ObjectInputStream inputStream;
     private ServerSocket ss;
 
+    public boolean isPrimary() {
+        return isPrimary;
+    }
+
+    public void setPrimary(boolean primary) {
+        isPrimary = primary;
+    }
+
+    @Override
+    public int getsizeofPeers() {
+        return peers.size();
+    }
+
+    @Override
+    public void roundrobin(int index) {
+        if(isPrimary){
+            sendConfigMessage();
+        }
+    }
+
+    public void sendConfigMessage() {
+
+    }
+
+    private boolean isPrimary=false;
+
 
     @Override
     public void setNode(Node node) throws IOException, ClassNotFoundException {
@@ -111,11 +137,17 @@ public class Network implements INTW {
                 listenForResponses((Response) t);
             }else if (t instanceof ArrayList){
                 setPublicKeys((ArrayList<Pair>) t);
-            }else{
+            }else if (t instanceof Message) {
+                listenForMessages((IMessage) t);
+            }else {
                 listenForNewConnections((String) t);
             }
         }
 
+    }
+
+    public void listenForMessages(IMessage t) throws IOException {
+        node.receiveMessage(t);
     }
 
     public void setPublicKeys(ArrayList<Pair> t) {

@@ -34,4 +34,12 @@ public interface INTW {
 
     public void shareMessage(IMessage message,String peer) throws IOException; //share message to all nodes
     public void broadcastMessage(IMessage message) throws IOException;
-}
+    public void listenForMessages(IMessage t) throws IOException;
+    public boolean isPrimary();
+
+    public void setPrimary(boolean primary);
+    public int getsizeofPeers();
+
+    public void roundrobin(int index);
+    public void sendConfigMessage();
+    }

@@ -101,4 +101,6 @@ public interface INode {
     public void checkTruthyOfNewView(IMessage viewChangedMessage);
     public boolean verifyNewViewPool(IMessagePool messagePool);
     public INode getPrimaryNode(int nodeIndex);
-}
+    public void receiveMessage(IMessage t) throws IOException;
+    public void roundrobin(int index);
+    }
