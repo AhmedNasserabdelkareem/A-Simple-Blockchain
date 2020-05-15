@@ -8,7 +8,7 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 
 public interface INode {
-    public void setConfigs(int maxNumTransactions, IAgreementMethod method, ArrayList<String> IPsOfOtherPeers, int nodeType);//0 for client , 1 for miner
+    public void setConfigs(boolean isPow,int maxNumTransactions, IAgreementMethod method, ArrayList<String> IPsOfOtherPeers, int nodeType);//0 for client , 1 for miner
     public void issueTransactions(int from , int to);//for client nodes, issue for ids from .. to ..
     public void setNTW(INTW ntw);
 
@@ -94,9 +94,9 @@ public interface INode {
     public IBlock getNewBlock();
     public void setNewBlock(IMessage newBlockMessage);
     public void insertPreprepareMessage(IMessage preprepareMessage);
-    public void insertPrepareMessageInPool(ArrayList<IMessage> prepareMessages);
+    public void insertPrepareMessageInPool(ArrayList<IMessage> prepareMessages) throws IOException;
     public void insertCommitMessageInPool(ArrayList<IMessage> commitMessages);
-    public void insertChangeViewMessageInPool(ArrayList<IMessage> changeViewMessages);
+    public void insertChangeViewMessageInPool(ArrayList<IMessage> changeViewMessages) throws IOException;
     public void checkTruthyOfNewView(IMessage viewChangedMessage);
     public boolean verifyNewViewPool(IMessagePool messagePool);
     public INode getPrimaryNode(int nodeIndex);

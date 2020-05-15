@@ -53,6 +53,7 @@ public class Node implements INode {
     private int maxNumTransactions;
     private IAgreementMethod method;
     private String[] IPsOfOtherPeers;
+    private boolean isPow;
 
 
     public Node(String config_file) throws IOException {
@@ -62,6 +63,7 @@ public class Node implements INode {
         blockChain = new ArrayList<>();
         id2keys = new ArrayList<>();
         readConfiguration();
+        generateKeyPair();
     }
 
     public void readConfiguration() throws IOException {
@@ -74,7 +76,8 @@ public class Node implements INode {
     }
 
     @Override
-    public void setConfigs(int maxNumTransactions, IAgreementMethod method, ArrayList<String> IPsOfOtherPeers, int nodeType) {
+    public void setConfigs(boolean isPow,int maxNumTransactions, IAgreementMethod method, ArrayList<String> IPsOfOtherPeers, int nodeType) {
+        this.isPow = isPow;
         this.nodeType = nodeType;
         this.agreementMethod = method;
         this.maxTransaction = maxNumTransactions;
@@ -153,12 +156,15 @@ public class Node implements INode {
         return true;
     }
 
-    public ArrayList<ITransaction> verifyBlockTransactions(ArrayList<ITransaction> transactions){
-        for(int i =0; i<transactions.size();i++){
-            if(!verifyTransaction(transactions.get(i)))
-                transactions.remove(i);
+    public boolean verifyBlockTransactions(ArrayList<ITransaction> transactions){
+        for (int i = 0; i < transactions.size(); i++) {
+            if (verifyTransaction(transactions.get(i))) {
+                resetUnspent();
+            } else {
+                return false;
+            }
         }
-        return  transactions;
+        return true;
     }
 
     @Override
@@ -336,7 +342,7 @@ public class Node implements INode {
      * and insert them in her prepare pool if a message is invalid it will ignore it.
      * the node has to receive min 2*f+1 prepare message to be able to move to the next phase*/
     @Override
-    public void insertPrepareMessageInPool(ArrayList<IMessage> prepareMessages) {
+    public void insertPrepareMessageInPool(ArrayList<IMessage> prepareMessages) throws IOException {
         IMessage prepareMessage;
         for (int i = 0; i < prepareMessages.size(); i++) {
             prepareMessage = prepareMessages.get(i);
@@ -353,10 +359,9 @@ public class Node implements INode {
                     generateViewChangeMessage(this.newViewNum);
                 }
 
-                //check belal's function
-                prepareMessage.getBlock().setTransactions(verifyBlockTransactions(prepareMessage.getBlock().getTransactions()));
-
-
+                if (verifyBlockTransactions(prepareMessage.getBlock().getTransactions())) {
+                    this.preparePool.insertMessage(prepareMessage);
+                }
 
 
                 this.preparePool.insertMessage(prepareMessage);
@@ -413,10 +418,22 @@ public class Node implements INode {
         }
 
         if (this.commitPool.getPoolSize() >= 2 * this.maxMaliciousNodes + 1) {
+            /*mark transactions as spent*/
+            verifyBlockTransactions(this.block.getTransactions());
+            commitUnspent();
             this.state = "commit";
             this.commitPool.clean();
             addToChain(this.block);
         }
+
+    }
+
+
+    public void receiveMessage() {
+
+        // take type{pre-prepare,}
+        //collect message
+        //pre-prepare
 
     }
 
@@ -442,7 +459,7 @@ public class Node implements INode {
      * when the new primary receives his 2*f+1 changeView messages that refers to him to be the new primary
      * he will set him self as the new primary and broadcast that to all nodes*/
     @Override
-    public void insertChangeViewMessageInPool(ArrayList<IMessage> changeViewMessages) {
+    public void insertChangeViewMessageInPool(ArrayList<IMessage> changeViewMessages) throws IOException {
 
         IMessage changeViewMessage;
         for (int i = 0; i < changeViewMessages.size(); i++) {
