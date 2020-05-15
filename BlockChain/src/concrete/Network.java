@@ -4,19 +4,20 @@ import interfaces.IBlock;
 import interfaces.IMessage;
 import interfaces.INTW;
 import interfaces.INode;
-import jdk.internal.util.xml.impl.Pair;
 
 import java.io.*;
 import java.net.*;
 import java.security.PublicKey;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class Network implements INTW {
     private ArrayList<String> peers = new ArrayList<>();
+    private ArrayList<String> tableOfNodes = new ArrayList<>();
     private String PrimaryPeer  ="";
     private Node node;
-    private InetAddress destination ;
+    private InetAddress sourceIP;
     private final static int PORT =5555;
     private static ObjectOutputStream outputStream;
     private static ObjectInputStream inputStream;
@@ -36,6 +37,7 @@ public class Network implements INTW {
     }
 
     public void sendConfigMessage(IMessage m) throws IOException {
+        constructTable();
         for (String peer:peers) {
             if (peer == getNextPrimary()){
                 m.setisPrimary(true);
@@ -50,8 +52,17 @@ public class Network implements INTW {
 
     }
 
+    public void constructTable() throws IOException {
+        tableOfNodes.clear();
+        tableOfNodes.add(getExternalIP());
+        for (String p:peers) {
+            tableOfNodes.add(p);
+        }
+        Collections.sort(tableOfNodes,new AlphanumComparator());
+    }
+
     public String getNextPrimary() {
-        return null;
+        return tableOfNodes.get((tableOfNodes.indexOf(sourceIP.getHostAddress())+1)%tableOfNodes.size());
     }
 
     private boolean isPrimary=false;
@@ -60,14 +71,16 @@ public class Network implements INTW {
     @Override
     public void setNode(Node node) throws IOException, ClassNotFoundException {
         this.node  =node;
-        this.destination = InetAddress.getByName(getExternalIP());
+        this.sourceIP = InetAddress.getByName(getExternalIP());
+        constructTable();
         startServer();
     }
 
     @Override
-    public void listenForNewConnections(String IP) {
+    public void listenForNewConnections(String IP) throws IOException {
         //TODO handle this to object
         peers.add(IP);
+        constructTable();
     }
 
     @Override
@@ -102,15 +115,21 @@ public class Network implements INTW {
         socket.close();
     }
 
+
     @Override
-    public void shareResponse(Block block, boolean response) throws IOException {
-        Response r = new Response(block,response);
-        Socket socket = new Socket(destination, PORT);
+    public void shareResponse(Response r,String peer) throws IOException {
+        Socket socket = new Socket(InetAddress.getByName(peer), PORT);
         outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(r);
         outputStream.flush();
         outputStream.close();
         socket.close();
+    }
+    public void broadcastResponse(Block block,boolean response) throws IOException {
+        Response r = new Response(block,response);
+        for (String p:peers) {
+            shareResponse(r,p);
+        }
     }
 
     @Override

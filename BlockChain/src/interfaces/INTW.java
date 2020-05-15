@@ -13,12 +13,11 @@ import java.util.HashMap;
 
 public interface INTW {
     public void setNode(Node node) throws IOException, ClassNotFoundException;
-    public void listenForNewConnections(String ip); //listens for any new node request and add it to peers List
+    public void listenForNewConnections(String ip) throws IOException; //listens for any new node request and add it to peers List
     public ArrayList<String> getConnectedPeers();
     public void listenForTransactions(Transaction t);
     public void issueTransaction(Transaction transaction) throws IOException;//to all ips / primary
     public void shareBlock(IBlock block, String peer) throws IOException; //share the block using the agreement method
-    public void shareResponse(Block block , boolean response) throws IOException;
     public void listenForResponses(Response r);
     public void listenForBlocks(Block b); //listen for any shared blocks and calls agreeOnBlock (only if node type is 1 in pow)
     public String getExternalIP() throws IOException;
@@ -42,4 +41,7 @@ public interface INTW {
 
     public void sendConfigMessage(IMessage m) throws IOException;
     public String getNextPrimary();
+    public void constructTable() throws IOException;
+    public void shareResponse(Response r,String peer) throws IOException;
+    public void broadcastResponse(Block block,boolean response) throws IOException;
     }
