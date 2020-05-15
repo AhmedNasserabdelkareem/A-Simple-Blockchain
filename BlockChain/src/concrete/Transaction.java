@@ -53,6 +53,7 @@ public class Transaction implements ITransaction {
     private byte[] signedHash ;
     private PublicKey payerKey = null;
     private float[] available;
+    private ITransaction prev;
     public Transaction(){
     }
 
@@ -183,24 +184,36 @@ public class Transaction implements ITransaction {
     }
 
     @Override
+    public void setPrevTransaction(ITransaction t) {
+        this.prev =t;
+    }
+
+    @Override
     public String hash() {
         if(this.hash !=null){
             return this.hash;
         }
         StringBuilder sb = new StringBuilder();
-        sb.append(this.block.getTransactionByID(this.prevTrasactionID).hash());
+        if( prevTrasactionID != -1) {
+            if (prev == null) {
+                sb.append(this.block.getTransactionByID(this.prevTrasactionID).hash());
+            } else {
+                sb.append(prev.hash());
+            }
+        }
         for (Integer i:this.ips) {
             sb.append("-");
             sb.append(this.payerKey);
         }
         for (OutputPair i:this.ops) {
             sb.append("-");
+            while(Utils.getInstance().getPublicKeyFromID(i.id) == null);
             sb.append(Utils.getInstance().getPublicKeyFromID(i.id));
             sb.append("-");
             sb.append(String.valueOf(i.value));
         }
         this.hash =Utils.applySha256(sb.toString());
-        System.out.println("transaction hashed ..");
+        //System.out.println("transaction hashed ..");
         return this.hash;
     }
 

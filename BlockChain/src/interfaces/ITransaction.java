@@ -26,6 +26,7 @@ public interface ITransaction {
     public void setPrevID(int pID);
     public void setOutIndex(int i);
     public void setBlock(IBlock b);
+    public void setPrevTransaction(ITransaction t);
     //getters
     /**@return null in case of no witnesses*/
     public ArrayList<Integer> getWitnesses();
@@ -44,6 +45,7 @@ public interface ITransaction {
     public String hash();
     public void signTransaction(PrivateKey key, PublicKey publicKey);
     public static ITransaction parseTransaction(String line){
+        int id = 0;
         try {
             ITransaction t = new Transaction();
             ArrayList<Integer> ips = new ArrayList<>();
@@ -51,6 +53,7 @@ public interface ITransaction {
 
             Scanner scanner = new Scanner(line);
             t.setID(scanner.nextInt());                                     //id
+            id = t.getID();
             ips.add(Integer.valueOf(scanner.next().split(":")[1]));       //input
             while (scanner.hasNext()) {                                     //prev id, outIx , outvalue pairs
                 try {
@@ -78,6 +81,7 @@ public interface ITransaction {
         }catch (Exception e){
             System.out.println("error parsing an essential field");
             e.printStackTrace();
+            System.out.println("error in "+id);
             return null;
         }
     }

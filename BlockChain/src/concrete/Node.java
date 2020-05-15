@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Timer;
 
 public class Node implements INode {
+    enum Types {client, miner};
     HashMap<Integer, ITransaction> AvOps = new HashMap<>();
     ArrayList<Integer> newAddedTs = new ArrayList<>();
     private INTW network;
@@ -52,11 +53,14 @@ public class Node implements INode {
     private IAgreementMethod method;
     private String[] IPsOfOtherPeers;
     private boolean isPow;
+    private HashMap<Integer,ITransaction> issuedTransactions;
+    private HashMap<Integer,KeyPair> myKeyPairs;
+    private int from=0,to=0;
 
     public static void main(String []args){
-        INode node = new Node();
-        node.issueTransactions(0,2);
+        //INode node = new Node();
     }
+
     public Node(String config_file) throws IOException {
         CONFIG_FILE = config_file;
         peers = new ArrayList<>();
@@ -66,9 +70,32 @@ public class Node implements INode {
         readConfiguration();
         generateKeyPair();
     }
-    public Node(){
 
+    private void prepare2issue(int lowerB,int upperB){
+        if(this.nodeType == 0) {
+            this.from = lowerB;this.to=upperB;
+            this.myKeyPairs = new HashMap<>();
+            HashMap<Integer, PublicKey> toBroadcast = new HashMap<>();
+            this.issuedTransactions = new HashMap<>();
+            for (int i = lowerB; i < upperB; i++) {
+                try {
+                    KeyPair pair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+                    myKeyPairs.put(i, pair);
+                    toBroadcast.put(i, pair.getPublic());
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                this.network.broadcastPK(toBroadcast);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //call issue when all pks are here
+            this.issueTransactions();
+        }
     }
+
 
     public void readConfiguration() throws IOException {
         //TODO read from remote file >> config
@@ -208,25 +235,32 @@ public class Node implements INode {
     }
 
     @Override
-    public void issueTransactions(int from, int to) { // in terms of transactions' id
+    public void issueTransactions() { // in terms of transactions' id
         try
         {
-            File file=new File(Utils.getInstance().TransactionsDatasetDir());
+
+            URL url = getClass().getResource(Utils.getInstance().TransactionsDatasetDir());
+            File file = new File(url.getPath());
             FileReader fr=new FileReader(file);
             BufferedReader br=new BufferedReader(fr);
-            StringBuffer sb=new StringBuffer();
             String line;
             while((line=br.readLine())!=null)
             {
                 ITransaction t =  ITransaction.parseTransaction(line);
-                if(t.getIPs().get(0) < to && t.getIPs().get(0)>from) {
-                    System.out.println("Tr issued .."+t.getID()+t.getIPs()+t.getOPs());
+                if(t==null){
+                    continue;
+                }
+                t.setPrevTransaction(issuedTransactions.get(t.getPrevID()));
+                t.hash();
+                this.issuedTransactions.put(t.getID(),t);
+                if(t.getIPs().get(0) < to && t.getIPs().get(0)>=from) {
+                    t.signTransaction(myKeyPairs.get(t.getIPs().get(0)).getPrivate(),myKeyPairs.get(t.getIPs().get(0)).getPublic());
+                    System.out.println("Tr issued .."+t.getID()+"  "+t.getIPs().get(0)+" "+t.getOPs().get(0).id+" "+t.getOPs().get(0).value);
                     //this.network.issueTransaction((Transaction) t);
                 }
             }
             fr.close();
-            System.out.println("Contents of File: ");
-            System.out.println(sb.toString());
+
         }
         catch(IOException e)
         {
@@ -251,7 +285,7 @@ public class Node implements INode {
     }
 
     @Override
-    public void broadCastPublicKeys(ArrayList<Pair> keys) throws IOException {
+    public void broadCastPublicKeys(HashMap<Integer,PublicKey> keys) throws IOException {
         network.broadcastPK(keys);
 
     }

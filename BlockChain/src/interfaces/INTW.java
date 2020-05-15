@@ -9,6 +9,7 @@ import jdk.internal.util.xml.impl.Pair;
 import java.io.IOException;
 import java.security.PublicKey;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public interface INTW {
     public void setNode(Node node) throws IOException, ClassNotFoundException;
@@ -24,7 +25,7 @@ public interface INTW {
     public void startServer() throws IOException, ClassNotFoundException;
     public void setPublicKeys(ArrayList<Pair> t);
     public void broadcastlock(IBlock block) throws IOException;
-    public void broadcastPK(ArrayList<Pair> keys) throws IOException;
+    public void broadcastPK(HashMap<Integer,PublicKey> keys) throws IOException;
     public void sharepublickeys(ArrayList<Pair> keys, String peer) throws IOException;
 
     public PublicKey getPrimaryID(int viewNum); //return the public key of the primary for the given view number
