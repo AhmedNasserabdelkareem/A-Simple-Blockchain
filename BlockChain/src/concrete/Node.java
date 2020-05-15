@@ -2,9 +2,7 @@ package concrete;
 import interfaces.*;
 import jdk.internal.util.xml.impl.Pair;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.*;
@@ -26,7 +24,7 @@ public class Node implements INode {
     private IBlock currentBlock;
     private ArrayList<IBlock> blockChain;
     private ArrayList<Pair> id2keys;
-    private final String CONFIG_FILE;
+    private String CONFIG_FILE;
     private PublicKey nodePublicKey;
     private PrivateKey nodePrivateKey;
     private PublicKey primaryNodePublicKey; // primary node's public key
@@ -55,7 +53,10 @@ public class Node implements INode {
     private String[] IPsOfOtherPeers;
     private boolean isPow;
 
-
+    public static void main(String []args){
+        INode node = new Node();
+        node.issueTransactions(0,2);
+    }
     public Node(String config_file) throws IOException {
         CONFIG_FILE = config_file;
         peers = new ArrayList<>();
@@ -64,6 +65,9 @@ public class Node implements INode {
         id2keys = new ArrayList<>();
         readConfiguration();
         generateKeyPair();
+    }
+    public Node(){
+
     }
 
     public void readConfiguration() throws IOException {
@@ -137,23 +141,27 @@ public class Node implements INode {
 
     private boolean verifyTransactionVal(ITransaction t) {
         int prevID = t.getPrevID();
-        ITransaction prev = getUnspentTransactionByID(prevID);
-        if (prev == null) {
-            return false;
-        }
-        int out = t.getOutIndex();
-        float totalPayed = 0;
-        for (ITransaction.OutputPair p : t.getOPs()) {
-            totalPayed += p.value;
-        }
-        ArrayList<ITransaction.OutputPair> ops = prev.getOPs();
-        boolean av = prev.getOPs().get(out).available >= totalPayed;
-        if (!av) {
-            return false;
-        }
-        prev.getOPs().get(out).available -= totalPayed;
+        if (prevID != -1 && t.getIPs().get(0)==0) {
+            ITransaction prev = getUnspentTransactionByID(prevID);
+            if (prev == null) {
+                return false;
+            }
+            int out = t.getOutIndex();
+            float totalPayed = 0;
+            for (ITransaction.OutputPair p : t.getOPs()) {
+                totalPayed += p.value;
+            }
+            ArrayList<ITransaction.OutputPair> ops = prev.getOPs();
+            boolean av = prev.getOPs().get(out).available >= totalPayed;
+            if (!av) {
+                return false;
+            }
+            prev.getOPs().get(out).available -= totalPayed;
 
-        return true;
+            return true;
+        }else{
+            return true; // no value check if there is no prev and input is 0
+        }
     }
 
     public boolean verifyBlockTransactions(ArrayList<ITransaction> transactions){
@@ -200,8 +208,30 @@ public class Node implements INode {
     }
 
     @Override
-    public void issueTransactions(int from, int to) {
-
+    public void issueTransactions(int from, int to) { // in terms of transactions' id
+        try
+        {
+            File file=new File(Utils.getInstance().TransactionsDatasetDir());
+            FileReader fr=new FileReader(file);
+            BufferedReader br=new BufferedReader(fr);
+            StringBuffer sb=new StringBuffer();
+            String line;
+            while((line=br.readLine())!=null)
+            {
+                ITransaction t =  ITransaction.parseTransaction(line);
+                if(t.getIPs().get(0) < to && t.getIPs().get(0)>from) {
+                    System.out.println("Tr issued .."+t.getID()+t.getIPs()+t.getOPs());
+                    //this.network.issueTransaction((Transaction) t);
+                }
+            }
+            fr.close();
+            System.out.println("Contents of File: ");
+            System.out.println(sb.toString());
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override

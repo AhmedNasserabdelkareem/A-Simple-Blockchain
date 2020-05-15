@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 
 
-public class Transaction implements ITransaction, Serializable {
+public class Transaction implements ITransaction {
     public static void testParsing(String [] args){
         ITransaction t = ITransaction.parseTransaction("49\tintput:0\tvalue:79.121956\toutput:49");
         try {
