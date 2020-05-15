@@ -5,7 +5,7 @@ import java.security.PublicKey;
 public interface IMessage {
 
 
-    public boolean verifyMessage(IMessage message);
+    public void setType(String type);
 
     public IBlock getBlock();
 
@@ -13,11 +13,9 @@ public interface IMessage {
 
     public String getMessageType();
 
-    public void setMessageType(String type);
+    public PublicKey getPrimaryPublicKey();
 
-    public PublicKey getPrimaryNode();
-
-    public void setPrimaryNode(PublicKey primaryNodeKey);
+    public void setPrimaryPublicKey(PublicKey primaryNodeKey);
 
     public int getSeqNum();
 
@@ -27,9 +25,17 @@ public interface IMessage {
 
     public void setViewNum(int viewNum);
 
-    public byte[] getClientSignature();
+    public boolean verifyPeerSignature();
 
-    public void setClientSignature(byte[] clientSignature);
+    public PublicKey getNodePublicKey();
+
+    public int getNewViewNum();
+
+    public IMessagePool getMessagePool();
+
+//    public byte[] getNodeSignature();
+//
+//    public void setNodeSignature(byte[] nodeSignature);
 
 
 }

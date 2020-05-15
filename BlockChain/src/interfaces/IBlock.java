@@ -10,7 +10,7 @@ public interface IBlock {
     public void setPrevBlock(IBlock block);
     public IBlock getPrevBlock();
     public void setAgreementMethod(IAgreementMethod method); //must be set to create  the header nonce
-    public String getBlockHash();
+    //public String getBlockHash();
     public ITransaction getTransactionByID(int id);
 
     public boolean verifyBlockHash();
@@ -19,7 +19,7 @@ public interface IBlock {
 
     public boolean verifySignature();
 
-    public String calculateHash();
+//    public String calculateHash();
 
 
     public byte[] getClientSignature();

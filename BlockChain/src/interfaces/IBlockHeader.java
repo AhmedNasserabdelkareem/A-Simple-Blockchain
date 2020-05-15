@@ -9,7 +9,10 @@ public interface IBlockHeader {
     public  void createTransactionsHash(ArrayList<ITransaction> ts ); // Merkle root hash
     public  void setNonce( int nonce); // -1 by default
 
-
+    public String calculateHash();
+    public String getHash();
+    public void setHash(String hash);
+    public void setTransactionsHash(String transactionsHash);
     public boolean isSet();//returns true if the prevBlock and transactions' hash are set
 
 

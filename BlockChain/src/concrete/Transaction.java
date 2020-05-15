@@ -195,11 +195,11 @@ public class Transaction implements ITransaction, Serializable {
         }
         for (OutputPair i:this.ops) {
             sb.append("-");
-            sb.append(Utils.getInstance().getPublicKeyFromID(i.id));
+            sb.append(Utils.getPublicKeyFromID(i.id));
             sb.append("-");
             sb.append(String.valueOf(i.value));
         }
-        this.hash =Utils.getInstance().applySha256(sb.toString());
+        this.hash =Utils.applySha256(sb.toString());
         System.out.println("transaction hashed ..");
         return this.hash;
     }

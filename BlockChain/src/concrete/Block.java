@@ -8,9 +8,20 @@ public class Block implements IBlock, Serializable {
     private IBlockHeader header;
     private ArrayList<ITransaction> ts;
     private IBlock prevBlock=null;
+
+
     public Block(){
         this.header = new BlockHeader();
     }
+
+
+    public Block(IBlockHeader header, ArrayList<ITransaction> ts, IBlock prevBlock) {
+        this.header = header;
+        this.ts = ts;
+        this.prevBlock = prevBlock;
+    }
+
+
     @Override
     public IBlockHeader getHeader() {
         return null;
@@ -43,10 +54,10 @@ public class Block implements IBlock, Serializable {
 
     }
 
-    @Override
-    public String getBlockHash() {
-        return null;
-    }
+//    @Override
+//    public String getBlockHash() {
+//        return null;
+//    }
 
     @Override
     public boolean verifyBlockHash() {
@@ -63,10 +74,10 @@ public class Block implements IBlock, Serializable {
         return false;
     }
 
-    @Override
-    public String calculateHash() {
-        return null;
-    }
+//    @Override
+//    public String calculateHash() {
+//        return null;
+//    }
 
     @Override
     public byte[] getClientSignature() {

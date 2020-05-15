@@ -7,6 +7,7 @@ import concrete.Transaction;
 import jdk.internal.util.xml.impl.Pair;
 
 import java.io.IOException;
+import java.security.PublicKey;
 import java.util.ArrayList;
 
 public interface INTW {
@@ -26,4 +27,10 @@ public interface INTW {
     public void broadcastPK(ArrayList<Pair> keys) throws IOException;
     public void sharepublickeys(ArrayList<Pair> keys, String peer) throws IOException;
 
-    }
+    public PublicKey getPrimaryID(int viewNum); //return the public key of the primary for the given view number
+
+    public INode getPrimaryNode(int nodeIndex);
+
+    public void shareMessage(IMessage message); //share message to all nodes
+
+}
