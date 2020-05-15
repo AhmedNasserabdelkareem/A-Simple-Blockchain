@@ -65,7 +65,7 @@ public class Block implements IBlock, Serializable {
         sb.append(String.valueOf(h.getTimeStamp()));
         sb.append("-");
         sb.append(String.valueOf(h.getTransactionsHash()));
-        return Utils.getInstance().applySha256(sb.toString());
+        return Utils.applySha256(sb.toString());
     }
     @Override
     public String getBlockHash() {
@@ -90,7 +90,7 @@ public class Block implements IBlock, Serializable {
         sb.append(String.valueOf(this.header.getTimeStamp()));
         sb.append("-");
         sb.append(String.valueOf(this.header.getTransactionsHash()));
-        String hash =Utils.getInstance().applySha256(sb.toString());
+        String hash =Utils.applySha256(sb.toString());
         System.out.println("verifying block hash ..");
         return hash.equals( this.hash);
     }
