@@ -1,14 +1,18 @@
 package interfaces;
 
+import java.util.Set;
+
 public interface IMessagePool {
 
-    public void addMessage(IMessage message);
-
-    public boolean verifyMessage(IMessage message);
+    public void insertMessage(IMessage message);
 
     public boolean isMessageExists(IMessage message);
 
-    public void cleanPool();
+    public void clean();
 
     public int getPoolSize();
+
+    public void setPool(Set<IMessage> pool);
+
+    public Set<IMessage> getPool();
 }

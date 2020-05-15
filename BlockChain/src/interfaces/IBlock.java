@@ -10,13 +10,13 @@ public interface IBlock {
     public void setPrevBlock(IBlock block);
     public IBlock getPrevBlock();
     public void setAgreementMethod(IAgreementMethod method); //must be set to create  the header nonce
-    public String getBlockHash();
+    //public String getBlockHash();
     public ITransaction getTransactionByID(int id);
 
     public boolean verifyBlockHash();
 
     public boolean verifyPrevHash();
-
+    public String getBlockHash();
 
     public String calculateHash();
 

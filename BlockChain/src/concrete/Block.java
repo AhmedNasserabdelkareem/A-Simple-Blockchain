@@ -10,9 +10,19 @@ public class Block implements IBlock, Serializable {
     private IBlock prevBlock=null;
     private String hash = null;
     private IAgreementMethod am ;
+
     public Block(){
         this.header = new BlockHeader();
     }
+
+
+    public Block(IBlockHeader header, ArrayList<ITransaction> ts, IBlock prevBlock) {
+        this.header = header;
+        this.ts = ts;
+        this.prevBlock = prevBlock;
+    }
+
+
     @Override
     public IBlockHeader getHeader() {
         return this.header;
@@ -95,6 +105,7 @@ public class Block implements IBlock, Serializable {
     public String calculateHash() {
         return getBlockHash();
     }
+
 
 
 

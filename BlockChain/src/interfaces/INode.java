@@ -40,17 +40,11 @@ public interface INode {
 
     public void setPrimaryId(PublicKey primaryId);
 
-    public IBlockManager getBlockManager();
-
-    public void setBlockManager(IBlockManager blockManager);
-
-
-
 
     public int getSeqNum();
+    public void setSeqNum();
 
-    public void setSeqNum(int seqNum);
-
+    public PublicKey getNodePublicKey();
     public int getViewNum();
 
     public void setViewNum(int viewNum);
@@ -67,49 +61,43 @@ public interface INode {
 
     public int getMaxMaliciousNodes();
 
-    public IMessagePool getNewBlockMessagePool();
-
-    public void insertNewBlockMessageInPool(IMessage newBlockMessage);
-
-    public IMessagePool getPrepreparePool();
-
-    public void insertPreprepareMessageInPool(IMessage preprepareMessage);
-
     public IMessagePool getPreparePool();
-
-    public void insertPrepareMessageInPool(IMessage prepareMessage);
 
     public IMessagePool getCommitPool();
 
-    public void insertCommitMessageInPool(IMessage commitMessage);
 
     public IMessagePool getChangeViewPool();
 
-    public void insertChangeViewPool(IMessage changeViewMessage);
 
-    public IMessagePool getViewChangedPool();
+    public void generateNewBlockMessage();
 
-    public void insertViewChangedPool(IMessage viewChangedMessage);
+    public void generateViewChangeMessage(int newViewNum);
 
-    public IMessage generateNewBlockMessage();
+    public void generateViewChangedMessage();
 
-    public IMessage generateViewChangeMessage(int newViewNum);
+    public void generatePreprepareMessage();
 
-    public IMessage generateViewChanged();
+    public void generatePrepareMessage();
 
-    public IMessage generatePreprepareMessage();
+    public void generateCommitMessage();
 
-    public IMessage generatePrepareMessage();
-
-    public IMessage generateCommitMessage();
-
-    public void ignoreBlock();
-
-    public void broadCastMessage(IMessage message);
-
+    public void broadcastMessage(IMessage message);
+    public void addTransaction(ArrayList<ITransaction> ledger);
     public void broadCastPublicKeys(ArrayList<Pair> keys) throws IOException;
 
     void setPublicKeys(ArrayList<Pair> t);
     public void readConfiguration() throws IOException;
 
-    }
+
+    public void generateKeyPair();
+    public void generateNodeSignature();
+    public IBlock getNewBlock();
+    public void setNewBlock(IMessage newBlockMessage);
+    public void insertPreprepareMessage(IMessage preprepareMessage);
+    public void insertPrepareMessageInPool(ArrayList<IMessage> prepareMessages);
+    public void insertCommitMessageInPool(ArrayList<IMessage> commitMessages);
+    public void insertChangeViewMessageInPool(ArrayList<IMessage> changeViewMessages);
+    public void checkTruthyOfNewView(IMessage viewChangedMessage);
+    public boolean verifyNewViewPool(IMessagePool messagePool);
+
+}
