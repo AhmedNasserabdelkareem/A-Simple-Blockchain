@@ -40,15 +40,16 @@ public class Node implements INode {
     private boolean verifyTransactionSign(ITransaction t){
         int signer = t.getIPs().get(0);
         byte[] signature = t.getSignedHash();
+        boolean b= true;
         try {
             Signature s = Signature.getInstance("SHA1WithRSA");
             s.initVerify(t.getPayerPK());
             s.update(t.hash().getBytes());
-            boolean b = s.verify(t.getSignedHash());
+            b = s.verify(t.getSignedHash());
         }catch (Exception e){
             e.printStackTrace();
         }
-        return  true;
+        return  b;
     }
 
     private boolean verifyTransactionVal(ITransaction t){
