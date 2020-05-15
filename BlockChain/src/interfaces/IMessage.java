@@ -33,6 +33,8 @@ public interface IMessage {
     public int getNewViewNum();
 
     public IMessagePool getMessagePool();
+    public int getMaxMaliciousNodes();
+    public void setMaxMaliciousNodes(int maxMaliciousNodes);
 
 //    public byte[] getNodeSignature();
 //

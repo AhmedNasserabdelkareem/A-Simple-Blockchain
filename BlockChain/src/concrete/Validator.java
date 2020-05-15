@@ -16,21 +16,22 @@ public class Validator implements IValidator, Serializable {
     private int viewNum = 0;
     private int maxMaliciousNodes = 0;
 
-    public Validator(PublicKey primaryPublicKey, int seqNum, int viewNum, int maxMaliciousNodes) {
+    public Validator(PublicKey primaryPublicKey, int seqNum, int viewNum, int maxMaliciousNodes,IBlock block) {
         this.finishPool = new MessagePool();
         this.primaryPublicKey = primaryPublicKey;
         this.seqNum = seqNum;
         this.viewNum = viewNum;
         this.maxMaliciousNodes = maxMaliciousNodes;
+        this.newBlock = block;
     }
 
     @Override
     public void initiateNewBlockMessage(IBlock prevBlock, ArrayList<ITransaction> transactions) {
 
-        IBlockHeader blockHeader = new BlockHeader();
-        blockHeader.createPrevBlockHash(prevBlock);
-        blockHeader.createTransactionsHash(transactions);
-        this.newBlock = new Block(blockHeader, transactions, prevBlock);
+//        IBlockHeader blockHeader = new BlockHeader();
+//        blockHeader.createPrevBlockHash(prevBlock);
+//        blockHeader.createTransactionsHash(transactions);
+//        this.newBlock = new Block(blockHeader, transactions, prevBlock);
         this.newBlockMessage = new Message("new block",this.primaryPublicKey, this.seqNum, this.viewNum, this.newBlock);
         this.isCommited = false;
 

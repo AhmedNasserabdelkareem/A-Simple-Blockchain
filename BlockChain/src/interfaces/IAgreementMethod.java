@@ -12,6 +12,4 @@ public interface IAgreementMethod {
 //    public  int getNonce(); //return -1 BFT/ nonce pow   called while header creation
 
     public void pbft(ArrayList<Node> nodes); //practical Byzantine fault tolerance
-
-    public int roundRobin(int noOfNodes);
 }

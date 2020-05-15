@@ -67,7 +67,7 @@ public interface INode {
     public IMessagePool getChangeViewPool();
 
 
-    public void generateNewBlockMessage() throws IOException;
+    public void generateNewBlockMessage(IBlock block) throws IOException;
 
     public void generateViewChangeMessage(int newViewNum) throws IOException;
 
@@ -90,8 +90,8 @@ public interface INode {
     public void generateKeyPair();
     public void generateNodeSignature();
     public IBlock getNewBlock();
-    public void setNewBlock(IMessage newBlockMessage);
-    public void insertPreprepareMessage(IMessage preprepareMessage);
+    public void setNewBlock(IMessage newBlockMessage) throws IOException;
+    public void insertPreprepareMessage(IMessage preprepareMessage) throws IOException;
     public void insertPrepareMessageInPool(ArrayList<IMessage> prepareMessages) throws IOException;
     public void insertCommitMessageInPool(ArrayList<IMessage> commitMessages);
     public void insertChangeViewMessageInPool(ArrayList<IMessage> changeViewMessages) throws IOException;

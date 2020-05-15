@@ -51,6 +51,7 @@ public class Node implements INode {
     private int maxNumTransactions;
     private IAgreementMethod method;
     private String[] IPsOfOtherPeers;
+    private boolean isPrimary;
     private boolean isPow;
     private HashMap<Integer,ITransaction> issuedTransactions;
     private HashMap<Integer,KeyPair> myKeyPairs;
@@ -58,6 +59,7 @@ public class Node implements INode {
     private ArrayList<IMessage> changeViewMessages;
     private ArrayList<IMessage> commitMessages;
     private ArrayList<IMessage> prepareMessages;
+    private IUtils utils=Utils.getInstance();
 
     public static void main(String []args){
         //INode node = new Node();
@@ -74,6 +76,8 @@ public class Node implements INode {
         changeViewMessages = new ArrayList<>();
         readConfiguration();
         generateKeyPair();
+
+
     }
 
     private void prepare2issue(int lowerB,int upperB){
@@ -305,6 +309,8 @@ public class Node implements INode {
 ////////////////////////////////////////////////////////////////////////////////////////
 
 
+
+
     /*Generate the public and private key for the node*/
     @Override
     public void generateKeyPair() {
@@ -333,6 +339,20 @@ public class Node implements INode {
     }
 
 
+
+    public void generateConfigMessage(int maxMaliciousNodes, PublicKey primaryNodePublicKey) throws IOException {
+        IMessage configMessage = new Message("config",maxMaliciousNodes,primaryNodePublicKey);
+        sendConfigMessage(configMessage);
+    }
+
+    public void receiveConfigs(IMessage configMessage){
+        this.maxMaliciousNodes = configMessage.getMaxMaliciousNodes();
+        this.primaryNodePublicKey = configMessage.getPrimaryPublicKey();
+        this.isPrimary = configMessage.isPrimary();
+
+    }
+
+
     /*this is the new block that the client broadcasts it to all nodes*/
     @Override
     public IBlock getNewBlock() {
@@ -341,7 +361,7 @@ public class Node implements INode {
 
     /*the node will save the client block with her*/
     @Override
-    public void setNewBlock(IMessage newBlockMessage) {
+    public void setNewBlock(IMessage newBlockMessage) throws IOException {
         if (newBlockMessage.getMessageType().equals("new block") &&
                 newBlockMessage.getPrimaryPublicKey() == primaryNodePublicKey &&
                 newBlockMessage.getSeqNum() == this.seqNum && newBlockMessage.getViewNum() == this.viewNum){
@@ -350,12 +370,15 @@ public class Node implements INode {
         }
         generateNodeSignature();
 
+        if(isPrimary)
+            generatePreprepareMessage();
+
     }
 
     /*this is only for the primary which will let the client to sent the block*/
     @Override
-    public void generateNewBlockMessage() throws IOException {
-        this.validator = new Validator(this.primaryNodePublicKey, this.seqNum, this.viewNum, this.maxMaliciousNodes);
+    public void generateNewBlockMessage(IBlock block) throws IOException {
+        this.validator = new Validator(this.primaryNodePublicKey, this.seqNum, this.viewNum, this.maxMaliciousNodes,block);
         this.validator.initiateNewBlockMessage(getLastBlock(), block.getTransactions());
         // timer
         IMessage newBlockMessage = validator.finalizeBlock();
@@ -374,7 +397,7 @@ public class Node implements INode {
     /*All nodes except the primary will validate the pre-prepare message and if valid
      * they will take the block inside it to continue the next phases*/
     @Override
-    public void insertPreprepareMessage(IMessage preprepareMessage) {
+    public void insertPreprepareMessage(IMessage preprepareMessage) throws IOException {
         if (preprepareMessage.getMessageType().equals("pre-prepare") && preprepareMessage.verifyPeerSignature() &&
                 preprepareMessage.getPrimaryPublicKey() == this.primaryNodePublicKey &&
                 preprepareMessage.getViewNum() == this.viewNum &&
@@ -386,6 +409,9 @@ public class Node implements INode {
         } else {
             System.out.println("Error with secondary Node in preprepare phase verification so the node will ignore this message");
         }
+
+        if (!isPrimary)
+            generatePrepareMessage();
     }
 
 
@@ -445,6 +471,8 @@ public class Node implements INode {
             this.preparePool.clean();
         }
 
+        generateCommitMessage();
+
     }
 
 
@@ -496,6 +524,8 @@ public class Node implements INode {
             addToChain(this.block);
         }
 
+        this.network.getNextPrimary();
+
     }
 
 
@@ -508,6 +538,7 @@ public class Node implements INode {
                 insertPreprepareMessage(t);
             case "config":
                 network.setPrimary(t.isPrimary());
+                receiveConfigs(t);
             case "change view":
                 changeViewMessages.add(t);
                 if(changeViewMessages.size() == network.getsizeofPeers()){

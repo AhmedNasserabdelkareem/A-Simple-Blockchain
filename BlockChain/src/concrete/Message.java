@@ -32,10 +32,10 @@ public class Message implements IMessage {
     private boolean isPrimary;
 
     //config
-    public Message(int maxMaliciousNodes, boolean isPrimary, PublicKey primaryNodePublicKey) {
+    public Message(String type,int maxMaliciousNodes, PublicKey primaryNodePublicKey) {
         this.maxMaliciousNodes = maxMaliciousNodes;
         this.primaryNodePublicKey = primaryNodePublicKey;
-        this.isPrimary = isPrimary;
+        this.type = type;
 
     }
 
@@ -166,5 +166,13 @@ public class Message implements IMessage {
     @Override
     public IMessagePool getMessagePool() {
         return this.messagePool;
+    }
+
+    public int getMaxMaliciousNodes() {
+        return maxMaliciousNodes;
+    }
+
+    public void setMaxMaliciousNodes(int maxMaliciousNodes) {
+        this.maxMaliciousNodes = maxMaliciousNodes;
     }
 }
