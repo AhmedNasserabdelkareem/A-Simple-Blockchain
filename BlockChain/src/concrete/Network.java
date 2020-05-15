@@ -37,7 +37,7 @@ public class Network implements INTW {
     }
 
     public void sendConfigMessage(IMessage m) throws IOException {
-        constructTable();
+        isPrimary = false;
         for (String peer:peers) {
             if (peer == getNextPrimary()){
                 m.setisPrimary(true);

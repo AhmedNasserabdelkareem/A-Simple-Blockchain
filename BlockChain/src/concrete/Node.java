@@ -57,7 +57,7 @@ public class Node implements INode {
     private int from=0,to=0;
     private ArrayList<IMessage> changeViewMessages;
     private ArrayList<IMessage> commitMessages;
-    private ArrayList<IMessage> prePrepareMessages;
+    private ArrayList<IMessage> prepareMessages;
 
     public static void main(String []args){
         //INode node = new Node();
@@ -69,7 +69,7 @@ public class Node implements INode {
         transactions = new ArrayList<>();
         blockChain = new ArrayList<>();
         id2keys = new HashMap<>();
-        prePrepareMessages = new ArrayList<>();
+        prepareMessages = new ArrayList<>();
         commitMessages = new ArrayList<>();
         changeViewMessages = new ArrayList<>();
         readConfiguration();
@@ -502,6 +502,8 @@ public class Node implements INode {
         String type = t.getMessageType();
         switch (type){
             case "new block":
+                setNewBlock(t);
+            case "pre-prepare":
                 insertPreprepareMessage(t);
             case "config":
                 network.setPrimary(t.isPrimary());
@@ -517,11 +519,11 @@ public class Node implements INode {
                     insertCommitMessageInPool(commitMessages);
                     commitMessages.clear();
                 }
-            case "PrePrepare":
-                prePrepareMessages.add(t);
-                if(prePrepareMessages.size() == network.getsizeofPeers()){
-                    insertPrepareMessageInPool(prePrepareMessages);
-                    prePrepareMessages.clear();
+            case "prepare":
+                prepareMessages.add(t);
+                if(prepareMessages.size() == network.getsizeofPeers()){
+                    insertPrepareMessageInPool(prepareMessages);
+                    prepareMessages.clear();
                 }
             default:
                 System.out.println("No Type");
@@ -530,6 +532,11 @@ public class Node implements INode {
 
     public void sendConfigMessage(IMessage m) throws IOException {
         network.sendConfigMessage(m);
+    }
+
+    @Override
+    public int sizeOfNetwork() {
+        return network.getsizeofPeers()+1;
     }
 
 
@@ -729,5 +736,7 @@ public class Node implements INode {
     public PublicKey getNodePublicKey() {
         return this.nodePublicKey;
     }
+
+
 
 }

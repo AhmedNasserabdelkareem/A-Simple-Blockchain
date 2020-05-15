@@ -100,4 +100,5 @@ public interface INode {
     public INode getPrimaryNode(int nodeIndex);
     public void receiveMessage(IMessage t) throws IOException;
     public void sendConfigMessage(IMessage m) throws IOException;
+    public int sizeOfNetwork();
     }
