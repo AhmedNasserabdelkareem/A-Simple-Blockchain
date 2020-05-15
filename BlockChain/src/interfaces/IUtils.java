@@ -1,5 +1,7 @@
 package interfaces;
 
+import jdk.internal.util.xml.impl.Pair;
+
 import java.security.Key;
 import java.security.PublicKey;
 import java.util.ArrayList;
@@ -20,5 +22,5 @@ public interface IUtils {
     // the signature is valid.
     public boolean verifyECDSASig(PublicKey publicKey, String data, byte[] signature);
     public  String getPublicKeyFromID(int id);
-
+    public void setID2PK(ArrayList<Pair> id2keys);
     }

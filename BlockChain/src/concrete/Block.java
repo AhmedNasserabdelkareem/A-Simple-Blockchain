@@ -8,12 +8,14 @@ public class Block implements IBlock, Serializable {
     private IBlockHeader header;
     private ArrayList<ITransaction> ts;
     private IBlock prevBlock=null;
+    private String hash = null;
+    private IAgreementMethod am ;
     public Block(){
         this.header = new BlockHeader();
     }
     @Override
     public IBlockHeader getHeader() {
-        return null;
+        return this.header;
     }
 
     @Override
@@ -40,45 +42,74 @@ public class Block implements IBlock, Serializable {
 
     @Override
     public void setAgreementMethod(IAgreementMethod method) {
-
+        this.am = method;
     }
 
+    private String hashBlock(IBlock b ){
+        StringBuilder sb = new StringBuilder();
+        IBlockHeader h = b.getHeader();
+        sb.append(String.valueOf(h.getNonce()));
+        sb.append("-");
+        sb.append(String.valueOf(h.getPrevBlockHash()));
+        sb.append("-");
+        sb.append(String.valueOf(h.getTimeStamp()));
+        sb.append("-");
+        sb.append(String.valueOf(h.getTransactionsHash()));
+        return Utils.getInstance().applySha256(sb.toString());
+    }
     @Override
     public String getBlockHash() {
-        return null;
+
+        if(this.hash !=null){
+            return this.hash;
+        }
+
+        this.hash =hashBlock(this);
+        System.out.println("block hashed ..");
+        return this.hash;
+
     }
 
     @Override
     public boolean verifyBlockHash() {
-        return false;
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.valueOf(this.header.getNonce()));
+        sb.append("-");
+        sb.append(String.valueOf(this.header.getPrevBlockHash()));
+        sb.append("-");
+        sb.append(String.valueOf(this.header.getTimeStamp()));
+        sb.append("-");
+        sb.append(String.valueOf(this.header.getTransactionsHash()));
+        String hash =Utils.getInstance().applySha256(sb.toString());
+        System.out.println("verifying block hash ..");
+        return hash.equals( this.hash);
     }
 
     @Override
     public boolean verifyPrevHash() {
-        return false;
+        return hashBlock(this.prevBlock).equals(this.header.getPrevBlockHash()) ;
     }
 
-    @Override
-    public boolean verifySignature() {
-        return false;
-    }
 
     @Override
     public String calculateHash() {
-        return null;
+        return getBlockHash();
     }
 
-    @Override
-    public byte[] getClientSignature() {
-        return new byte[0];
-    }
 
-    @Override
-    public void setClientSignature(byte[] clientSignature) {
-    }
+
 
     @Override
     public ITransaction getTransactionByID(int id) {
+        if (this.ts == null){
+            System.out.println("error , trying to get transaction without providing any ..");
+            return null;
+        }
+        for (ITransaction t :this.ts){
+            if(t.getID() == id){
+                return t;
+            }
+        }
         return null;
     }
 }

@@ -1,6 +1,12 @@
 package concrete;
 import interfaces.*;
+import jdk.internal.util.xml.impl.Pair;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.PublicKey;
 import java.security.Signature;
 
@@ -10,37 +16,83 @@ import java.util.HashMap;
 public class Node implements INode {
     HashMap<Integer,ITransaction> AvOps = new HashMap<>();
     ArrayList<Integer> newAddedTs = new ArrayList<>();
-    @Override
-    public void setConfigs(int maxNumTransactions, IAgreementMethod method, String[] IPsOfOtherPeers, int nodeType) {
+    private INTW network;
+    private int nodeType;
+    private int maxTransaction;
+    private IAgreementMethod agreementMethod;
+    private ArrayList<String> peers;
+    private ArrayList<ITransaction> transactions;
+    private IBlock currentBlock;
+    private ArrayList<IBlock> blockChain;
+    private ArrayList<Pair> id2keys;
+    private final String CONFIG_FILE;
 
+
+    public Node(String config_file) throws IOException {
+        CONFIG_FILE = config_file;
+        peers = new ArrayList<>();
+        transactions = new ArrayList<>();
+        blockChain = new ArrayList<>();
+        id2keys = new ArrayList<>();
+        readConfiguration();
+    }
+
+    public void readConfiguration() throws IOException {
+        //TODO read from remote file >> config
+        URL conf = new URL(CONFIG_FILE);
+        BufferedReader in = new BufferedReader(new InputStreamReader(conf.openStream()));
+        String res = in.readLine();
+        //TODO Split file
+        //setConfigs();
+    }
+
+    @Override
+    public void setConfigs(int maxNumTransactions, IAgreementMethod method, ArrayList<String> IPsOfOtherPeers, int nodeType) {
+        this.nodeType = nodeType;
+        this.agreementMethod = method;
+        this.maxTransaction = maxNumTransactions;
+        this.peers=IPsOfOtherPeers;
     }
 
     @Override
     public void setNTW(INTW ntw) {
-
+        this.network = ntw;
     }
 
     @Override
     public int getNodeType() {
-        return 0;
+        return nodeType;
     }
 
     @Override
     public void addTransaction(ITransaction t) {
-        newAddedTs.add(t.getID());
-        AvOps.put(t.getID(),t);
 
+        if(verifyTransaction(t)){
+            newAddedTs.add(t.getID());
+            AvOps.put(t.getID(),t);
+            transactions.add(t);
+            if(transactions.size()==maxTransaction){
+                createBlock();
+                transactions.clear();
+                AvOps.clear();
+
+            }
+        }
     }
 
     @Override
     public void createBlock() {
-
+        currentBlock = new Block();
+        currentBlock.setAgreementMethod(agreementMethod);
+        currentBlock.setTransactions(transactions);
+        //TODO SET SIGNATURE AND PREV BLOCK
     }
 
     private boolean verifyTransactionSign(ITransaction t){
         int signer = t.getIPs().get(0);
         byte[] signature = t.getSignedHash();
-        boolean b= true;
+
+        boolean b =false;
         try {
             Signature s = Signature.getInstance("SHA1WithRSA");
             s.initVerify(t.getPayerPK());
@@ -114,8 +166,8 @@ public class Node implements INode {
     }
 
     @Override
-    public void shareBlock(IBlock block, INTW ntw) {
-
+    public void shareBlock(IBlock block) throws IOException {
+        network.broadcastlock(block);
     }
 
     @Override
@@ -125,7 +177,7 @@ public class Node implements INode {
 
     @Override
     public void addToChain(IBlock block) {
-
+        blockChain.add(block);
     }
 
     @Override
@@ -301,5 +353,16 @@ public class Node implements INode {
     @Override
     public void broadCastMessage(IMessage message) {
 
+    }
+
+    @Override
+    public void broadCastPublicKeys(ArrayList<Pair> keys) throws IOException {
+        network.broadcastPK(keys);
+    }
+
+    @Override
+    public void setPublicKeys(ArrayList<Pair> t) {
+        this.id2keys = t;
+        Utils.getInstance().setID2PK(t);
     }
 }

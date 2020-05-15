@@ -1,5 +1,7 @@
 package concrete;
 import interfaces.*;
+import jdk.internal.util.xml.impl.Pair;
+
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -10,6 +12,8 @@ import java.util.ArrayList;
 
 public class Utils implements IUtils{
     private static Utils u = null;
+    private ArrayList<Pair> id2keys;
+
     public static IUtils getInstance(){
         if (u == null ){
             u= new Utils();
@@ -89,6 +93,17 @@ public class Utils implements IUtils{
 
     @Override
     public String getPublicKeyFromID(int id) {
-        return String.valueOf(id);
+        for (Pair p : this.id2keys){
+            if(p.id==id){
+                return  p.value;
+            }
+        }
+        System.out.println("this id has no public key..");
+        return null;
+    }
+
+    @Override
+    public void setID2PK(ArrayList<Pair> id2keys) {
+        this.id2keys = id2keys;
     }
 }
