@@ -47,7 +47,7 @@ public interface INode {
     public PublicKey getNodePublicKey();
     public int getViewNum();
 
-    public void setViewNum(int viewNum);
+    public void setViewNum();
 
     public void setIsPrimary(boolean isPrimary);
 

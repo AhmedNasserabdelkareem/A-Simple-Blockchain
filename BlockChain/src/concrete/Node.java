@@ -235,6 +235,7 @@ public class Node implements INode {
         
 ////////////////////////////////////////////////////////////////////////////////////////
 
+
     /*Generate the public and private key for the node*/
     @Override
     public void generateKeyPair() {
@@ -595,8 +596,8 @@ public class Node implements INode {
     }
 
     @Override
-    public void setViewNum(int viewNum) {
-        this.viewNum = viewNum;
+    public void setViewNum() {
+        this.viewNum  = this.chain.size() + 1;
     }
 
     @Override
