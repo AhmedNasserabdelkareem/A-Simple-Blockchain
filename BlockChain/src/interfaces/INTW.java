@@ -31,6 +31,6 @@ public interface INTW {
 
     public INode getPrimaryNode(int nodeIndex);
 
-    public void shareMessage(IMessage message); //share message to all nodes
-
+    public void shareMessage(IMessage message,String peer) throws IOException; //share message to all nodes
+    public void broadcastMessage(IMessage message) throws IOException;
 }
