@@ -11,6 +11,7 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 
 public class Utils implements IUtils{
+    private static String dataDir="/TxDataset_v2/txdataset_v2";
     private static Utils u = null;
     private ArrayList<Pair> id2keys;
 
@@ -19,6 +20,11 @@ public class Utils implements IUtils{
             u= new Utils();
         }
         return u;
+    }
+
+    @Override
+    public String TransactionsDatasetDir() {
+        return dataDir;
     }
 
     @Override

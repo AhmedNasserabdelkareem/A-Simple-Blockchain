@@ -23,4 +23,5 @@ public interface IUtils {
     public boolean verifyECDSASig(PublicKey publicKey, String data, byte[] signature);
     public  String getPublicKeyFromID(int id);
     public void setID2PK(ArrayList<Pair> id2keys);
+    public String TransactionsDatasetDir();
     }

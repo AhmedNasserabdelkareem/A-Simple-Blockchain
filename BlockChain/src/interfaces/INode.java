@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public interface INode {
     public void setConfigs(int maxNumTransactions, IAgreementMethod method, ArrayList<String> IPsOfOtherPeers, int nodeType);//0 for client , 1 for miner
-
+    public void issueTransactions(int from , int to);//for client nodes, issue for ids from .. to ..
     public void setNTW(INTW ntw);
 
     public int getNodeType();

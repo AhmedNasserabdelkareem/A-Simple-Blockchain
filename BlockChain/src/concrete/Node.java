@@ -159,6 +159,10 @@ public class Node implements INode {
         }
     }
 
+    @Override
+    public void issueTransactions(int from, int to) {
+
+    }
 
     @Override
     public ITransaction getUnspentTransactionByID(int id) {
