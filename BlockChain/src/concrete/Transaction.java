@@ -195,7 +195,7 @@ public class Transaction implements ITransaction, Serializable {
         }
         for (OutputPair i:this.ops) {
             sb.append("-");
-            sb.append(Utils.getPublicKeyFromID(i.id));
+            sb.append(Utils.getInstance().getPublicKeyFromID(i.id));
             sb.append("-");
             sb.append(String.valueOf(i.value));
         }

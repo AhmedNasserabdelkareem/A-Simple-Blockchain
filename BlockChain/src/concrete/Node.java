@@ -275,7 +275,7 @@ public class Node implements INode {
         if (newBlockMessage.getMessageType().equals("new block") &&
                 newBlockMessage.getPrimaryPublicKey() == primaryNodePublicKey &&
                 newBlockMessage.getSeqNum() == this.seqNum && newBlockMessage.getViewNum() == this.viewNum
-                && newBlockMessage.getBlock().verifySignature()) { // i mean by block signature -> transaction signature
+                ) { // i mean by block signature -> transaction signature
             this.newBlock = newBlockMessage.getBlock();
         }
         generateNodeSignature();
@@ -286,7 +286,7 @@ public class Node implements INode {
     @Override
     public void generateNewBlockMessage() throws IOException {
         this.validator = new Validator(this.primaryNodePublicKey, this.seqNum, this.viewNum, this.maxMaliciousNodes);
-        this.validator.initiateNewBlockMessage(getLastBlock(), getBlockTransactions());
+        this.validator.initiateNewBlockMessage(getLastBlock(),block.getTransactions());
         // timer
         IMessage newBlockMessage = validator.finalizeBlock();
         broadcastMessage(newBlockMessage);
