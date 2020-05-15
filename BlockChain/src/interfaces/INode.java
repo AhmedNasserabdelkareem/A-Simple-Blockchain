@@ -1,15 +1,13 @@
 package interfaces;
 
-import jdk.internal.util.xml.impl.Pair;
-
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.security.PublicKey;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public interface INode {
     public void setConfigs(boolean isPow,int maxNumTransactions, IAgreementMethod method, ArrayList<String> IPsOfOtherPeers, int nodeType);//0 for client , 1 for miner
-    public void issueTransactions(int from , int to);//for client nodes, issue for ids from .. to ..
+    public void issueTransactions();//for client nodes, issue for ids from .. to ..
     public void setNTW(INTW ntw);
 
     public int getNodeType();
@@ -83,9 +81,9 @@ public interface INode {
 
     public void broadcastMessage(IMessage message) throws IOException;
     public void addTransaction(ArrayList<ITransaction> ledger);
-    public void broadCastPublicKeys(ArrayList<Pair> keys) throws IOException;
+    public void broadCastPublicKeys(HashMap<Integer,PublicKey> keys) throws IOException;
 
-    void setPublicKeys(ArrayList<Pair> t);
+    void setPublicKeys(HashMap<Integer, PublicKey> t);
     public void readConfiguration() throws IOException;
 
 
@@ -100,4 +98,7 @@ public interface INode {
     public void checkTruthyOfNewView(IMessage viewChangedMessage);
     public boolean verifyNewViewPool(IMessagePool messagePool);
     public INode getPrimaryNode(int nodeIndex);
-}
+    public void receiveMessage(IMessage t) throws IOException;
+    public void sendConfigMessage(IMessage m) throws IOException;
+    public int sizeOfNetwork();
+    }

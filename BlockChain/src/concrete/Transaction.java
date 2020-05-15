@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 
 
-public class Transaction implements ITransaction, Serializable {
+public class Transaction implements ITransaction {
     public static void testParsing(String [] args){
         ITransaction t = ITransaction.parseTransaction("49\tintput:0\tvalue:79.121956\toutput:49");
         try {
@@ -53,6 +53,7 @@ public class Transaction implements ITransaction, Serializable {
     private byte[] signedHash ;
     private PublicKey payerKey = null;
     private float[] available;
+    private ITransaction prev;
     public Transaction(){
     }
 
@@ -183,24 +184,36 @@ public class Transaction implements ITransaction, Serializable {
     }
 
     @Override
+    public void setPrevTransaction(ITransaction t) {
+        this.prev =t;
+    }
+
+    @Override
     public String hash() {
         if(this.hash !=null){
             return this.hash;
         }
         StringBuilder sb = new StringBuilder();
-        sb.append(this.block.getTransactionByID(this.prevTrasactionID).hash());
+        if( prevTrasactionID != -1) {
+            if (prev == null) {
+                sb.append(this.block.getTransactionByID(this.prevTrasactionID).hash());
+            } else {
+                sb.append(prev.hash());
+            }
+        }
         for (Integer i:this.ips) {
             sb.append("-");
             sb.append(this.payerKey);
         }
         for (OutputPair i:this.ops) {
             sb.append("-");
-            sb.append(Utils.getPublicKeyFromID(i.id));
+            while(Utils.getInstance().getPublicKeyFromID(i.id) == null);
+            sb.append(Utils.getInstance().getPublicKeyFromID(i.id));
             sb.append("-");
             sb.append(String.valueOf(i.value));
         }
         this.hash =Utils.applySha256(sb.toString());
-        System.out.println("transaction hashed ..");
+        //System.out.println("transaction hashed ..");
         return this.hash;
     }
 

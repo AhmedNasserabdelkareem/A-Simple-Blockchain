@@ -4,7 +4,8 @@ import java.security.PublicKey;
 
 public interface IMessage {
 
-
+    public boolean isPrimary();
+    public void setisPrimary(boolean b);
     public void setType(String type);
 
     public IBlock getBlock();

@@ -7,12 +7,13 @@ import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 
 public class Utils implements IUtils{
-    private static String dataDir="/TxDataset_v2/txdataset_v2";
+    private static String dataDir="txdataset_v2.txt";
     private static Utils u = null;
-    private ArrayList<Pair> id2keys;
+    private HashMap<Integer, PublicKey> PKs = new HashMap<>();
 
     public static IUtils getInstance(){
         if (u == null ){
@@ -25,6 +26,28 @@ public class Utils implements IUtils{
     public String TransactionsDatasetDir() {
         return dataDir;
     }
+
+    @Override
+    public HashMap<Integer, PublicKey> getPKs() {
+        return PKs;
+    }
+
+    public  PublicKey getPublicKeyFromID(int id) {
+        return PKs.get(id);
+
+    }
+
+    public void setID2PK(HashMap<Integer,PublicKey> id2keys) {
+        this.PKs.putAll( id2keys);
+    }
+
+
+
+
+
+
+
+
 
 
     //Applies Sha256 to a string and returns the result.
@@ -117,20 +140,6 @@ public class Utils implements IUtils{
     // This method returns encoded string from any key.
     public static String getStringFromKey(Key key) {
         return Base64.getEncoder().encodeToString(key.getEncoded());
-    }
-
-    public  String getPublicKeyFromID(int id) {
-        for (Pair p : this.id2keys){
-            if(p.id==id){
-                return  p.value;
-            }
-        }
-        System.out.println("this id has no public key..");
-        return null;
-    }
-
-    public void setID2PK(ArrayList<Pair> id2keys) {
-        this.id2keys = id2keys;
     }
 
 }

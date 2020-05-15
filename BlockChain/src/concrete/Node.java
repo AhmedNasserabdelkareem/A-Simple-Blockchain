@@ -2,10 +2,7 @@ package concrete;
 import interfaces.*;
 import jdk.internal.util.xml.impl.Pair;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
+import java.io.*;
 import java.net.URL;
 import java.security.*;
 
@@ -15,6 +12,7 @@ import java.util.HashMap;
 import java.util.Timer;
 
 public class Node implements INode {
+    enum Types {client, miner};
     HashMap<Integer, ITransaction> AvOps = new HashMap<>();
     ArrayList<Integer> newAddedTs = new ArrayList<>();
     private INTW network;
@@ -25,8 +23,8 @@ public class Node implements INode {
     private ArrayList<ITransaction> transactions;
     private IBlock currentBlock;
     private ArrayList<IBlock> blockChain;
-    private ArrayList<Pair> id2keys;
-    private final String CONFIG_FILE;
+    private HashMap<Integer,PublicKey> id2keys;
+    private String CONFIG_FILE;
     private PublicKey nodePublicKey;
     private PrivateKey nodePrivateKey;
     private PublicKey primaryNodePublicKey; // primary node's public key
@@ -54,17 +52,55 @@ public class Node implements INode {
     private IAgreementMethod method;
     private String[] IPsOfOtherPeers;
     private boolean isPow;
+    private HashMap<Integer,ITransaction> issuedTransactions;
+    private HashMap<Integer,KeyPair> myKeyPairs;
+    private int from=0,to=0;
+    private ArrayList<IMessage> changeViewMessages;
+    private ArrayList<IMessage> commitMessages;
+    private ArrayList<IMessage> prepareMessages;
 
+    public static void main(String []args){
+        //INode node = new Node();
+    }
 
     public Node(String config_file) throws IOException {
         CONFIG_FILE = config_file;
         peers = new ArrayList<>();
         transactions = new ArrayList<>();
         blockChain = new ArrayList<>();
-        id2keys = new ArrayList<>();
+        id2keys = new HashMap<>();
+        prepareMessages = new ArrayList<>();
+        commitMessages = new ArrayList<>();
+        changeViewMessages = new ArrayList<>();
         readConfiguration();
         generateKeyPair();
     }
+
+    private void prepare2issue(int lowerB,int upperB){
+        if(this.nodeType == 0) {
+            this.from = lowerB;this.to=upperB;
+            this.myKeyPairs = new HashMap<>();
+            HashMap<Integer, PublicKey> toBroadcast = new HashMap<>();
+            this.issuedTransactions = new HashMap<>();
+            for (int i = lowerB; i < upperB; i++) {
+                try {
+                    KeyPair pair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+                    myKeyPairs.put(i, pair);
+                    toBroadcast.put(i, pair.getPublic());
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                this.network.broadcastPK(toBroadcast);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //call issue when all pks are here
+            this.issueTransactions();
+        }
+    }
+
 
     public void readConfiguration() throws IOException {
         //TODO read from remote file >> config
@@ -137,23 +173,27 @@ public class Node implements INode {
 
     private boolean verifyTransactionVal(ITransaction t) {
         int prevID = t.getPrevID();
-        ITransaction prev = getUnspentTransactionByID(prevID);
-        if (prev == null) {
-            return false;
-        }
-        int out = t.getOutIndex();
-        float totalPayed = 0;
-        for (ITransaction.OutputPair p : t.getOPs()) {
-            totalPayed += p.value;
-        }
-        ArrayList<ITransaction.OutputPair> ops = prev.getOPs();
-        boolean av = prev.getOPs().get(out).available >= totalPayed;
-        if (!av) {
-            return false;
-        }
-        prev.getOPs().get(out).available -= totalPayed;
+        if (prevID != -1 && t.getIPs().get(0)==0) {
+            ITransaction prev = getUnspentTransactionByID(prevID);
+            if (prev == null) {
+                return false;
+            }
+            int out = t.getOutIndex();
+            float totalPayed = 0;
+            for (ITransaction.OutputPair p : t.getOPs()) {
+                totalPayed += p.value;
+            }
+            ArrayList<ITransaction.OutputPair> ops = prev.getOPs();
+            boolean av = prev.getOPs().get(out).available >= totalPayed;
+            if (!av) {
+                return false;
+            }
+            prev.getOPs().get(out).available -= totalPayed;
 
-        return true;
+            return true;
+        }else{
+            return true; // no value check if there is no prev and input is 0
+        }
     }
 
     public boolean verifyBlockTransactions(ArrayList<ITransaction> transactions){
@@ -200,8 +240,37 @@ public class Node implements INode {
     }
 
     @Override
-    public void issueTransactions(int from, int to) {
+    public void issueTransactions() { // in terms of transactions' id
+        try
+        {
 
+            URL url = getClass().getResource(Utils.getInstance().TransactionsDatasetDir());
+            File file = new File(url.getPath());
+            FileReader fr=new FileReader(file);
+            BufferedReader br=new BufferedReader(fr);
+            String line;
+            while((line=br.readLine())!=null)
+            {
+                ITransaction t =  ITransaction.parseTransaction(line);
+                if(t==null){
+                    continue;
+                }
+                t.setPrevTransaction(issuedTransactions.get(t.getPrevID()));
+                t.hash();
+                this.issuedTransactions.put(t.getID(),t);
+                if(t.getIPs().get(0) < to && t.getIPs().get(0)>=from) {
+                    t.signTransaction(myKeyPairs.get(t.getIPs().get(0)).getPrivate(),myKeyPairs.get(t.getIPs().get(0)).getPublic());
+                    System.out.println("Tr issued .."+t.getID()+"  "+t.getIPs().get(0)+" "+t.getOPs().get(0).id+" "+t.getOPs().get(0).value);
+                    //this.network.issueTransaction((Transaction) t);
+                }
+            }
+            fr.close();
+
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -221,13 +290,13 @@ public class Node implements INode {
     }
 
     @Override
-    public void broadCastPublicKeys(ArrayList<Pair> keys) throws IOException {
+    public void broadCastPublicKeys(HashMap<Integer,PublicKey> keys) throws IOException {
         network.broadcastPK(keys);
 
     }
 
     @Override
-    public void setPublicKeys(ArrayList<Pair> t) {
+    public void setPublicKeys(HashMap<Integer, PublicKey> t) {
         this.id2keys = t;
     }
 
@@ -275,8 +344,8 @@ public class Node implements INode {
     public void setNewBlock(IMessage newBlockMessage) {
         if (newBlockMessage.getMessageType().equals("new block") &&
                 newBlockMessage.getPrimaryPublicKey() == primaryNodePublicKey &&
-                newBlockMessage.getSeqNum() == this.seqNum && newBlockMessage.getViewNum() == this.viewNum
-                && newBlockMessage.getBlock().verifySignature()) { // i mean by block signature -> transaction signature
+                newBlockMessage.getSeqNum() == this.seqNum && newBlockMessage.getViewNum() == this.viewNum){
+        //        && newBlockMessage.getBlock().verifySignature()) { // i mean by block signature -> transaction signature
             this.newBlock = newBlockMessage.getBlock();
         }
         generateNodeSignature();
@@ -287,7 +356,7 @@ public class Node implements INode {
     @Override
     public void generateNewBlockMessage() throws IOException {
         this.validator = new Validator(this.primaryNodePublicKey, this.seqNum, this.viewNum, this.maxMaliciousNodes);
-        this.validator.initiateNewBlockMessage(getLastBlock(), getBlockTransactions());
+        this.validator.initiateNewBlockMessage(getLastBlock(), block.getTransactions());
         // timer
         IMessage newBlockMessage = validator.finalizeBlock();
         broadcastMessage(newBlockMessage);
@@ -430,12 +499,45 @@ public class Node implements INode {
     }
 
 
-    public void receiveMessage() {
+    public void receiveMessage(IMessage t) throws IOException {
+        String type = t.getMessageType();
+        switch (type){
+            case "new block":
+                setNewBlock(t);
+            case "pre-prepare":
+                insertPreprepareMessage(t);
+            case "config":
+                network.setPrimary(t.isPrimary());
+            case "change view":
+                changeViewMessages.add(t);
+                if(changeViewMessages.size() == network.getsizeofPeers()){
+                    insertChangeViewMessageInPool(changeViewMessages);
+                    changeViewMessages.clear();
+                }
+            case "commit":
+                commitMessages.add(t);
+                if(commitMessages.size() == network.getsizeofPeers()){
+                    insertCommitMessageInPool(commitMessages);
+                    commitMessages.clear();
+                }
+            case "prepare":
+                prepareMessages.add(t);
+                if(prepareMessages.size() == network.getsizeofPeers()){
+                    insertPrepareMessageInPool(prepareMessages);
+                    prepareMessages.clear();
+                }
+            default:
+                System.out.println("No Type");
+        }
+    }
 
-        // take type{pre-prepare,}
-        //collect message
-        //pre-prepare
+    public void sendConfigMessage(IMessage m) throws IOException {
+        network.sendConfigMessage(m);
+    }
 
+    @Override
+    public int sizeOfNetwork() {
+        return network.getsizeofPeers()+1;
     }
 
 
@@ -635,5 +737,7 @@ public class Node implements INode {
     public PublicKey getNodePublicKey() {
         return this.nodePublicKey;
     }
+
+
 
 }
