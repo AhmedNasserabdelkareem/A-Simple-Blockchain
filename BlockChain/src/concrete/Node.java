@@ -93,16 +93,11 @@ public class Node implements INode {
 
     @Override
     public void addTransaction(ITransaction t) {
-<<<<<<< HEAD
 
         if(verifyTransaction(t)){
             newAddedTs.add(t.getID());
             AvOps.put(t.getID(),t);
-=======
-        newAddedTs.add(t.getID());
-        AvOps.put(t.getID(), t);
-        if (verifyTransaction(t)) {
->>>>>>> 50120ac457eaace416d909a3f5260b164e19e4bd
+
             transactions.add(t);
             if (transactions.size() == maxTransaction) {
                 createBlock();
@@ -124,12 +119,8 @@ public class Node implements INode {
     private boolean verifyTransactionSign(ITransaction t) {
         int signer = t.getIPs().get(0);
         byte[] signature = t.getSignedHash();
-<<<<<<< HEAD
 
-        boolean b =false;
-=======
         boolean b = false;
->>>>>>> 50120ac457eaace416d909a3f5260b164e19e4bd
         try {
             Signature s = Signature.getInstance("SHA1WithRSA");
             s.initVerify(t.getPayerPK());
@@ -536,11 +527,11 @@ public class Node implements INode {
 
 
     public ArrayList<ITransaction> createBlockTransactions() {
-
+        return null;
     }
 
     public void createTransForBlock() {
-        for ()
+
     }
 
 
@@ -612,16 +603,7 @@ public class Node implements INode {
     }
 
     @Override
-<<<<<<< HEAD
-    public void broadCastPublicKeys(ArrayList<Pair> keys) throws IOException {
-        network.broadcastPK(keys);
-    }
 
-    @Override
-    public void setPublicKeys(ArrayList<Pair> t) {
-        this.id2keys = t;
-        Utils.getInstance().setID2PK(t);
-=======
     public void setMaxMaliciousNodes(int f) {
         this.maxMaliciousNodes = f;
     }
@@ -634,7 +616,6 @@ public class Node implements INode {
     @Override
     public PublicKey getNodePublicKey() {
         return this.nodePublicKey;
->>>>>>> 50120ac457eaace416d909a3f5260b164e19e4bd
     }
 
 }
