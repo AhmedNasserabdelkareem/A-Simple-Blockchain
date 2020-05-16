@@ -50,4 +50,6 @@ public interface INTW {
     public void broadcastResponse(Block block,boolean response) throws IOException;
 
     void sendPeers(ArrayList<String> ips) throws IOException;
+
+    void sendNodesType(ArrayList<Integer> nodeTypes);
 }
