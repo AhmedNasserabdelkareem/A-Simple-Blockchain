@@ -93,6 +93,9 @@ public class Block implements IBlock, Serializable {
 
     @Override
     public boolean verifyPrevHash() {
+        if(this.prevBlock == null){
+            return true;
+        }
         return hashBlock(this.prevBlock).equals(this.header.getPrevBlockHash()) ;
     }
 
