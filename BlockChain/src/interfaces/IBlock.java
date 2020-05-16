@@ -9,7 +9,6 @@ public interface IBlock {
     public ArrayList<ITransaction> getTransactions();
     public void setPrevBlock(IBlock block);
     public IBlock getPrevBlock();
-    public void setAgreementMethod(IAgreementMethod method); //must be set to create  the header nonce
     //public String getBlockHash();
     public ITransaction getTransactionByID(int id);
 

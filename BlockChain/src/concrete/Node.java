@@ -1,6 +1,10 @@
 package concrete;
+
 import interfaces.*;
 import jdk.internal.util.xml.impl.Pair;
+import com.google.gson.GsonBuilder;
+import org.bouncycastle.*;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.*;
 import java.net.URL;
@@ -12,18 +16,23 @@ import java.util.HashMap;
 import java.util.Timer;
 
 public class Node implements INode {
-    enum Types {client, miner};
+    static {
+        Security.addProvider(new BouncyCastleProvider());
+    }
+
+    enum Types {client, miner}
+
+    ;
     HashMap<Integer, ITransaction> AvOps = new HashMap<>();
     ArrayList<Integer> newAddedTs = new ArrayList<>();
     private INTW network;
     private int nodeType;
     private int maxTransaction;
-    private IAgreementMethod agreementMethod;
     private ArrayList<String> peers;
     private ArrayList<ITransaction> transactions;
     private IBlock currentBlock;
     private ArrayList<IBlock> blockChain;
-    private HashMap<Integer,PublicKey> id2keys;
+    private HashMap<Integer, PublicKey> id2keys;
     private String CONFIG_FILE;
     private PublicKey nodePublicKey;
     private PrivateKey nodePrivateKey;
@@ -37,9 +46,10 @@ public class Node implements INode {
     private IBlock block; //current block the node is validating
     private IBlock newBlock; //client (validator) block
     // private ArrayList<PublicKey> peers;
-    private IMessagePool preparePool; //contains prepare messages
-    private IMessagePool commitPool; // contains commit messages
-    private IMessagePool viewChangePool;
+    private IMessagePool preparePool = new MessagePool(); //contains prepare messages
+    private IMessagePool commitPool = new MessagePool();
+    ; // contains commit messages
+    private IMessagePool viewChangePool = new MessagePool();
     private byte[] nodeSignature;
     private IValidator validator; //validator is a helper node
     private Timer configTimer;
@@ -49,20 +59,24 @@ public class Node implements INode {
     private ArrayList<IBlock> chain;
     private int chainIndex = 0;
     private int maxNumTransactions;
-    private IAgreementMethod method;
     private String[] IPsOfOtherPeers;
     private boolean isPrimary;
+    private String nodeIp;
     private boolean isPow;
-    private HashMap<Integer,ITransaction> issuedTransactions;
-    private HashMap<Integer,KeyPair> myKeyPairs;
-    private int from=0,to=0;
+    private HashMap<Integer, ITransaction> issuedTransactions;
+    private HashMap<Integer, KeyPair> myKeyPairs;
+    private int from = 0, to = 0;
     private ArrayList<IMessage> changeViewMessages;
     private ArrayList<IMessage> commitMessages;
     private ArrayList<IMessage> prepareMessages;
-    private IUtils utils=Utils.getInstance();
+    private IUtils utils = Utils.getInstance();
 
-    public static void main(String []args){
+    public static void main(String[] args) {
         //INode node = new Node();
+    }
+
+
+    public Node() {
     }
 
     public Node(String config_file) throws IOException {
@@ -80,9 +94,10 @@ public class Node implements INode {
 
     }
 
-    private void prepare2issue(int lowerB,int upperB){
-        if(this.nodeType == 0) {
-            this.from = lowerB;this.to=upperB;
+    private void prepare2issue(int lowerB, int upperB) {
+        if (this.nodeType == 0) {
+            this.from = lowerB;
+            this.to = upperB;
             this.myKeyPairs = new HashMap<>();
             HashMap<Integer, PublicKey> toBroadcast = new HashMap<>();
             this.issuedTransactions = new HashMap<>();
@@ -116,10 +131,9 @@ public class Node implements INode {
     }
 
     @Override
-    public void setConfigs(boolean isPow,int maxNumTransactions, IAgreementMethod method, ArrayList<String> IPsOfOtherPeers, int nodeType) {
+    public void setConfigs(boolean isPow, int maxNumTransactions, ArrayList<String> IPsOfOtherPeers, int nodeType) {
         this.isPow = isPow;
         this.nodeType = nodeType;
-        this.agreementMethod = method;
         this.maxTransaction = maxNumTransactions;
         this.peers = IPsOfOtherPeers;
     }
@@ -135,11 +149,11 @@ public class Node implements INode {
     }
 
     @Override
-    public void addTransaction(ITransaction t) {
+    public void addTransaction(ITransaction t) throws IOException {
 
-        if(verifyTransaction(t)){
+        if (verifyTransaction(t)) {
             newAddedTs.add(t.getID());
-            AvOps.put(t.getID(),t);
+            AvOps.put(t.getID(), t);
 
             transactions.add(t);
             if (transactions.size() == maxTransaction) {
@@ -152,11 +166,14 @@ public class Node implements INode {
     }
 
     @Override
-    public void createBlock() {
+    public void createBlock() throws IOException {
         currentBlock = new Block();
-        currentBlock.setAgreementMethod(agreementMethod);
         currentBlock.setTransactions(transactions);
         //TODO SET SIGNATURE AND PREV BLOCK
+        if (isPow) {
+            //pow(block,difficulty)
+        } else
+            generateNewBlockMessage(currentBlock);
     }
 
     private boolean verifyTransactionSign(ITransaction t) {
@@ -177,7 +194,7 @@ public class Node implements INode {
 
     private boolean verifyTransactionVal(ITransaction t) {
         int prevID = t.getPrevID();
-        if (prevID != -1 && t.getIPs().get(0)==0) {
+        if (prevID != -1 && t.getIPs().get(0) == 0) {
             ITransaction prev = getUnspentTransactionByID(prevID);
             if (prev == null) {
                 return false;
@@ -195,18 +212,28 @@ public class Node implements INode {
             prev.getOPs().get(out).available -= totalPayed;
 
             return true;
-        }else{
+        } else {
             return true; // no value check if there is no prev and input is 0
         }
     }
 
-    public boolean verifyBlockTransactions(ArrayList<ITransaction> transactions){
+    @Override
+    public boolean verifyBlockTransactions(ArrayList<ITransaction> transactions) {
         for (int i = 0; i < transactions.size(); i++) {
             if (verifyTransaction(transactions.get(i))) {
                 resetUnspent();
             } else {
                 return false;
             }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean verifyTransactionsSignature(ArrayList<ITransaction> transactions) {
+        for (int i = 0; i < transactions.size(); i++) {
+            if (!verifyTransactionSign(transactions.get(i)))
+                return false;
         }
         return true;
     }
@@ -245,34 +272,30 @@ public class Node implements INode {
 
     @Override
     public void issueTransactions() { // in terms of transactions' id
-        try
-        {
+        try {
 
             URL url = getClass().getResource(Utils.getInstance().TransactionsDatasetDir());
             File file = new File(url.getPath());
-            FileReader fr=new FileReader(file);
-            BufferedReader br=new BufferedReader(fr);
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
             String line;
-            while((line=br.readLine())!=null)
-            {
-                ITransaction t =  ITransaction.parseTransaction(line);
-                if(t==null){
+            while ((line = br.readLine()) != null) {
+                ITransaction t = ITransaction.parseTransaction(line);
+                if (t == null) {
                     continue;
                 }
                 t.setPrevTransaction(issuedTransactions.get(t.getPrevID()));
                 t.hash();
-                this.issuedTransactions.put(t.getID(),t);
-                if(t.getIPs().get(0) < to && t.getIPs().get(0)>=from) {
-                    t.signTransaction(myKeyPairs.get(t.getIPs().get(0)).getPrivate(),myKeyPairs.get(t.getIPs().get(0)).getPublic());
-                    System.out.println("Tr issued .."+t.getID()+"  "+t.getIPs().get(0)+" "+t.getOPs().get(0).id+" "+t.getOPs().get(0).value);
+                this.issuedTransactions.put(t.getID(), t);
+                if (t.getIPs().get(0) < to && t.getIPs().get(0) >= from) {
+                    t.signTransaction(myKeyPairs.get(t.getIPs().get(0)).getPrivate(), myKeyPairs.get(t.getIPs().get(0)).getPublic());
+                    System.out.println("Tr issued .." + t.getID() + "  " + t.getIPs().get(0) + " " + t.getOPs().get(0).id + " " + t.getOPs().get(0).value);
                     //this.network.issueTransaction((Transaction) t);
                 }
             }
             fr.close();
 
-        }
-        catch(IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -294,7 +317,7 @@ public class Node implements INode {
     }
 
     @Override
-    public void broadCastPublicKeys(HashMap<Integer,PublicKey> keys) throws IOException {
+    public void broadCastPublicKeys(HashMap<Integer, PublicKey> keys) throws IOException {
         network.broadcastPK(keys);
 
     }
@@ -305,15 +328,35 @@ public class Node implements INode {
     }
 
 
-        
 ////////////////////////////////////////////////////////////////////////////////////////
 
 
+    //apply POW (mining) verification by Increasing nonce value until hash target is reached.
+    @Override
+    public void pow(IBlock block, int difficulty) throws IOException {
+        System.out.println("Working in pow");
+        int nonce = 0;
+        String hash = block.getHeader().getHash();
+        String merkleRoot = Utils.getMerkleRoot(block.getTransactions());
+        block.getHeader().setTransactionsHash(merkleRoot);
+        String target = Utils.getDificultyString(difficulty); //Create a string with difficulty * "0"
+        while (!hash.substring(0, difficulty).equals(target)) {
+            nonce++;
+            block.getHeader().setNonce(nonce);
+            hash = block.getHeader().calculateHash();
+        }
+        block.getHeader().setHash(hash);
+        block.getHeader().setNonce(nonce);
+        System.out.println("block is mined...");
+        System.out.println("block hash is: " + block.getHeader().getHash());
+        addToChain(block);
+        shareBlock(block);
+    }
 
 
     /*Generate the public and private key for the node*/
     @Override
-    public void generateKeyPair() {
+    public void generateKeyPair() throws IOException {
         try {
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("ECDSA", "BC");
             SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
@@ -327,6 +370,12 @@ public class Node implements INode {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        this.nodeIp = this.network.getIP();
+        this.network.broadcastPK(this.nodeIp,this.nodePublicKey);
+
+        System.out.println("Node keys are generated");
+        System.out.println("Node's public key: " + this.nodePublicKey);
+        System.out.println("Node's private key: " + this.nodePrivateKey);
     }
 
     /*Generate a signature for the node using her private key to sign the message*/
@@ -336,16 +385,22 @@ public class Node implements INode {
                 String.valueOf(this.viewNum) + this.newBlock.getHeader().getTransactionsHash();
         this.nodeSignature = Utils.applyECDSASig(this.nodePrivateKey, data);
 
+        System.out.println("node signature is generated.");
+        System.out.println("Node's signature: " + this.nodeSignature.toString());
+
     }
 
 
-
-    public void generateConfigMessage(int maxMaliciousNodes, PublicKey primaryNodePublicKey) throws IOException {
-        IMessage configMessage = new Message("config",maxMaliciousNodes,primaryNodePublicKey);
+    /******/
+    public void generateConfigMessage(PublicKey primaryNodePublicKey) throws IOException {
+        this.maxMaliciousNodes = (sizeOfNetwork() - 1) / 3;
+        IMessage configMessage = new Message("config", isPrimary, primaryNodePublicKey);
+        System.out.println("Generating config message...");
         sendConfigMessage(configMessage);
     }
 
-    public void receiveConfigs(IMessage configMessage){
+    public void receiveConfigs(IMessage configMessage) {
+        System.out.println("Node received config message");
         this.maxMaliciousNodes = configMessage.getMaxMaliciousNodes();
         this.primaryNodePublicKey = configMessage.getPrimaryPublicKey();
         this.isPrimary = configMessage.isPrimary();
@@ -359,29 +414,39 @@ public class Node implements INode {
         return this.newBlock;
     }
 
+    @Override
+    public void setNewBlock(IBlock newBlock) {
+        this.newBlock = newBlock;
+    }
+
     /*the node will save the client block with her*/
     @Override
     public void setNewBlock(IMessage newBlockMessage) throws IOException {
+        System.out.println("New block is received");
         if (newBlockMessage.getMessageType().equals("new block") &&
                 newBlockMessage.getPrimaryPublicKey() == primaryNodePublicKey &&
-                newBlockMessage.getSeqNum() == this.seqNum && newBlockMessage.getViewNum() == this.viewNum){
-        //        && newBlockMessage.getBlock().verifySignature()) { // i mean by block signature -> transaction signature
+                newBlockMessage.getSeqNum() == this.seqNum && newBlockMessage.getViewNum() == this.viewNum
+                && verifyTransactionsSignature(newBlockMessage.getBlock().getTransactions())) {
+            //        && newBlockMessage.getBlock().verifySignature()) { // i mean by block signature -> transaction signature
+            System.out.println("passing set new block validation");
             this.newBlock = newBlockMessage.getBlock();
         }
         generateNodeSignature();
 
-        if(isPrimary)
+        if (isPrimary) {
+            System.out.println("generate new pre-prepare message as the node is primary");
             generatePreprepareMessage();
-
+        }
     }
 
     /*this is only for the primary which will let the client to sent the block*/
     @Override
     public void generateNewBlockMessage(IBlock block) throws IOException {
-        this.validator = new Validator(this.primaryNodePublicKey, this.seqNum, this.viewNum, this.maxMaliciousNodes,block);
+        this.validator = new Validator(this.primaryNodePublicKey, this.seqNum, this.viewNum, this.maxMaliciousNodes, block);
         this.validator.initiateNewBlockMessage(getLastBlock(), block.getTransactions());
         // timer
         IMessage newBlockMessage = validator.finalizeBlock();
+        System.out.println("new block is created");
         broadcastMessage(newBlockMessage);
 
     }
@@ -391,6 +456,7 @@ public class Node implements INode {
     @Override
     public void generatePreprepareMessage() throws IOException {
         IMessage prePrepareMessage = new Message("pre-prepare", this.primaryNodePublicKey, this.seqNum, this.viewNum, this.nodeSignature, this.nodePublicKey, this.newBlock);
+        System.out.println("pre-prepare message is created");
         broadcastMessage(prePrepareMessage);
     }
 
@@ -403,6 +469,7 @@ public class Node implements INode {
                 preprepareMessage.getViewNum() == this.viewNum &&
                 preprepareMessage.getBlock().getHeader().getHash().equals(this.newBlock.getHeader().getHash())) {
 
+            System.out.println("pre-prepare validation is passed");
             this.state = "pre-prepare";
             this.seqNum = preprepareMessage.getSeqNum();
             this.block = preprepareMessage.getBlock();
@@ -410,8 +477,10 @@ public class Node implements INode {
             System.out.println("Error with secondary Node in preprepare phase verification so the node will ignore this message");
         }
 
-        if (!isPrimary)
+        if (!isPrimary) {
+            System.out.println("node is not primary so it will generate prepare message");
             generatePrepareMessage();
+        }
     }
 
 
@@ -428,6 +497,7 @@ public class Node implements INode {
         if (this.state.equals("pre-prepare")) {
             IMessage prepareMessage = new Message("prepare", this.primaryNodePublicKey, this.seqNum, this.viewNum, this.nodeSignature, this.block, this.nodePublicKey);
             this.preparePool.insertMessage(prepareMessage);
+            System.out.println("prepare message is created");
             broadcastMessage(prepareMessage);
         } else {
             System.out.println("Node is out it won't generate a prepare message");
@@ -449,6 +519,8 @@ public class Node implements INode {
                     prepareMessage.verifyPeerSignature() &&
                     prepareMessage.getBlock().getHeader().getHash().equals(this.block.getHeader().getHash()) &&
                     !this.preparePool.isMessageExists(prepareMessage)) {
+
+                System.out.println("prepare validation is passed");
                 if (prepareMessage.getNodePublicKey() == this.primaryNodePublicKey) {
                     System.out.println("Error in prepare phase the primary sent a message");
                     this.newViewNum = this.viewNum + 1;
@@ -468,6 +540,7 @@ public class Node implements INode {
 
         if (this.preparePool.getPoolSize() >= 2 * this.maxMaliciousNodes + 1) {
             this.state = "prepare";
+            System.out.println("node passed prepare phase");
             this.preparePool.clean();
         }
 
@@ -487,6 +560,8 @@ public class Node implements INode {
         if (this.state.equals("prepare")) {
             IMessage commitMessage = new Message("commit", this.primaryNodePublicKey, this.seqNum, this.viewNum, this.nodeSignature, this.block, this.nodePublicKey);
             this.commitPool.insertMessage(commitMessage);
+
+            System.out.println("node generated commit message and added it to her commit pool");
             broadcastMessage(commitMessage);
         } else {
             System.out.println("Node is out it won't generate a commit message as it doesn't finish her prepare phase");
@@ -497,7 +572,7 @@ public class Node implements INode {
      * and insert them in her commit pool if a message is invalid it will ignore it.
      * the node has to receive min 2*f+1 commit message to be able to move to the final phase*/
     @Override
-    public void insertCommitMessageInPool(ArrayList<IMessage> commitMessages) {
+    public void insertCommitMessageInPool(ArrayList<IMessage> commitMessages) throws IOException {
         IMessage commitMessage;
         for (int i = 0; i < commitMessages.size(); i++) {
             commitMessage = commitMessages.get(i);
@@ -508,7 +583,7 @@ public class Node implements INode {
                     commitMessage.verifyPeerSignature() &&
                     commitMessage.getBlock().getHeader().getHash().equals(this.block.getHeader().getHash()) &&
                     !commitPool.isMessageExists(commitMessage)) {
-
+                System.out.println("commit validation is passed");
                 this.commitPool.insertMessage(commitMessage);
             } else {
                 System.out.println("Error with Node while validating this commit message the node will ignore it.");
@@ -520,40 +595,45 @@ public class Node implements INode {
             verifyBlockTransactions(this.block.getTransactions());
             commitUnspent();
             this.state = "commit";
+            System.out.println("node passed commit phase");
             this.commitPool.clean();
             addToChain(this.block);
+            System.out.println("node added the block to chain");
         }
 
-        this.network.getNextPrimary();
+        generateConfigMessage(this.primaryNodePublicKey);
 
     }
 
 
     public void receiveMessage(IMessage t) throws IOException {
         String type = t.getMessageType();
-        switch (type){
+        switch (type) {
             case "new block":
                 setNewBlock(t);
             case "pre-prepare":
                 insertPreprepareMessage(t);
             case "config":
                 network.setPrimary(t.isPrimary());
+                setIsPrimary();
                 receiveConfigs(t);
+                if (isPrimary)
+                    generateNewBlockMessage(currentBlock);
             case "change view":
                 changeViewMessages.add(t);
-                if(changeViewMessages.size() == network.getsizeofPeers()){
+                if (changeViewMessages.size() == network.getsizeofPeers()) {
                     insertChangeViewMessageInPool(changeViewMessages);
                     changeViewMessages.clear();
                 }
             case "commit":
                 commitMessages.add(t);
-                if(commitMessages.size() == network.getsizeofPeers()){
+                if (commitMessages.size() == network.getsizeofPeers()) {
                     insertCommitMessageInPool(commitMessages);
                     commitMessages.clear();
                 }
             case "prepare":
                 prepareMessages.add(t);
-                if(prepareMessages.size() == network.getsizeofPeers()){
+                if (prepareMessages.size() == network.getsizeofPeers()) {
                     insertPrepareMessageInPool(prepareMessages);
                     prepareMessages.clear();
                 }
@@ -568,7 +648,7 @@ public class Node implements INode {
 
     @Override
     public int sizeOfNetwork() {
-        return network.getsizeofPeers()+1;
+        return network.getsizeofPeers() + 1;
     }
 
 
@@ -677,15 +757,6 @@ public class Node implements INode {
     }
 
 
-    public ArrayList<ITransaction> createBlockTransactions() {
-        return null;
-    }
-
-    public void createTransForBlock() {
-
-    }
-
-
     @Override
     public void addTransaction(ArrayList<ITransaction> ledger) {
         this.ledger = ledger;
@@ -695,6 +766,9 @@ public class Node implements INode {
     @Override
     public void receiveBlock(IBlock block) {
         this.block = block;
+        //verify block
+        // interupt mining of the current block
+        // add block to chain
     }
 
 
@@ -706,6 +780,26 @@ public class Node implements INode {
     @Override
     public PublicKey getPrimaryId() {
         return this.primaryNodePublicKey;
+    }
+
+    @Override
+    public int getNewViewNum() {
+        return newViewNum;
+    }
+
+    @Override
+    public void setNewViewNum(int newViewNum) {
+        this.newViewNum = newViewNum;
+    }
+
+    @Override
+    public IBlock getBlock() {
+        return block;
+    }
+
+    @Override
+    public void setBlock(IBlock block) {
+        this.block = block;
     }
 
     @Override
@@ -723,6 +817,12 @@ public class Node implements INode {
         this.seqNum = this.chain.size() + 1;
     }
 
+
+    @Override
+    public void setSeqNum(int seqNum) {
+        this.seqNum = seqNum;
+    }
+
     @Override
     public int getViewNum() {
         return this.viewNum;
@@ -730,27 +830,52 @@ public class Node implements INode {
 
     @Override
     public void setViewNum() {
-        this.viewNum  = this.chain.size() + 1;
+        this.viewNum = this.chain.size() + 1;
     }
 
     @Override
-    public void setIsPrimary(boolean isPrimary) {
+    public void setViewNum(int viewNum) {
+        this.viewNum = viewNum;
+    }
 
+    @Override
+    public void setIsPrimary() {
+        this.isPrimary = this.network.isPrimary();
     }
 
     @Override
     public boolean getIsPrimary() {
-        return false;
+        return this.isPrimary;
     }
 
     @Override
     public void setState(String state) {
+        this.state = state;
+    }
 
+    @Override
+    public byte[] getNodeSignature() {
+        return nodeSignature;
+    }
+
+    @Override
+    public void setNodeSignature(byte[] nodeSignature) {
+        this.nodeSignature = nodeSignature;
+    }
+
+    @Override
+    public IValidator getValidator() {
+        return validator;
+    }
+
+    @Override
+    public void setValidator(IValidator validator) {
+        this.validator = validator;
     }
 
     @Override
     public String getState() {
-        return null;
+        return this.state;
     }
 
     @Override
@@ -769,6 +894,33 @@ public class Node implements INode {
         return this.nodePublicKey;
     }
 
+    @Override
+    public INTW getNetwork() {
+        return network;
+    }
 
+    @Override
+    public void setNetwork(INTW network) {
+        this.network = network;
+    }
 
+    @Override
+    public IBlock getCurrentBlock() {
+        return currentBlock;
+    }
+
+    @Override
+    public void setCurrentBlock(IBlock currentBlock) {
+        this.currentBlock = currentBlock;
+    }
+
+    @Override
+    public String getPrevState() {
+        return prevState;
+    }
+
+    @Override
+    public void setPrevState(String prevState) {
+        this.prevState = prevState;
+    }
 }

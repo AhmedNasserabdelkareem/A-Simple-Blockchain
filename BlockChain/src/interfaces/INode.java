@@ -6,15 +6,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface INode {
-    public void setConfigs(boolean isPow,int maxNumTransactions, IAgreementMethod method, ArrayList<String> IPsOfOtherPeers, int nodeType);//0 for client , 1 for miner
+    public void setConfigs(boolean isPow,int maxNumTransactions, ArrayList<String> IPsOfOtherPeers, int nodeType);//0 for client , 1 for miner
     public void issueTransactions();//for client nodes, issue for ids from .. to ..
     public void setNTW(INTW ntw);
 
     public int getNodeType();
 
-    public void addTransaction(ITransaction t); //when # of ts == max , call create block
+    public void addTransaction(ITransaction t) throws IOException; //when # of ts == max , call create block
 
-    public void createBlock(); //creates a block using the transactions , prev block and agreement method
+    public void createBlock() throws IOException; //creates a block using the transactions , prev block and agreement method
 
     public boolean verifyTransaction(ITransaction t);
 
@@ -25,7 +25,7 @@ public interface INode {
     //called if the block was accepted to decrease the values to be equal to availabl
     public void commitUnspent();
     public void shareBlock(IBlock block) throws IOException; //share the block over the network
-
+    public void pow(IBlock block, int difficulty) throws IOException;
     // agree/disagree on a block coming from the ntw..send the decision to the ntw and add/not to the chain
     // use th agreementmethod (BFT/pow) to agree/not
     public void receiveBlock(IBlock block);//flag : 0 block , 1 response
@@ -41,13 +41,15 @@ public interface INode {
 
     public int getSeqNum();
     public void setSeqNum();
+    public void setSeqNum(int seqNum);
 
     public PublicKey getNodePublicKey();
     public int getViewNum();
 
     public void setViewNum();
+    public void setViewNum(int viewNum);
 
-    public void setIsPrimary(boolean isPrimary);
+    public void setIsPrimary();
 
     public boolean getIsPrimary();
 
@@ -87,13 +89,14 @@ public interface INode {
     public void readConfiguration() throws IOException;
 
 
-    public void generateKeyPair();
+    public void generateKeyPair() throws IOException;
     public void generateNodeSignature();
     public IBlock getNewBlock();
+    public void setNewBlock(IBlock newBlock);
     public void setNewBlock(IMessage newBlockMessage) throws IOException;
     public void insertPreprepareMessage(IMessage preprepareMessage) throws IOException;
     public void insertPrepareMessageInPool(ArrayList<IMessage> prepareMessages) throws IOException;
-    public void insertCommitMessageInPool(ArrayList<IMessage> commitMessages);
+    public void insertCommitMessageInPool(ArrayList<IMessage> commitMessages) throws IOException;
     public void insertChangeViewMessageInPool(ArrayList<IMessage> changeViewMessages) throws IOException;
     public void checkTruthyOfNewView(IMessage viewChangedMessage);
     public boolean verifyNewViewPool(IMessagePool messagePool);
@@ -101,4 +104,21 @@ public interface INode {
     public void receiveMessage(IMessage t) throws IOException;
     public void sendConfigMessage(IMessage m) throws IOException;
     public int sizeOfNetwork();
-    }
+
+    public int getNewViewNum();
+    public void setNewViewNum(int newViewNum);
+    public IBlock getBlock();
+    public void setBlock(IBlock block);
+    public boolean verifyBlockTransactions(ArrayList<ITransaction> transactions);
+    public byte[] getNodeSignature();
+    public void setNodeSignature(byte[] nodeSignature);
+    public IValidator getValidator();
+    public void setValidator(IValidator validator);
+    public INTW getNetwork();
+    public void setNetwork(INTW network);
+    public IBlock getCurrentBlock();
+    public void setCurrentBlock(IBlock currentBlock);
+    public boolean verifyTransactionsSignature(ArrayList<ITransaction> transactions);
+    public String getPrevState();
+    public void setPrevState(String prevState);
+}

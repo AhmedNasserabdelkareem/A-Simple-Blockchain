@@ -27,6 +27,10 @@ public interface INTW {
     public void broadcastPK(HashMap<Integer,PublicKey> keys) throws IOException;
     public void sharepublickeys(HashMap<Integer, PublicKey> keys, String peer) throws IOException;
 
+    public void broadcastPK(String ip,PublicKey publicKey) throws IOException;
+    public void sharepublickeys(String ip,PublicKey publicKey,String peer) throws IOException;
+    public String getIP();
+
     public PublicKey getPrimaryID(int viewNum); //return the public key of the primary for the given view number
 
     public INode getPrimaryNode(int nodeIndex);

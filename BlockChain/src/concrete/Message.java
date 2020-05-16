@@ -32,10 +32,10 @@ public class Message implements IMessage {
     private boolean isPrimary;
 
     //config
-    public Message(String type,int maxMaliciousNodes, PublicKey primaryNodePublicKey) {
-        this.maxMaliciousNodes = maxMaliciousNodes;
+    public Message(String type,boolean isPrimary, PublicKey primaryNodePublicKey) {
         this.primaryNodePublicKey = primaryNodePublicKey;
         this.type = type;
+        this.isPrimary = isPrimary;
 
     }
 
@@ -149,8 +149,8 @@ public class Message implements IMessage {
     public boolean verifyPeerSignature() {
         String data = Utils.getStringFromKey(this.nodePublicKey) + String.valueOf(this.seqNum) +
                 String.valueOf(this.viewNum) + this.block.getHeader().getTransactionsHash();
-        Utils.verifyECDSASig(this.nodePublicKey, data, this.nodeSignature);
-        return false;
+        return Utils.verifyECDSASig(this.nodePublicKey, data, this.nodeSignature);
+
     }
 
     @Override

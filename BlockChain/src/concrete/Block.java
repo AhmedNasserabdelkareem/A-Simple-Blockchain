@@ -9,7 +9,7 @@ public class Block implements IBlock, Serializable {
     private ArrayList<ITransaction> ts;
     private IBlock prevBlock=null;
     private String hash = null;
-    private IAgreementMethod am ;
+
 
     public Block(){
         this.header = new BlockHeader();
@@ -50,10 +50,6 @@ public class Block implements IBlock, Serializable {
         return this.prevBlock;
     }
 
-    @Override
-    public void setAgreementMethod(IAgreementMethod method) {
-        this.am = method;
-    }
 
     private String hashBlock(IBlock b ){
         StringBuilder sb = new StringBuilder();
