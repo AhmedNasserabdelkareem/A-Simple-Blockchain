@@ -69,11 +69,6 @@ public class Network implements INTW ,Runnable{
     }
 
     public String getNextPrimary() {
-        int indexOfIssuer = nodeTypes.indexOf(0);
-
-        if (ips.get(indexOfIssuer).equals(tableOfNodes.get((tableOfNodes.indexOf(sourceIP.getHostAddress())+1)%tableOfNodes.size()))){
-            return tableOfNodes.get((tableOfNodes.indexOf(sourceIP.getHostAddress())+2)%tableOfNodes.size());
-        }
         return tableOfNodes.get((tableOfNodes.indexOf(sourceIP.getHostAddress())+1)%tableOfNodes.size());
     }
 
@@ -151,20 +146,25 @@ public class Network implements INTW ,Runnable{
     }
 
     @Override
-    public void sendPeers(ArrayList<String> ips) throws IOException {
+    public void sendPeers(ArrayList<String> ips,ArrayList<Integer> nodeTypes) throws IOException {
         peers.clear();
+        this.nodeTypes = nodeTypes;
+        int indexOfIssuer = nodeTypes.indexOf(0);
         this.ips = ips;
-        for (String p:ips) {
-            if(!p.equals(getExternalIP())) {
-                peers.add(p);
+        if (node.getNodeType() ==0){
+            for (String p : ips) {
+                if (!p.equals(getExternalIP())) {
+                        peers.add(p);
+                }
+            }
+        }else {
+            for (String p : ips) {
+                if (!p.equals(getExternalIP())) {
+                    if (!p.equals(ips.get(indexOfIssuer)))
+                        peers.add(p);
+                }
             }
         }
-    }
-
-    @Override
-    public void sendNodesType(ArrayList<Integer> nodeTypes) {
-        this.nodeTypes=nodeTypes;
-
     }
 
     @Override

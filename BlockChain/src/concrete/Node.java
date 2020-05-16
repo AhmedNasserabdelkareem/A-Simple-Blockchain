@@ -103,8 +103,7 @@ public class Node implements INode {
         readConfiguration();
         network.setNode(this);
 
-        network.sendPeers(ips);
-        network.sendNodesType(nodeTypes);
+        network.sendPeers(ips,nodeTypes);
         Thread th = new Thread((Runnable) network);
         th.start();
         generateKeyPair();
@@ -213,7 +212,7 @@ public class Node implements INode {
         currentBlock.setTransactions(transactions);
         currentBlock.setPrevBlock(getLastBlock());
         if (isPow) {
-            pow(block,difficulty);
+            pow(currentBlock,difficulty);
             System.out.println("Create Block Pow");
         } else {
             System.out.println("Create Block BFT");
@@ -383,7 +382,6 @@ public class Node implements INode {
     public void pow(IBlock block, int difficulty) throws IOException {
         System.out.println("Working in pow");
         int nonce = 0;
-        System.out.println();
         String hash = block.getBlockHash();
         String merkleRoot = Utils.getMerkleRoot(block.getTransactions());
         block.getHeader().setTransactionsHash(merkleRoot);

@@ -49,7 +49,6 @@ public interface INTW {
     public void shareResponse(Response r,String peer) throws IOException;
     public void broadcastResponse(Block block,boolean response) throws IOException;
 
-    void sendPeers(ArrayList<String> ips) throws IOException;
+    void sendPeers(ArrayList<String> ips,ArrayList<Integer> types) throws IOException;
 
-    void sendNodesType(ArrayList<Integer> nodeTypes);
 }

@@ -37,7 +37,6 @@ public class Message implements IMessage, Serializable {
         this.primaryNodePublicKey = primaryNodePublicKey;
         this.type = type;
         this.isPrimary = isPrimary;
-
     }
 
     //"change view"
