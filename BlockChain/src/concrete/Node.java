@@ -419,7 +419,6 @@ public class Node implements INode {
         }
         this.nodeIp = this.network.getIP();
         System.out.println("node ip: "+nodeIp);
-        //this.network.broadcastPK(this.nodeIp,this.nodePublicKey);
         this.network.broadcastPK(new PairKeyPK(this.nodeIp,this.nodePublicKey));
 
         System.out.println("Node keys are generated");
