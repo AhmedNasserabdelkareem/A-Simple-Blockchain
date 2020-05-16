@@ -12,7 +12,8 @@ import java.util.ArrayList;
 
 
 
-public class Transaction implements ITransaction {
+public class Transaction implements ITransaction ,Serializable{
+
     public static void testParsing(String [] args){
         ITransaction t = ITransaction.parseTransaction("49\tintput:0\tvalue:79.121956\toutput:49");
         try {
@@ -213,7 +214,7 @@ public class Transaction implements ITransaction {
             sb.append(String.valueOf(i.value));
         }
         this.hash =Utils.applySha256(sb.toString());
-        //System.out.println("transaction hashed ..");
+        System.out.println("transaction hashed ..");
         return this.hash;
     }
 
@@ -229,7 +230,7 @@ public class Transaction implements ITransaction {
             s.initSign(key);
             s.update(this.hash.getBytes());
             this.signedHash = s.sign();
-            //System.out.println("transaction signed ..");
+            System.out.println("transaction signed ..");
         }catch (Exception e){
             e.printStackTrace();
         }

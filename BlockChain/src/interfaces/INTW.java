@@ -48,4 +48,6 @@ public interface INTW {
     public void constructTable() throws IOException;
     public void shareResponse(Response r,String peer) throws IOException;
     public void broadcastResponse(Block block,boolean response) throws IOException;
-    }
+
+    void sendPeers(ArrayList<String> ips) throws IOException;
+}

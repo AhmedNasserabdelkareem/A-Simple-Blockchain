@@ -22,7 +22,7 @@ public class Network implements INTW ,Runnable{
     private static ObjectOutputStream outputStream;
     private static ObjectInputStream inputStream;
     private ServerSocket ss;
-
+    
     public boolean isPrimary() {
         return isPrimary;
     }
@@ -73,6 +73,7 @@ public class Network implements INTW ,Runnable{
     public void setNode(Node node) throws IOException, ClassNotFoundException {
         this.node  =node;
         this.sourceIP = InetAddress.getByName(getExternalIP());
+
         constructTable();
     }
 
@@ -96,6 +97,7 @@ public class Network implements INTW ,Runnable{
 
     @Override
     public void issueTransaction(Transaction transaction) throws IOException {
+        System.out.println(peers);
         for (String peer:peers) {
             System.out.println(peer);
             Socket socket = new Socket(InetAddress.getByName(peer), PORT);
@@ -131,6 +133,16 @@ public class Network implements INTW ,Runnable{
         Response r = new Response(block,response);
         for (String p:peers) {
             shareResponse(r,p);
+        }
+    }
+
+    @Override
+    public void sendPeers(ArrayList<String> ips) throws IOException {
+        peers.clear();
+        for (String p:ips) {
+            if(!p.equals(getExternalIP())) {
+                peers.add(p);
+            }
         }
     }
 

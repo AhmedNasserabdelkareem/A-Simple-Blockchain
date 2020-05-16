@@ -1,12 +1,14 @@
 package interfaces;
 import concrete.Transaction;
+
+import java.io.Serializable;
 import java.security.*;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 public interface ITransaction {
     /**to represent the output*/
-    public class OutputPair{
+    public class OutputPair implements Serializable {
         public int id;
         public float value;
         public float committedVal;
