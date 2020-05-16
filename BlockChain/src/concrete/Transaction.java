@@ -207,7 +207,7 @@ public class Transaction implements ITransaction {
         }
         for (OutputPair i:this.ops) {
             sb.append("-");
-            while(Utils.getInstance().getPublicKeyFromID(i.id) == null);
+            while(Utils.getInstance().getPublicKeyFromID(i.id) == null)System.out.println("waiting for other ips to broadcast my pk");
             sb.append(Utils.getInstance().getPublicKeyFromID(i.id));
             sb.append("-");
             sb.append(String.valueOf(i.value));
@@ -229,7 +229,7 @@ public class Transaction implements ITransaction {
             s.initSign(key);
             s.update(this.hash.getBytes());
             this.signedHash = s.sign();
-            System.out.println("transaction signed ..");
+            //System.out.println("transaction signed ..");
         }catch (Exception e){
             e.printStackTrace();
         }

@@ -18,4 +18,6 @@ public interface IUtils {
     public  PublicKey getPublicKeyFromID(int id);
     public String TransactionsDatasetDir();
     public HashMap<Integer,PublicKey> getPKs();
-    }
+    public void setID2PK(HashMap<Integer,PublicKey> id2keys) ;
+
+}

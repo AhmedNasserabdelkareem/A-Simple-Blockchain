@@ -100,12 +100,18 @@ public class Node implements INode {
         setNTW(network);
         readConfiguration();
         network.setNode(this);
+        Thread th = new Thread((Runnable)network);
+        th.start();
         generateKeyPair();
 
+        prepare2issue(0,50);
     }
 
     private void prepare2issue(int lowerB, int upperB) {
+        System.out.println("entered issue"+this.nodeType);
+
         if (this.nodeType == 0) {
+            System.out.println("entered issue");
             this.from = lowerB;
             this.to = upperB;
             this.myKeyPairs = new HashMap<>();
@@ -120,6 +126,7 @@ public class Node implements INode {
                     e.printStackTrace();
                 }
             }
+            Utils.getInstance().setID2PK(toBroadcast);
             try {
                 this.network.broadcastPK(toBroadcast);
             } catch (IOException e) {
@@ -318,8 +325,8 @@ public class Node implements INode {
                 this.issuedTransactions.put(t.getID(), t);
                 if (t.getIPs().get(0) < to && t.getIPs().get(0) >= from) {
                     t.signTransaction(myKeyPairs.get(t.getIPs().get(0)).getPrivate(), myKeyPairs.get(t.getIPs().get(0)).getPublic());
-                    System.out.println("Tr issued .." + t.getID() + "  " + t.getIPs().get(0) + " " + t.getOPs().get(0).id + " " + t.getOPs().get(0).value);
-                    //this.network.issueTransaction((Transaction) t);
+                    //System.out.println("Tr issued .." + t.getID() + "  " + t.getIPs().get(0) + " " + t.getOPs().get(0).id + " " + t.getOPs().get(0).value);
+                    this.network.issueTransaction((Transaction) t);
                 }
             }
             fr.close();

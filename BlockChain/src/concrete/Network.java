@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class Network implements INTW {
+public class Network implements INTW ,Runnable{
     private ArrayList<String> peers = new ArrayList<>();
     private ArrayList<String> tableOfNodes = new ArrayList<>();
     private String PrimaryPeer  ="";
@@ -52,20 +52,6 @@ public class Network implements INTW {
 
     }
 
-    @Override
-    public void broadcastPK(String ip, PublicKey publicKey) throws IOException {
-
-    }
-
-    @Override
-    public void sharepublickeys(String ip, PublicKey publicKey, String peer) throws IOException {
-
-    }
-
-    @Override
-    public String getIP() {
-        return null;
-    }
 
     public void constructTable() throws IOException {
         tableOfNodes.clear();
@@ -88,7 +74,6 @@ public class Network implements INTW {
         this.node  =node;
         this.sourceIP = InetAddress.getByName(getExternalIP());
         constructTable();
-        startServer();
     }
 
     @Override
@@ -104,23 +89,15 @@ public class Network implements INTW {
     }
 
     @Override
-<<<<<<< HEAD
-    public void listenForTransactions(Transaction t) {
 
-        try {
-            this.node.addTransaction(t);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-=======
     public void listenForTransactions(Transaction t) throws IOException {
         this.node.addTransaction(t);
->>>>>>> 9a32aaeb71160057cd7aa147da418c5924ce8e73
     }
 
     @Override
     public void issueTransaction(Transaction transaction) throws IOException {
         for (String peer:peers) {
+            System.out.println(peer);
             Socket socket = new Socket(InetAddress.getByName(peer), PORT);
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             outputStream.writeObject(transaction);
@@ -271,5 +248,16 @@ public class Network implements INTW {
             shareMessage(message,p);
         }
 
+    }
+
+    @Override
+    public void run() {
+        try {
+            startServer();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }
