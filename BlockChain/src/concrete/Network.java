@@ -274,8 +274,8 @@ public class Network implements INTW ,Runnable{
     }
 
     @Override
-    public String getIP() {
-        return null;
+    public String getIP() throws IOException {
+        return getExternalIP();
     }
 
 
