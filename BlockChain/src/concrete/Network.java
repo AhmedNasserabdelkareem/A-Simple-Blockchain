@@ -104,6 +104,7 @@ public class Network implements INTW {
     }
 
     @Override
+<<<<<<< HEAD
     public void listenForTransactions(Transaction t) {
 
         try {
@@ -111,6 +112,10 @@ public class Network implements INTW {
         } catch (IOException e) {
             e.printStackTrace();
         }
+=======
+    public void listenForTransactions(Transaction t) throws IOException {
+        this.node.addTransaction(t);
+>>>>>>> 9a32aaeb71160057cd7aa147da418c5924ce8e73
     }
 
     @Override
@@ -223,6 +228,21 @@ public class Network implements INTW {
         outputStream.flush();
         outputStream.close();
         socket.close();
+    }
+
+    @Override
+    public void broadcastPK(String ip, PublicKey publicKey) throws IOException {
+
+    }
+
+    @Override
+    public void sharepublickeys(String ip, PublicKey publicKey, String peer) throws IOException {
+
+    }
+
+    @Override
+    public String getIP() {
+        return null;
     }
 
     @Override

@@ -15,7 +15,7 @@ public interface INTW {
     public void setNode(Node node) throws IOException, ClassNotFoundException;
     public void listenForNewConnections(String ip) throws IOException; //listens for any new node request and add it to peers List
     public ArrayList<String> getConnectedPeers();
-    public void listenForTransactions(Transaction t);
+    public void listenForTransactions(Transaction t) throws IOException;
     public void issueTransaction(Transaction transaction) throws IOException;//to all ips / primary
     public void shareBlock(IBlock block, String peer) throws IOException; //share the block using the agreement method
     public void listenForResponses(Response r);
