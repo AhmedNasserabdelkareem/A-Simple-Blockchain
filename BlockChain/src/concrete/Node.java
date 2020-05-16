@@ -7,6 +7,7 @@ import org.bouncycastle.*;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.security.*;
 
@@ -72,9 +73,13 @@ public class Node implements INode {
     private IUtils utils = Utils.getInstance();
 
     public static void main(String[] args) {
+
+        String conf = "https://drive.google.com/uc?export=download&id=1DdXJ1X_qX8gjUMybsnLc3wybgNCZxH6J";
         try {
-            INode node = new Node("https://file.io/CGBzdsHk");
+            INode node = new Node(conf);
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -82,7 +87,7 @@ public class Node implements INode {
 
 
 
-    public Node(String config_file) throws IOException {
+    public Node(String config_file) throws IOException, ClassNotFoundException {
         CONFIG_FILE = config_file;
         peers = new ArrayList<>();
         transactions = new ArrayList<>();
@@ -91,8 +96,12 @@ public class Node implements INode {
         prepareMessages = new ArrayList<>();
         commitMessages = new ArrayList<>();
         changeViewMessages = new ArrayList<>();
+        INTW network = new Network();
+        setNTW(network);
         readConfiguration();
+        network.setNode(this);
         generateKeyPair();
+
     }
 
     private void prepare2issue(int lowerB, int upperB) {
@@ -126,9 +135,28 @@ public class Node implements INode {
         //TODO read from remote file >> config
         URL conf = new URL(CONFIG_FILE);
         BufferedReader in = new BufferedReader(new InputStreamReader(conf.openStream()));
-        String res = in.readLine();
+        String res ="";
+        StringBuilder sb = new StringBuilder();
+        while((res=in.readLine())!= null){
+            sb.append(res);
+            sb.append("\n");
+        };
         //TODO Split file
-        //setConfigs();
+        res= sb.toString();
+        System.out.println(res);
+
+        String [] data = res.split("\n");
+        int maxSize =Integer.parseInt( data[0].split(":")[1]);
+        int diff =Integer.parseInt( data[1].split(":")[1]);
+        int pow =Integer.parseInt( data[2].split(":")[1]);
+        ArrayList<String> ips = new ArrayList<>();
+        ArrayList<Integer> nodeTypes = new ArrayList<>();
+        for (int i = 3; i < data.length;i++){
+            ips.add(data[i].split(",")[0]);
+            nodeTypes.add(Integer.parseInt(data[i].split(",")[1]));
+        }
+       // System.out.println(network.getExternalIP()+" "+ips.get(0));
+        setConfigs(pow ==1,maxSize,ips,nodeTypes.get(ips.indexOf(network.getExternalIP())));
     }
 
     @Override
