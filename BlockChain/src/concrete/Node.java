@@ -72,12 +72,15 @@ public class Node implements INode {
     private IUtils utils = Utils.getInstance();
 
     public static void main(String[] args) {
-        //INode node = new Node();
+        try {
+            INode node = new Node("https://file.io/CGBzdsHk");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
-    public Node() {
-    }
+
 
     public Node(String config_file) throws IOException {
         CONFIG_FILE = config_file;
