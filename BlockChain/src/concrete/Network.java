@@ -105,15 +105,17 @@ public class Network implements INTW ,Runnable{
 
     @Override
     public void issueTransaction(Transaction transaction) throws IOException {
-        //System.out.println(peers);
+        System.out.println(peers);
         for (String peer:peers) {
-            //System.out.println(peer);
+            System.out.println(peer);
             Socket socket = new Socket(InetAddress.getByName(peer), PORT);
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             outputStream.writeObject(transaction);
             outputStream.flush();
             outputStream.close();
             socket.close();
+            System.out.println(peer);
+
         }
     }
 
