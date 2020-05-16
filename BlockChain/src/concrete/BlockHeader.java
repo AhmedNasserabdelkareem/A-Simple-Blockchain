@@ -32,7 +32,11 @@ public class BlockHeader implements IBlockHeader, Serializable {
 
     @Override
     public void createPrevBlockHash(IBlock prevBlock) {
-        this.prevBlockHash = prevBlock.getHeader().getHash();
+        if(prevBlock == null){
+            this.prevBlockHash = "null";
+        }else {
+            this.prevBlockHash = prevBlock.getHeader().getHash();
+        }
     }
 
 
