@@ -90,8 +90,6 @@ public class Node implements INode {
         changeViewMessages = new ArrayList<>();
         readConfiguration();
         generateKeyPair();
-
-
     }
 
     private void prepare2issue(int lowerB, int upperB) {
