@@ -3,10 +3,11 @@ package concrete;
 import interfaces.IMessage;
 import interfaces.IMessagePool;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MessagePool implements IMessagePool {
+public class MessagePool implements IMessagePool, Serializable {
     private Set<IMessage> pool;
 
     public MessagePool() {

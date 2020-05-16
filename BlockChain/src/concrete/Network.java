@@ -22,7 +22,7 @@ public class Network implements INTW ,Runnable{
     private static ObjectOutputStream outputStream;
     private static ObjectInputStream inputStream;
     private ServerSocket ss;
-    
+
     public boolean isPrimary() {
         return isPrimary;
     }
@@ -133,10 +133,10 @@ public class Network implements INTW ,Runnable{
     }
 
     @Override
-    public void sendPeers(ArrayList<String> ips) {
+    public void sendPeers(ArrayList<String> ips) throws IOException {
         peers.clear();
         for (String p:ips) {
-            if(p != sourceIP.getHostAddress()) {
+            if(!p.equals(getExternalIP())) {
                 peers.add(p);
             }
         }

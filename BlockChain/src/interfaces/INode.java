@@ -1,5 +1,7 @@
 package interfaces;
 
+import concrete.Transaction;
+
 import java.io.IOException;
 import java.security.PublicKey;
 import java.util.ArrayList;
@@ -12,7 +14,7 @@ public interface INode {
 
     public int getNodeType();
 
-    public void addTransaction(ITransaction t) throws IOException; //when # of ts == max , call create block
+    public void addTransaction(Transaction t) throws IOException; //when # of ts == max , call create block
 
     public void createBlock() throws IOException; //creates a block using the transactions , prev block and agreement method
 
