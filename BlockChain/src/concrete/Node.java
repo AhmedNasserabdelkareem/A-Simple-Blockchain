@@ -155,7 +155,7 @@ public class Node implements INode {
             nodeTypes.add(Integer.parseInt(data[i].split(",")[1]));
         }
        // System.out.println(network.getExternalIP()+" "+ips.get(0));
-        setConfigs(pow ==0,maxSize,ips,nodeTypes.get(ips.indexOf(network.getExternalIP())));
+        setConfigs(pow ==1,maxSize,ips,nodeTypes.get(ips.indexOf(network.getExternalIP())));
     }
 
     @Override
