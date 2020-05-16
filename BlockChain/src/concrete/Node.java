@@ -19,6 +19,9 @@ public class Node implements INode {
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
+
+    private int difficulty;
+
     enum Types {client, miner};
     HashMap<Integer, ITransaction> AvOps = new HashMap<>();
     ArrayList<Integer> newAddedTs = new ArrayList<>();
@@ -165,15 +168,16 @@ public class Node implements INode {
             nodeTypes.add(Integer.parseInt(data[i].split(",")[1]));
         }
        // System.out.println(network.getExternalIP()+" "+ips.get(0));
-        setConfigs(pow ==1,maxSize,ips,nodeTypes.get(ips.indexOf(network.getExternalIP())));
+        setConfigs(pow ==1,maxSize,ips,nodeTypes.get(ips.indexOf(network.getExternalIP())),diff);
     }
 
     @Override
-    public void setConfigs(boolean isPow, int maxNumTransactions, ArrayList<String> IPsOfOtherPeers, int nodeType) {
+    public void setConfigs(boolean isPow, int maxNumTransactions, ArrayList<String> IPsOfOtherPeers, int nodeType,int diff) {
         this.isPow = isPow;
         this.nodeType = nodeType;
         this.maxTransaction = maxNumTransactions;
         this.peers = IPsOfOtherPeers;
+        this.difficulty = diff;
     }
 
     @Override
@@ -208,9 +212,9 @@ public class Node implements INode {
     public void createBlock() throws IOException {
         currentBlock = new Block();
         currentBlock.setTransactions(transactions);
-        //TODO SET SIGNATURE AND PREV BLOCK
+        currentBlock.setPrevBlock(getLastBlock());
         if (isPow) {
-            //pow(block,difficulty)
+            pow(block,difficulty);
             System.out.println("Create Block Pow");
         } else {
             System.out.println("Create Block BFT");
@@ -380,7 +384,8 @@ public class Node implements INode {
     public void pow(IBlock block, int difficulty) throws IOException {
         System.out.println("Working in pow");
         int nonce = 0;
-        String hash = block.getHeader().getHash();
+        System.out.println();
+        String hash = block.getBlockHash();
         String merkleRoot = Utils.getMerkleRoot(block.getTransactions());
         block.getHeader().setTransactionsHash(merkleRoot);
         String target = Utils.getDificultyString(difficulty); //Create a string with difficulty * "0"
@@ -818,7 +823,10 @@ public class Node implements INode {
 
     @Override
     public IBlock getLastBlock() {
-        return chain.get(chain.size() - 1);
+        if (chain.size()>0) {
+            return chain.get(chain.size() - 1);
+        }
+        return null;
     }
 
     @Override
