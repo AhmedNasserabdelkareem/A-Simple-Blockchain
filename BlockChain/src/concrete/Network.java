@@ -41,15 +41,18 @@ public class Network implements INTW ,Runnable{
     public void sendConfigMessage(IMessage m) throws IOException {
         isPrimary = false;
         for (String peer:peers) {
-            if (peer == getNextPrimary()){
+
+            if (peer.equals(getNextPrimary())){
                 m.setisPrimary(true);
             }
-            Socket socket = new Socket(InetAddress.getByName(peer), PORT);
-            outputStream = new ObjectOutputStream(socket.getOutputStream());
-            outputStream.writeObject(m);
-            outputStream.flush();
-            outputStream.close();
-            socket.close();
+            if (!getExternalIP().equals(getNextPrimary())) {
+                Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+                outputStream = new ObjectOutputStream(socket.getOutputStream());
+                outputStream.writeObject(m);
+                outputStream.flush();
+                outputStream.close();
+                socket.close();
+            }
         }
 
     }
@@ -65,7 +68,7 @@ public class Network implements INTW ,Runnable{
 
     public String getNextPrimary() {
         int indexOfIssuer = nodeTypes.indexOf(0);
-        if (ips.get(indexOfIssuer) == tableOfNodes.get((tableOfNodes.indexOf(sourceIP.getHostAddress())+1)%tableOfNodes.size())){
+        if (ips.get(indexOfIssuer).equals(tableOfNodes.get((tableOfNodes.indexOf(sourceIP.getHostAddress())+1)%tableOfNodes.size()))){
             return tableOfNodes.get((tableOfNodes.indexOf(sourceIP.getHostAddress())+2)%tableOfNodes.size());
         }
         return tableOfNodes.get((tableOfNodes.indexOf(sourceIP.getHostAddress())+1)%tableOfNodes.size());
