@@ -4,9 +4,10 @@ import interfaces.IBlock;
 import interfaces.IMessage;
 import interfaces.IMessagePool;
 
+import java.io.Serializable;
 import java.security.PublicKey;
 
-public class Message implements IMessage {
+public class Message implements IMessage, Serializable {
 
     private String type;
     private PublicKey primaryNodePublicKey;

@@ -20,10 +20,7 @@ public class Node implements INode {
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
-
-    enum Types {client, miner}
-
-    ;
+    enum Types {client, miner};
     HashMap<Integer, ITransaction> AvOps = new HashMap<>();
     ArrayList<Integer> newAddedTs = new ArrayList<>();
     private INTW network;
@@ -109,6 +106,7 @@ public class Node implements INode {
         Thread th = new Thread((Runnable) network);
         th.start();
         generateKeyPair();
+
         prepare2issue(0,100);
     }
 
@@ -189,13 +187,14 @@ public class Node implements INode {
     }
 
     @Override
-    public void addTransaction(ITransaction t) throws IOException {
+    public void addTransaction(Transaction t) throws IOException {
         System.out.println(t.getID());
         if (verifyTransaction(t)) {
             newAddedTs.add(t.getID());
             AvOps.put(t.getID(), t);
 
             transactions.add(t);
+            System.out.println("Verified"+" "+transactions.size());
             if (transactions.size() == maxTransaction) {
                 createBlock();
                 transactions.clear();
@@ -212,8 +211,11 @@ public class Node implements INode {
         //TODO SET SIGNATURE AND PREV BLOCK
         if (isPow) {
             //pow(block,difficulty)
-        } else
+            System.out.println("Create Block Pow");
+        } else {
+            System.out.println("Create Block BFT");
             generateNewBlockMessage(currentBlock);
+        }
     }
 
     private boolean verifyTransactionSign(ITransaction t) {
@@ -464,6 +466,7 @@ public class Node implements INode {
     /*the node will save the client block with her*/
     @Override
     public void setNewBlock(IMessage newBlockMessage) throws IOException {
+
         System.out.println("New block is received");
         if (newBlockMessage.getMessageType().equals("new block") &&
                 newBlockMessage.getPrimaryPublicKey() == primaryNodePublicKey &&
@@ -485,7 +488,7 @@ public class Node implements INode {
     @Override
     public void generateNewBlockMessage(IBlock block) throws IOException {
         this.validator = new Validator(this.primaryNodePublicKey, this.seqNum, this.viewNum, this.maxMaliciousNodes, block);
-        this.validator.initiateNewBlockMessage(getLastBlock(), block.getTransactions());
+        this.validator.initiateNewBlockMessage(null, block.getTransactions());
         // timer
         IMessage newBlockMessage = validator.finalizeBlock();
         System.out.println("new block is created");

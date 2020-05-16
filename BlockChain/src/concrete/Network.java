@@ -22,7 +22,7 @@ public class Network implements INTW ,Runnable{
     private static ObjectOutputStream outputStream;
     private static ObjectInputStream inputStream;
     private ServerSocket ss;
-    
+
     public boolean isPrimary() {
         return isPrimary;
     }
@@ -75,6 +75,9 @@ public class Network implements INTW ,Runnable{
         this.sourceIP = InetAddress.getByName(getExternalIP());
 
         constructTable();
+        if(tableOfNodes.get(0).equals(getExternalIP())){
+            setPrimary(true);
+        }
     }
 
     @Override
