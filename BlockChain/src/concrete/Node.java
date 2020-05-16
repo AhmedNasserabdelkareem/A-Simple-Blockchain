@@ -71,6 +71,8 @@ public class Node implements INode {
     private ArrayList<IMessage> commitMessages;
     private ArrayList<IMessage> prepareMessages;
     private IUtils utils = Utils.getInstance();
+    ArrayList<String> ips;
+    ArrayList<Integer> nodeTypes ;
 
     public static void main(String[] args) {
         String conf = "https://drive.google.com/uc?export=download&id=1DdXJ1X_qX8gjUMybsnLc3wybgNCZxH6J";
@@ -96,12 +98,17 @@ public class Node implements INode {
         prepareMessages = new ArrayList<>();
         commitMessages = new ArrayList<>();
         changeViewMessages = new ArrayList<>();
+        ips = new ArrayList<>();
+        nodeTypes = new ArrayList<>();
         INTW network = new Network();
         setNTW(network);
         readConfiguration();
         network.setNode(this);
-        generateKeyPair();
-        prepare2issue(0,3);
+        network.sendPeers(ips);
+        Thread th = new Thread((Runnable) network);
+        th.start();
+        //generateKeyPair();
+        prepare2issue(0,49);
     }
 
     private void prepare2issue(int lowerB, int upperB) {
@@ -143,14 +150,13 @@ public class Node implements INode {
         };
         //TODO Split file
         res= sb.toString();
-        System.out.println(res);
 
         String [] data = res.split("\n");
         int maxSize =Integer.parseInt( data[0].split(":")[1]);
         int diff =Integer.parseInt( data[1].split(":")[1]);
         int pow =Integer.parseInt( data[2].split(":")[1]);
-        ArrayList<String> ips = new ArrayList<>();
-        ArrayList<Integer> nodeTypes = new ArrayList<>();
+        ips = new ArrayList<>();
+        nodeTypes = new ArrayList<>();
         for (int i = 3; i < data.length;i++){
             ips.add(data[i].split(",")[0]);
             nodeTypes.add(Integer.parseInt(data[i].split(",")[1]));
@@ -179,7 +185,7 @@ public class Node implements INode {
 
     @Override
     public void addTransaction(ITransaction t) throws IOException {
-
+        System.out.println(t.getID());
         if (verifyTransaction(t)) {
             newAddedTs.add(t.getID());
             AvOps.put(t.getID(), t);
@@ -319,7 +325,7 @@ public class Node implements INode {
                 if (t.getIPs().get(0) < to && t.getIPs().get(0) >= from) {
                     t.signTransaction(myKeyPairs.get(t.getIPs().get(0)).getPrivate(), myKeyPairs.get(t.getIPs().get(0)).getPublic());
                     System.out.println("Tr issued .." + t.getID() + "  " + t.getIPs().get(0) + " " + t.getOPs().get(0).id + " " + t.getOPs().get(0).value);
-                    //this.network.issueTransaction((Transaction) t);
+                    this.network.issueTransaction((Transaction) t);
                 }
             }
             fr.close();
