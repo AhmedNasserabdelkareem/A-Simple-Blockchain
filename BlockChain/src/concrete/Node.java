@@ -7,7 +7,6 @@ import org.bouncycastle.*;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.net.URL;
 import java.security.*;
 
@@ -102,6 +101,7 @@ public class Node implements INode {
         readConfiguration();
         network.setNode(this);
         network.sendPeers(ips);
+        network.sendNodesType(nodeTypes);
         Thread th = new Thread((Runnable) network);
         th.start();
         //generateKeyPair();
@@ -411,7 +411,7 @@ public class Node implements INode {
 
         System.out.println("Node keys are generated");
         System.out.println("Node's public key: " + this.nodePublicKey);
-        System.out.println("Node's private key: " + this.nodePrivateKey);
+        System.out.println("Node's pirivate key: " + this.nodePrivateKey);
     }
 
     /*Generate a signature for the node using her private key to sign the message*/
@@ -484,7 +484,6 @@ public class Node implements INode {
         IMessage newBlockMessage = validator.finalizeBlock();
         System.out.println("new block is created");
         broadcastMessage(newBlockMessage);
-
     }
 
     /*this is for the primary node it's the only one who can generate the pre-prepare message

@@ -14,6 +14,8 @@ import java.util.HashMap;
 
 public class Network implements INTW ,Runnable{
     private ArrayList<String> peers = new ArrayList<>();
+    private ArrayList<String> ips = new ArrayList<>();
+    private ArrayList<Integer> nodeTypes = new ArrayList<>();
     private ArrayList<String> tableOfNodes = new ArrayList<>();
     private String PrimaryPeer  ="";
     private Node node;
@@ -62,6 +64,10 @@ public class Network implements INTW ,Runnable{
     }
 
     public String getNextPrimary() {
+        int indexOfIssuer = nodeTypes.indexOf(0);
+        if (ips.get(indexOfIssuer) == tableOfNodes.get((tableOfNodes.indexOf(sourceIP.getHostAddress())+1)%tableOfNodes.size())){
+            return tableOfNodes.get((tableOfNodes.indexOf(sourceIP.getHostAddress())+2)%tableOfNodes.size());
+        }
         return tableOfNodes.get((tableOfNodes.indexOf(sourceIP.getHostAddress())+1)%tableOfNodes.size());
     }
 
@@ -69,11 +75,13 @@ public class Network implements INTW ,Runnable{
 
 
     @Override
-    public void setNode(Node node) throws IOException, ClassNotFoundException {
+    public void setNode(Node node) throws IOException {
         this.node  =node;
         this.sourceIP = InetAddress.getByName(getExternalIP());
-
         constructTable();
+        if (tableOfNodes.get(0).equals(getExternalIP())){
+            setPrimary(true);
+        }
     }
 
     @Override
@@ -135,11 +143,18 @@ public class Network implements INTW ,Runnable{
     @Override
     public void sendPeers(ArrayList<String> ips) throws IOException {
         peers.clear();
+        this.ips = ips;
         for (String p:ips) {
             if(!p.equals(getExternalIP())) {
                 peers.add(p);
             }
         }
+    }
+
+    @Override
+    public void sendNodesType(ArrayList<Integer> nodeTypes) {
+        this.nodeTypes=nodeTypes;
+
     }
 
     @Override
