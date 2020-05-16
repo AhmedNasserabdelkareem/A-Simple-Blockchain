@@ -418,6 +418,8 @@ public class Node implements INode {
             throw new RuntimeException(e);
         }
         this.nodeIp = this.network.getIP();
+        System.out.println("node ip: "+nodeIp);
+        //this.network.broadcastPK(this.nodeIp,this.nodePublicKey);
         this.network.broadcastPK(new PairKeyPK(this.nodeIp,this.nodePublicKey));
 
         System.out.println("Node keys are generated");
@@ -448,6 +450,11 @@ public class Node implements INode {
 
     public void receiveConfigs(IMessage configMessage) {
         System.out.println("Node received config message");
+        System.out.println("max malicious nodes in config message: " + configMessage.getMaxMaliciousNodes());
+        System.out.println("primary id in config message: " + configMessage.getPrimaryPublicKey().toString());
+        System.out.println("is primary in config message: " + configMessage.isPrimary());
+        System.out.println("is primary from network call: " + getIsPrimary());
+
         this.maxMaliciousNodes = configMessage.getMaxMaliciousNodes();
         this.primaryNodePublicKey = configMessage.getPrimaryPublicKey();
         this.isPrimary = configMessage.isPrimary();
@@ -502,6 +509,10 @@ public class Node implements INode {
      * and broadcast it to all nodes*/
     @Override
     public void generatePreprepareMessage() throws IOException {
+        System.out.println("primary node public key: "+ this.primaryNodePublicKey);
+        System.out.println("primary node public key: "+ this.nodeSignature);
+        System.out.println("primary node public key: "+ this.nodePublicKey);
+        System.out.println("primary node public key: "+ this.newBlock.getHeader().getHash());
         IMessage prePrepareMessage = new Message("pre-prepare", this.primaryNodePublicKey, this.seqNum, this.viewNum, this.nodeSignature, this.nodePublicKey, this.newBlock);
         System.out.println("pre-prepare message is created");
         broadcastMessage(prePrepareMessage);
@@ -511,6 +522,19 @@ public class Node implements INode {
      * they will take the block inside it to continue the next phases*/
     @Override
     public void insertPreprepareMessage(IMessage preprepareMessage) throws IOException {
+        System.out.println("preprepare message max malicious nodes: " + preprepareMessage.getMaxMaliciousNodes());
+        System.out.println("preprepare message block hash: " + preprepareMessage.getBlock().getHeader().getHash());
+        System.out.println("preprepare message type: " + preprepareMessage.getMessageType());
+        System.out.println("preprepare message sending node public key: " + preprepareMessage.getNodePublicKey());
+        System.out.println("preprepare message primary public key the same the above: " + preprepareMessage.getPrimaryPublicKey());
+        System.out.println("preprepare message seq num: " + preprepareMessage.getSeqNum());
+        System.out.println("preprepare message view num: " + preprepareMessage.getViewNum());
+
+        System.out.println("verify peer signature : " + preprepareMessage.verifyPeerSignature());
+        System.out.println("primary ley for the current node: " + this.primaryNodePublicKey);
+        System.out.println("node view num: " + this.viewNum);
+        System.out.println("Node new block hash: " + this.newBlock.getHeader().getHash());
+
         if (preprepareMessage.getMessageType().equals("pre-prepare") && preprepareMessage.verifyPeerSignature() &&
                 preprepareMessage.getPrimaryPublicKey() == this.primaryNodePublicKey &&
                 preprepareMessage.getViewNum() == this.viewNum &&
