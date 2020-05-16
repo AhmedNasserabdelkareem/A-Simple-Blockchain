@@ -52,6 +52,21 @@ public class Network implements INTW {
 
     }
 
+    @Override
+    public void broadcastPK(String ip, PublicKey publicKey) throws IOException {
+
+    }
+
+    @Override
+    public void sharepublickeys(String ip, PublicKey publicKey, String peer) throws IOException {
+
+    }
+
+    @Override
+    public String getIP() {
+        return null;
+    }
+
     public void constructTable() throws IOException {
         tableOfNodes.clear();
         tableOfNodes.add(getExternalIP());
@@ -90,7 +105,12 @@ public class Network implements INTW {
 
     @Override
     public void listenForTransactions(Transaction t) {
-        this.node.addTransaction(t);
+
+        try {
+            this.node.addTransaction(t);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
