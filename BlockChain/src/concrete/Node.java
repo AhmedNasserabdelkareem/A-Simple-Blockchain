@@ -77,15 +77,10 @@ public class Node implements INode {
         String conf = "https://drive.google.com/uc?export=download&id=1DdXJ1X_qX8gjUMybsnLc3wybgNCZxH6J";
         try {
             INode node = new Node(conf);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
-
-
-
 
     public Node(String config_file) throws IOException, ClassNotFoundException {
         CONFIG_FILE = config_file;
@@ -815,6 +810,7 @@ public class Node implements INode {
         boolean b = block.verifyBlockHash();
         this.isInterrupt = true;
         addToChain(block);
+        System.out.println("isVerified: " +b+" "+chain.size());
     }
 
 
