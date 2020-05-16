@@ -1,5 +1,6 @@
 package interfaces;
 
+import concrete.PairKeyPK;
 import concrete.Transaction;
 
 import java.io.IOException;
@@ -123,4 +124,6 @@ public interface INode {
     public boolean verifyTransactionsSignature(ArrayList<ITransaction> transactions);
     public String getPrevState();
     public void setPrevState(String prevState);
+
+    void receivePK(PairKeyPK t);
 }

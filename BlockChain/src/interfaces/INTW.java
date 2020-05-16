@@ -1,9 +1,6 @@
 package interfaces;
 
-import concrete.Block;
-import concrete.Node;
-import concrete.Response;
-import concrete.Transaction;
+import concrete.*;
 import jdk.internal.util.xml.impl.Pair;
 
 import java.io.IOException;
@@ -27,13 +24,10 @@ public interface INTW {
     public void broadcastPK(HashMap<Integer,PublicKey> keys) throws IOException;
     public void sharepublickeys(HashMap<Integer, PublicKey> keys, String peer) throws IOException;
 
-    public void broadcastPK(String ip,PublicKey publicKey) throws IOException;
-    public void sharepublickeys(String ip,PublicKey publicKey,String peer) throws IOException;
+    public void broadcastPK(PairKeyPK pair) throws IOException;
+    public void sharepublickeys(PairKeyPK pair,String peer) throws IOException;
     public String getIP();
 
-    public PublicKey getPrimaryID(int viewNum); //return the public key of the primary for the given view number
-
-    public INode getPrimaryNode(int nodeIndex);
 
     public void shareMessage(IMessage message,String peer) throws IOException; //share message to all nodes
     public void broadcastMessage(IMessage message) throws IOException;
@@ -50,5 +44,7 @@ public interface INTW {
     public void broadcastResponse(Block block,boolean response) throws IOException;
 
     void sendPeers(ArrayList<String> ips,ArrayList<Integer> types) throws IOException;
+    public void listenforPublicKey(PairKeyPK t);
+    public PublicKey getPkfromPairPK(String nextPrimary);
 
-}
+    }
