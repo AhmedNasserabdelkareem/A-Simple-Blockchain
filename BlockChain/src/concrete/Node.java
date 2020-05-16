@@ -68,6 +68,7 @@ public class Node implements INode {
     private ArrayList<IMessage> changeViewMessages;
     private ArrayList<IMessage> commitMessages;
     private ArrayList<IMessage> prepareMessages;
+    private ArrayList<IMessage> viewChangedMessages;
     private IUtils utils = Utils.getInstance();
     ArrayList<String> ips;
     ArrayList<Integer> nodeTypes ;
@@ -90,6 +91,7 @@ public class Node implements INode {
         prepareMessages = new ArrayList<>();
         commitMessages = new ArrayList<>();
         changeViewMessages = new ArrayList<>();
+        viewChangedMessages = new ArrayList<>();
         ips = new ArrayList<>();
         nodeTypes = new ArrayList<>();
         chain = new ArrayList<>();
@@ -97,12 +99,10 @@ public class Node implements INode {
         setNTW(network);
         readConfiguration();
         network.setNode(this);
-
         network.sendPeers(ips,nodeTypes);
         Thread th = new Thread((Runnable) network);
         th.start();
         generateKeyPair();
-
         prepare2issue(0,100);
     }
 
@@ -678,6 +678,13 @@ public class Node implements INode {
                     insertPrepareMessageInPool(prepareMessages);
                     prepareMessages.clear();
                 }
+            case "view changed":
+//                viewChangedMessages.add(t);
+//                if (viewChangedMessages.size() == network.getsizeofPeers()) {
+//
+//                    viewChangedMessages.clear();
+//                }
+                checkTruthyOfNewView(t);
             default:
                 System.out.println("No Type");
         }

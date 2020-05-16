@@ -46,13 +46,14 @@ public class Network implements INTW ,Runnable{
             if (peer.equals(getNextPrimary())){
                 m.setisPrimary(true);
             }
+            if (!getExternalIP().equals(getNextPrimary())) {
                 Socket socket = new Socket(InetAddress.getByName(peer), PORT);
                 outputStream = new ObjectOutputStream(socket.getOutputStream());
                 outputStream.writeObject(m);
                 outputStream.flush();
                 outputStream.close();
                 socket.close();
-
+            }
         }
 
     }
