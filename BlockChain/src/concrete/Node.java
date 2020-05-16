@@ -31,7 +31,6 @@ public class Node implements INode {
     private ArrayList<String> peers;
     private ArrayList<ITransaction> transactions;
     private IBlock currentBlock;
-    private ArrayList<IBlock> blockChain;
     private HashMap<Integer, PublicKey> id2keys;
     private String CONFIG_FILE;
     private PublicKey nodePublicKey;
@@ -92,13 +91,13 @@ public class Node implements INode {
         CONFIG_FILE = config_file;
         peers = new ArrayList<>();
         transactions = new ArrayList<>();
-        blockChain = new ArrayList<>();
         id2keys = new HashMap<>();
         prepareMessages = new ArrayList<>();
         commitMessages = new ArrayList<>();
         changeViewMessages = new ArrayList<>();
         ips = new ArrayList<>();
         nodeTypes = new ArrayList<>();
+        chain = new ArrayList<>();
         INTW network = new Network();
         setNTW(network);
         readConfiguration();
@@ -361,7 +360,7 @@ public class Node implements INode {
 
     @Override
     public void addToChain(IBlock block) {
-        blockChain.add(block);
+        chain.add(block);
     }
 
     @Override
