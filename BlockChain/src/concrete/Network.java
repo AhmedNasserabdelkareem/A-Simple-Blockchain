@@ -45,6 +45,7 @@ public class Network implements INTW ,Runnable{
 
             if (peer.equals(getNextPrimary())){
                 m.setisPrimary(true);
+                m.setPrimaryPublicKey(getPkfromPairPK(getNextPrimary()));
             }
             if (!getExternalIP().equals(getNextPrimary())) {
                 Socket socket = new Socket(InetAddress.getByName(peer), PORT);
@@ -56,6 +57,15 @@ public class Network implements INTW ,Runnable{
             }
         }
 
+    }
+
+    public PublicKey getPkfromPairPK(String nextPrimary) {
+        for (PairKeyPK pk:node.getPublicKeysIP()) {
+            if(pk.getIp().equals(nextPrimary)){
+                return pk.getPk();
+            }
+        }
+        return null;
     }
 
 
@@ -198,6 +208,8 @@ public class Network implements INTW ,Runnable{
                 listenForBlocks((Block) t);
             }else if ( t instanceof Response) {
                 listenForResponses((Response) t);
+            }else if ( t instanceof PairKeyPK) {
+                listenforPublicKey((PairKeyPK) t);
             }else if (t instanceof HashMap){
                 setPublicKeys((HashMap<Integer, PublicKey>) t);
             }else if (t instanceof Message) {
@@ -207,6 +219,10 @@ public class Network implements INTW ,Runnable{
             }
         }
 
+    }
+
+    public void listenforPublicKey(PairKeyPK t) {
+        node.receivePK(t);
     }
 
     public void listenForMessages(IMessage t) throws IOException {
@@ -241,13 +257,20 @@ public class Network implements INTW ,Runnable{
     }
 
     @Override
-    public void broadcastPK(String ip, PublicKey publicKey) throws IOException {
-
+    public void broadcastPK(PairKeyPK pair) throws IOException {
+        for (String p:peers) {
+            sharepublickeys(pair,p);
+        }
     }
 
     @Override
-    public void sharepublickeys(String ip, PublicKey publicKey, String peer) throws IOException {
-
+    public void sharepublickeys(PairKeyPK pair, String peer) throws IOException {
+        Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+        outputStream = new ObjectOutputStream(socket.getOutputStream());
+        outputStream.writeObject(pair);
+        outputStream.flush();
+        outputStream.close();
+        socket.close();
     }
 
     @Override
@@ -255,15 +278,6 @@ public class Network implements INTW ,Runnable{
         return null;
     }
 
-    @Override
-    public PublicKey getPrimaryID(int viewNum) {
-        return null;
-    }
-
-    @Override
-    public INode getPrimaryNode(int nodeIndex) {
-        return null;
-    }
 
     @Override
     public void shareMessage(IMessage message,String peer) throws IOException {

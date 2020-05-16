@@ -69,6 +69,12 @@ public class Node implements INode {
     private ArrayList<IMessage> commitMessages;
     private ArrayList<IMessage> prepareMessages;
     private ArrayList<IMessage> viewChangedMessages;
+
+    public ArrayList<PairKeyPK> getPublicKeysIP() {
+        return publicKeysIP;
+    }
+
+    private ArrayList<PairKeyPK> publicKeysIP;
     private IUtils utils = Utils.getInstance();
     ArrayList<String> ips;
     ArrayList<Integer> nodeTypes ;
@@ -95,6 +101,7 @@ public class Node implements INode {
         ips = new ArrayList<>();
         nodeTypes = new ArrayList<>();
         chain = new ArrayList<>();
+        publicKeysIP = new ArrayList<>();
         INTW network = new Network();
         setNTW(network);
         readConfiguration();
@@ -413,7 +420,8 @@ public class Node implements INode {
         }
         this.nodeIp = this.network.getIP();
         System.out.println("node ip: "+nodeIp);
-        this.network.broadcastPK(this.nodeIp,this.nodePublicKey);
+        //this.network.broadcastPK(this.nodeIp,this.nodePublicKey);
+        this.network.broadcastPK(new PairKeyPK(this.nodeIp,this.nodePublicKey));
 
         System.out.println("Node keys are generated");
         System.out.println("Node's public key: " + this.nodePublicKey);
@@ -767,11 +775,11 @@ public class Node implements INode {
         if (this.viewChangePool.getPoolSize() >= 2 * this.maxMaliciousNodes + 1) {
             this.prevState = this.state;
             this.state = "change view";
-            if (this.nodePublicKey == this.network.getPrimaryID(this.newViewNum)) {
-                this.primaryNodePublicKey = this.nodePublicKey;
-                this.viewNum = this.newViewNum;
-                generateViewChangedMessage();
-            }
+//            if (this.nodePublicKey == this.network.getPrimaryID(this.newViewNum)) {
+//                this.primaryNodePublicKey = this.nodePublicKey;
+//                this.viewNum = this.newViewNum;
+//                generateViewChangedMessage();
+//            }
         }
 
 
@@ -997,5 +1005,10 @@ public class Node implements INode {
     @Override
     public void setPrevState(String prevState) {
         this.prevState = prevState;
+    }
+
+    @Override
+    public void receivePK(PairKeyPK t) {
+        publicKeysIP.add(t);
     }
 }
