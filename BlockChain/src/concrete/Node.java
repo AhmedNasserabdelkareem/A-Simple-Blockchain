@@ -21,6 +21,7 @@ public class Node implements INode {
     }
 
     private int difficulty;
+    private boolean isInterrupt =false;
 
     enum Types {client, miner};
     HashMap<Integer, ITransaction> AvOps = new HashMap<>();
@@ -30,7 +31,6 @@ public class Node implements INode {
     private int maxTransaction;
     private ArrayList<String> peers;
     private ArrayList<ITransaction> transactions;
-    private IBlock currentBlock;
     private HashMap<Integer, PublicKey> id2keys;
     private String CONFIG_FILE;
     private PublicKey nodePublicKey;
@@ -208,15 +208,15 @@ public class Node implements INode {
 
     @Override
     public void createBlock() throws IOException {
-        currentBlock = new Block();
-        currentBlock.setTransactions(transactions);
-        currentBlock.setPrevBlock(getLastBlock());
+        block = new Block();
+        block.setTransactions(transactions);
+        block.setPrevBlock(getLastBlock());
         if (isPow) {
-            pow(currentBlock,difficulty);
+            pow(block,difficulty);
             System.out.println("Create Block Pow");
         } else {
             System.out.println("Create Block BFT");
-            generateNewBlockMessage(currentBlock);
+            generateNewBlockMessage(block);
         }
     }
 
@@ -386,7 +386,7 @@ public class Node implements INode {
         String merkleRoot = Utils.getMerkleRoot(block.getTransactions());
         block.getHeader().setTransactionsHash(merkleRoot);
         String target = Utils.getDificultyString(difficulty); //Create a string with difficulty * "0"
-        while (!hash.substring(0, difficulty).equals(target)) {
+        while (!hash.substring(0, difficulty).equals(target) && !isInterrupt) {
             nonce++;
             block.getHeader().setNonce(nonce);
             hash = block.getHeader().calculateHash();
@@ -664,7 +664,7 @@ public class Node implements INode {
                 setIsPrimary();
                 receiveConfigs(t);
                 if (isPrimary)
-                    generateNewBlockMessage(currentBlock);
+                    generateNewBlockMessage(block);
             case "change view":
                 changeViewMessages.add(t);
                 if (changeViewMessages.size() == network.getsizeofPeers()) {
@@ -812,9 +812,9 @@ public class Node implements INode {
     @Override
     public void receiveBlock(IBlock block) {
         this.block = block;
-        //verify block
-        // interupt mining of the current block
-        // add block to chain
+        boolean b = block.verifyBlockHash();
+        this.isInterrupt = true;
+        addToChain(block);
     }
 
 
@@ -955,12 +955,12 @@ public class Node implements INode {
 
     @Override
     public IBlock getCurrentBlock() {
-        return currentBlock;
+        return block;
     }
 
     @Override
     public void setCurrentBlock(IBlock currentBlock) {
-        this.currentBlock = currentBlock;
+        this.block = currentBlock;
     }
 
     @Override
