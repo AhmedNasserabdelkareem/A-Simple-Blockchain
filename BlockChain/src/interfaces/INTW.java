@@ -26,7 +26,7 @@ public interface INTW {
 
     public void broadcastPK(PairKeyPK pair) throws IOException;
     public void sharepublickeys(PairKeyPK pair,String peer) throws IOException;
-    public String getIP();
+    public String getIP() throws IOException;
 
 
     public void shareMessage(IMessage message,String peer) throws IOException; //share message to all nodes
