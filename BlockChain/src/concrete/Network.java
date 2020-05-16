@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class Network implements INTW {
+public class Network implements INTW ,Runnable{
     private ArrayList<String> peers = new ArrayList<>();
     private ArrayList<String> tableOfNodes = new ArrayList<>();
     private String PrimaryPeer  ="";
@@ -73,7 +73,6 @@ public class Network implements INTW {
         this.node  =node;
         this.sourceIP = InetAddress.getByName(getExternalIP());
         constructTable();
-        startServer();
     }
 
     @Override
@@ -246,5 +245,16 @@ public class Network implements INTW {
             shareMessage(message,p);
         }
 
+    }
+
+    @Override
+    public void run() {
+        try {
+            startServer();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }

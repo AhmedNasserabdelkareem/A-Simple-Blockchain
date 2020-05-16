@@ -101,6 +101,7 @@ public class Node implements INode {
         readConfiguration();
         network.setNode(this);
         generateKeyPair();
+        prepare2issue(0,3);
     }
 
     private void prepare2issue(int lowerB, int upperB) {
