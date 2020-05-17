@@ -2,7 +2,6 @@ package concrete;
 
 import interfaces.*;
 import jdk.internal.util.xml.impl.Pair;
-import com.google.gson.GsonBuilder;
 import org.bouncycastle.*;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -69,6 +68,12 @@ public class Node implements INode {
     private ArrayList<IMessage> commitMessages;
     private ArrayList<IMessage> prepareMessages;
     private ArrayList<IMessage> viewChangedMessages;
+
+    public ArrayList<PairKeyPK> getPublicKeysIP() {
+        return publicKeysIP;
+    }
+
+    private ArrayList<PairKeyPK> publicKeysIP;
     private IUtils utils = Utils.getInstance();
     ArrayList<String> ips;
     ArrayList<Integer> nodeTypes ;
@@ -95,6 +100,7 @@ public class Node implements INode {
         ips = new ArrayList<>();
         nodeTypes = new ArrayList<>();
         chain = new ArrayList<>();
+        publicKeysIP = new ArrayList<>();
         INTW network = new Network();
         setNTW(network);
         readConfiguration();
@@ -103,7 +109,15 @@ public class Node implements INode {
         Thread th = new Thread((Runnable) network);
         th.start();
         generateKeyPair();
+        if(getIsPrimary()) {
+            IMessage configMessage = new Message("config", getIsPrimary(), nodePublicKey);
+            sendConfigMessageAtFirst(configMessage);
+        }
         prepare2issue(0,100);
+    }
+
+    private void sendConfigMessageAtFirst(IMessage configMessage) throws IOException {
+        network.sendConfigMessageAtFirst(configMessage);
     }
 
     private void prepare2issue(int lowerB, int upperB) {
@@ -412,7 +426,8 @@ public class Node implements INode {
             throw new RuntimeException(e);
         }
         this.nodeIp = this.network.getIP();
-        this.network.broadcastPK(this.nodeIp,this.nodePublicKey);
+        System.out.println("node ip: "+nodeIp);
+        this.network.broadcastPK(new PairKeyPK(this.nodeIp,this.nodePublicKey));
 
         System.out.println("Node keys are generated");
         System.out.println("Node's public key: " + this.nodePublicKey);
@@ -442,6 +457,11 @@ public class Node implements INode {
 
     public void receiveConfigs(IMessage configMessage) {
         System.out.println("Node received config message");
+        System.out.println("max malicious nodes in config message: " + configMessage.getMaxMaliciousNodes());
+        System.out.println("primary id in config message: " + configMessage.getPrimaryPublicKey().toString());
+        System.out.println("is primary in config message: " + configMessage.isPrimary());
+        System.out.println("is primary from network call: " + getIsPrimary());
+
         this.maxMaliciousNodes = configMessage.getMaxMaliciousNodes();
         this.primaryNodePublicKey = configMessage.getPrimaryPublicKey();
         this.isPrimary = configMessage.isPrimary();
@@ -496,6 +516,10 @@ public class Node implements INode {
      * and broadcast it to all nodes*/
     @Override
     public void generatePreprepareMessage() throws IOException {
+        System.out.println("primary node public key: "+ this.primaryNodePublicKey);
+        System.out.println("primary node public key: "+ this.nodeSignature);
+        System.out.println("primary node public key: "+ this.nodePublicKey);
+        System.out.println("primary node public key: "+ this.newBlock.getHeader().getHash());
         IMessage prePrepareMessage = new Message("pre-prepare", this.primaryNodePublicKey, this.seqNum, this.viewNum, this.nodeSignature, this.nodePublicKey, this.newBlock);
         System.out.println("pre-prepare message is created");
         broadcastMessage(prePrepareMessage);
@@ -505,6 +529,19 @@ public class Node implements INode {
      * they will take the block inside it to continue the next phases*/
     @Override
     public void insertPreprepareMessage(IMessage preprepareMessage) throws IOException {
+        System.out.println("preprepare message max malicious nodes: " + preprepareMessage.getMaxMaliciousNodes());
+        System.out.println("preprepare message block hash: " + preprepareMessage.getBlock().getHeader().getHash());
+        System.out.println("preprepare message type: " + preprepareMessage.getMessageType());
+        System.out.println("preprepare message sending node public key: " + preprepareMessage.getNodePublicKey());
+        System.out.println("preprepare message primary public key the same the above: " + preprepareMessage.getPrimaryPublicKey());
+        System.out.println("preprepare message seq num: " + preprepareMessage.getSeqNum());
+        System.out.println("preprepare message view num: " + preprepareMessage.getViewNum());
+
+        System.out.println("verify peer signature : " + preprepareMessage.verifyPeerSignature());
+        System.out.println("primary ley for the current node: " + this.primaryNodePublicKey);
+        System.out.println("node view num: " + this.viewNum);
+        System.out.println("Node new block hash: " + this.newBlock.getHeader().getHash());
+
         if (preprepareMessage.getMessageType().equals("pre-prepare") && preprepareMessage.verifyPeerSignature() &&
                 preprepareMessage.getPrimaryPublicKey() == this.primaryNodePublicKey &&
                 preprepareMessage.getViewNum() == this.viewNum &&
@@ -744,11 +781,11 @@ public class Node implements INode {
         if (this.viewChangePool.getPoolSize() >= 2 * this.maxMaliciousNodes + 1) {
             this.prevState = this.state;
             this.state = "change view";
-            if (this.nodePublicKey == this.network.getPrimaryID(this.newViewNum)) {
-                this.primaryNodePublicKey = this.nodePublicKey;
-                this.viewNum = this.newViewNum;
-                generateViewChangedMessage();
-            }
+//            if (this.nodePublicKey == this.network.getPrimaryID(this.newViewNum)) {
+//                this.primaryNodePublicKey = this.nodePublicKey;
+//                this.viewNum = this.newViewNum;
+//                generateViewChangedMessage();
+//            }
         }
 
 
@@ -897,7 +934,7 @@ public class Node implements INode {
 
     @Override
     public boolean getIsPrimary() {
-        return this.isPrimary;
+        return network.isPrimary();
     }
 
     @Override
@@ -974,5 +1011,10 @@ public class Node implements INode {
     @Override
     public void setPrevState(String prevState) {
         this.prevState = prevState;
+    }
+
+    @Override
+    public void receivePK(PairKeyPK t) {
+        publicKeysIP.add(t);
     }
 }
