@@ -41,8 +41,6 @@ public class Network implements INTW ,Runnable{
     public void sendConfigMessage(IMessage m) throws IOException {
         isPrimary = false;
         for (String peer:peers) {
-
-
             if (peer.equals(getNextPrimary())){
                 m.setisPrimary(true);
                 m.setPrimaryPublicKey(getPkfromPairPK(getNextPrimary()));
@@ -63,6 +61,8 @@ public class Network implements INTW ,Runnable{
             if (peer.equals(getExternalIP())){
                 m.setisPrimary(true);
                 m.setPrimaryPublicKey(getPkfromPairPK(getNextPrimary()));
+            }else{
+
             }
                 Socket socket = new Socket(InetAddress.getByName(peer), PORT);
                 outputStream = new ObjectOutputStream(socket.getOutputStream());

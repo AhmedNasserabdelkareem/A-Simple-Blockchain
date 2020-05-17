@@ -109,11 +109,11 @@ public class Node implements INode {
         Thread th = new Thread((Runnable) network);
         th.start();
         generateKeyPair();
+        prepare2issue(0,100);
         if(getIsPrimary()) {
-            IMessage configMessage = new Message("config", getIsPrimary(), nodePublicKey);
+            IMessage configMessage = new Message("config", false, nodePublicKey);
             sendConfigMessageAtFirst(configMessage);
         }
-        prepare2issue(0,100);
     }
 
     private void sendConfigMessageAtFirst(IMessage configMessage) throws IOException {
@@ -220,12 +220,15 @@ public class Node implements INode {
         block = new Block();
         block.setTransactions(transactions);
         block.setPrevBlock(getLastBlock());
+        block.getBlockHash();
+
         if (isPow) {
             pow(block,difficulty);
             System.out.println("Create Block Pow");
         } else {
             System.out.println("Create Block BFT");
-            generateNewBlockMessage(block);
+            //generateNewBlockMessage(block);
+            generateConfigMessage(nodePublicKey);
         }
     }
 
