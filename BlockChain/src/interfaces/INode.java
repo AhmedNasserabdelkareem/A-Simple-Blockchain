@@ -69,14 +69,14 @@ public interface INode {
     public IMessagePool getCommitPool();
 
 
-    public IMessagePool getChangeViewPool();
+    //public IMessagePool getChangeViewPool();
 
 
     public void generateNewBlockMessage(IBlock block) throws IOException;
 
-    public void generateViewChangeMessage(int newViewNum) throws IOException;
+    //public void generateViewChangeMessage(int newViewNum) throws IOException;
 
-    public void generateViewChangedMessage() throws IOException;
+    //public void generateViewChangedMessage() throws IOException;
 
     public void generatePreprepareMessage() throws IOException;
 
@@ -100,9 +100,9 @@ public interface INode {
     public void insertPreprepareMessage(IMessage preprepareMessage) throws IOException;
     public void insertPrepareMessageInPool(ArrayList<IMessage> prepareMessages) throws IOException;
     public void insertCommitMessageInPool(ArrayList<IMessage> commitMessages) throws IOException;
-    public void insertChangeViewMessageInPool(ArrayList<IMessage> changeViewMessages) throws IOException;
-    public void checkTruthyOfNewView(IMessage viewChangedMessage);
-    public boolean verifyNewViewPool(IMessagePool messagePool);
+    //public void insertChangeViewMessageInPool(ArrayList<IMessage> changeViewMessages) throws IOException;
+    //public void checkTruthyOfNewView(IMessage viewChangedMessage);
+    //public boolean verifyNewViewPool(IMessagePool messagePool);
     public INode getPrimaryNode(int nodeIndex);
     public void receiveMessage(IMessage t) throws IOException;
     public void sendConfigMessage(IMessage m) throws IOException;

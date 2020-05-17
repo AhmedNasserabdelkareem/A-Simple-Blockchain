@@ -48,8 +48,6 @@ public class Node implements INode {
     // private ArrayList<PublicKey> peers;
     private IMessagePool preparePool = new MessagePool(); //contains prepare messages
     private IMessagePool commitPool = new MessagePool();
-    ; // contains commit messages
-    private IMessagePool viewChangePool = new MessagePool();
     private byte[] nodeSignature;
     private IValidator validator; //validator is a helper node
     private Timer configTimer;
@@ -66,10 +64,8 @@ public class Node implements INode {
     private HashMap<Integer, ITransaction> issuedTransactions;
     private HashMap<Integer, KeyPair> myKeyPairs;
     private int from = 0, to = 0;
-    private ArrayList<IMessage> changeViewMessages;
     private ArrayList<IMessage> commitMessages;
     private ArrayList<IMessage> prepareMessages;
-    private ArrayList<IMessage> viewChangedMessages;
 
     public ArrayList<PairKeyPK> getPublicKeysIP() {
         return publicKeysIP;
@@ -97,8 +93,6 @@ public class Node implements INode {
         id2keys = new HashMap<>();
         prepareMessages = new ArrayList<>();
         commitMessages = new ArrayList<>();
-        changeViewMessages = new ArrayList<>();
-        viewChangedMessages = new ArrayList<>();
         ips = new ArrayList<>();
         nodeTypes = new ArrayList<>();
         chain = new ArrayList<>();
@@ -231,10 +225,10 @@ public class Node implements INode {
             pow(block, difficulty);
             System.out.println("Create Block Pow");
         } else {
-            System.out.println("Create Block BFT");
+            System.out.println("PBFT creating block transactions");
             //generateNewBlockMessage(block);
-            if (isPrimary)
-                generateConfigMessage(this.nodePublicKey);
+            if (getIsPrimary())
+                generateNewBlockMessage(block);
         }
     }
 
@@ -455,29 +449,6 @@ public class Node implements INode {
 
     }
 
-
-    /******/
-    public void generateConfigMessage(PublicKey primaryNodePublicKey) throws IOException {
-        this.maxMaliciousNodes = (sizeOfNetwork() - 1) / 3;
-        IMessage configMessage = new Message("config", isPrimary, primaryNodePublicKey);
-        System.out.println("Generating config message...");
-        sendConfigMessage(configMessage);
-    }
-
-    public void receiveConfigs(IMessage configMessage) {
-        System.out.println("Node received config message");
-        System.out.println("max malicious nodes in config message: " + configMessage.getMaxMaliciousNodes());
-        System.out.println("primary id in config message: " + configMessage.getPrimaryPublicKey().toString());
-        System.out.println("is primary in config message: " + configMessage.isPrimary());
-        System.out.println("is primary from network call: " + getIsPrimary());
-
-        this.maxMaliciousNodes = configMessage.getMaxMaliciousNodes();
-        this.primaryNodePublicKey = configMessage.getPrimaryPublicKey();
-        this.isPrimary = configMessage.isPrimary();
-
-    }
-
-
     /*this is the new block that the client broadcasts it to all nodes*/
     @Override
     public IBlock getNewBlock() {
@@ -494,17 +465,17 @@ public class Node implements INode {
     public void setNewBlock(IMessage newBlockMessage) throws IOException {
 
         System.out.println("New block is received");
-        if (newBlockMessage.getMessageType().equals("new block") &&
-                newBlockMessage.getPrimaryPublicKey() == primaryNodePublicKey &&
-                newBlockMessage.getSeqNum() == this.seqNum && newBlockMessage.getViewNum() == this.viewNum
+        if (newBlockMessage.getMessageType().equals("new block")
                 && verifyTransactionsSignature(newBlockMessage.getBlock().getTransactions())) {
-            //        && newBlockMessage.getBlock().verifySignature()) { // i mean by block signature -> transaction signature
+            this.primaryNodePublicKey = newBlockMessage.getPrimaryPublicKey();
+            this.viewNum = newBlockMessage.getViewNum();
+            this.maxMaliciousNodes = newBlockMessage.getMaxMaliciousNodes();
             System.out.println("passing set new block validation");
             this.newBlock = newBlockMessage.getBlock();
         }
         generateNodeSignature();
 
-        if (isPrimary) {
+        if (getIsPrimary()) {
             System.out.println("generate new pre-prepare message as the node is primary");
             generatePreprepareMessage();
         }
@@ -513,10 +484,14 @@ public class Node implements INode {
     /*this is only for the primary which will let the client to sent the block*/
     @Override
     public void generateNewBlockMessage(IBlock block) throws IOException {
-        this.validator = new Validator(this.primaryNodePublicKey, this.seqNum, this.viewNum, this.maxMaliciousNodes, block);
-        this.validator.initiateNewBlockMessage(null, block.getTransactions());
+        /*node public key is the primary public key as the primary who will call this function*/
+        this.viewNum++;
+        this.maxMaliciousNodes = (sizeOfNetwork()-1)/3;
+        this.validator = new Validator(this.nodePublicKey, this.seqNum, this.viewNum, this.maxMaliciousNodes, block);
+        this.validator.initiateNewBlockMessage();
         // timer
         IMessage newBlockMessage = validator.finalizeBlock();
+        this.newBlock = block;
         System.out.println("new block is created");
         broadcastMessage(newBlockMessage);
     }
@@ -529,7 +504,8 @@ public class Node implements INode {
         System.out.println("primary node public key: " + this.nodeSignature);
         System.out.println("primary node public key: " + this.nodePublicKey);
         System.out.println("primary node public key: " + this.newBlock.getHeader().getHash());
-        IMessage prePrepareMessage = new Message("pre-prepare", this.primaryNodePublicKey, this.seqNum, this.viewNum, this.nodeSignature, this.nodePublicKey, this.newBlock);
+        /*node public key is the primary public key as he is the only one who will call this method*/
+        IMessage prePrepareMessage = new Message("pre-prepare", this.nodePublicKey, this.seqNum, this.viewNum, this.nodeSignature, this.nodePublicKey, this.newBlock);
         System.out.println("pre-prepare message is created");
         broadcastMessage(prePrepareMessage);
     }
@@ -554,7 +530,7 @@ public class Node implements INode {
         if (preprepareMessage.getMessageType().equals("pre-prepare") && preprepareMessage.verifyPeerSignature() &&
                 preprepareMessage.getPrimaryPublicKey() == this.primaryNodePublicKey &&
                 preprepareMessage.getViewNum() == this.viewNum &&
-                preprepareMessage.getBlock().getHeader().getHash().equals(this.newBlock.getHeader().getHash())) {
+                preprepareMessage.getBlock().getBlockHash().equals(this.newBlock.getBlockHash())) {
 
             System.out.println("pre-prepare validation is passed");
             this.state = "pre-prepare";
@@ -564,7 +540,7 @@ public class Node implements INode {
             System.out.println("Error with secondary Node in preprepare phase verification so the node will ignore this message");
         }
 
-        if (!isPrimary) {
+        if (!getIsPrimary()) {
             System.out.println("node is not primary so it will generate prepare message");
             generatePrepareMessage();
         }
@@ -604,22 +580,18 @@ public class Node implements INode {
                     prepareMessage.getPrimaryPublicKey() == this.primaryNodePublicKey &&
                     prepareMessage.getViewNum() == this.viewNum && prepareMessage.getSeqNum() == this.seqNum &&
                     prepareMessage.verifyPeerSignature() &&
-                    prepareMessage.getBlock().getHeader().getHash().equals(this.block.getHeader().getHash()) &&
+                    prepareMessage.getBlock().getBlockHash().equals(this.block.getBlockHash()) &&
                     !this.preparePool.isMessageExists(prepareMessage)) {
 
                 System.out.println("prepare validation is passed");
                 if (prepareMessage.getNodePublicKey() == this.primaryNodePublicKey) {
                     System.out.println("Error in prepare phase the primary sent a message");
-                    this.newViewNum = this.viewNum + 1;
-                    generateViewChangeMessage(this.newViewNum);
+                } else {
+                    /*not sent by a primary*/
+                    if (verifyBlockTransactions(prepareMessage.getBlock().getTransactions())) {
+                        this.preparePool.insertMessage(prepareMessage);
+                    }
                 }
-
-                if (verifyBlockTransactions(prepareMessage.getBlock().getTransactions())) {
-                    this.preparePool.insertMessage(prepareMessage);
-                }
-
-
-                this.preparePool.insertMessage(prepareMessage);
             } else {
                 System.out.println("Error with secondary node in prepare phase validation, the node will ignore this message");
             }
@@ -668,7 +640,7 @@ public class Node implements INode {
                     commitMessage.getPrimaryPublicKey() == this.primaryNodePublicKey &&
                     commitMessage.getSeqNum() == this.seqNum && commitMessage.getViewNum() == this.viewNum &&
                     commitMessage.verifyPeerSignature() &&
-                    commitMessage.getBlock().getHeader().getHash().equals(this.block.getHeader().getHash()) &&
+                    commitMessage.getBlock().getBlockHash().equals(this.block.getBlockHash()) &&
                     !commitPool.isMessageExists(commitMessage)) {
                 System.out.println("commit validation is passed");
                 this.commitPool.insertMessage(commitMessage);
@@ -700,18 +672,6 @@ public class Node implements INode {
                 setNewBlock(t);
             case "pre-prepare":
                 insertPreprepareMessage(t);
-            case "config":
-                network.setPrimary(t.isPrimary());
-                setIsPrimary();
-                receiveConfigs(t);
-                if (isPrimary)
-                    generateNewBlockMessage(block);
-            case "change view":
-                changeViewMessages.add(t);
-                if (changeViewMessages.size() == network.getsizeofPeers()) {
-                    insertChangeViewMessageInPool(changeViewMessages);
-                    changeViewMessages.clear();
-                }
             case "commit":
                 commitMessages.add(t);
                 if (commitMessages.size() == network.getsizeofPeers()) {
@@ -724,13 +684,7 @@ public class Node implements INode {
                     insertPrepareMessageInPool(prepareMessages);
                     prepareMessages.clear();
                 }
-            case "view changed":
-//                viewChangedMessages.add(t);
-//                if (viewChangedMessages.size() == network.getsizeofPeers()) {
-//
-//                    viewChangedMessages.clear();
-//                }
-                checkTruthyOfNewView(t);
+
             default:
                 System.out.println("No Type");
         }
@@ -745,99 +699,6 @@ public class Node implements INode {
         return network.getsizeofPeers() + 1;
     }
 
-
-    @Override
-    public IMessagePool getChangeViewPool() {
-        return this.viewChangePool;
-    }
-
-    /*the asks to change the view which means
-     it asks to change the primary node as the primary node is malicious*/
-    @Override
-    public void generateViewChangeMessage(int newViewNum) throws IOException {
-        IMessage changeViewMessage = new Message("change view", this.primaryNodePublicKey, this.seqNum, this.viewNum, this.nodeSignature, this.block, this.newViewNum, this.nodePublicKey);
-        this.viewChangePool.insertMessage(changeViewMessage);
-
-        broadcastMessage(changeViewMessage);
-    }
-
-    /*the node will validate the changeView messages that are sent to here
-     * and insert them in her changeView pool if a message is invalid it will ignore it.
-     * the node has to receive min 2*f+1 changeView message .
-     * when the new primary receives his 2*f+1 changeView messages that refers to him to be the new primary
-     * he will set him self as the new primary and broadcast that to all nodes*/
-    @Override
-    public void insertChangeViewMessageInPool(ArrayList<IMessage> changeViewMessages) throws IOException {
-
-        IMessage changeViewMessage;
-        for (int i = 0; i < changeViewMessages.size(); i++) {
-            changeViewMessage = changeViewMessages.get(i);
-
-            if (changeViewMessage.getMessageType().equals("change view") && changeViewMessage.getPrimaryPublicKey() == this.primaryNodePublicKey &&
-                    changeViewMessage.getViewNum() == this.viewNum && changeViewMessage.getSeqNum() == this.seqNum &&
-                    changeViewMessage.verifyPeerSignature() &&
-                    changeViewMessage.getBlock().getHeader().getHash().equals(this.block.getHeader().getHash()) &&
-                    !this.viewChangePool.isMessageExists(changeViewMessage) &&
-                    changeViewMessage.getNewViewNum() == this.newViewNum) {
-
-                this.viewChangePool.insertMessage(changeViewMessage);
-
-            } else {
-                System.out.println("Error with node in view change phase verification, the node will ignore this message.");
-            }
-        }
-
-        if (this.viewChangePool.getPoolSize() >= 2 * this.maxMaliciousNodes + 1) {
-            this.prevState = this.state;
-            this.state = "change view";
-//            if (this.nodePublicKey == this.network.getPrimaryID(this.newViewNum)) {
-//                this.primaryNodePublicKey = this.nodePublicKey;
-//                this.viewNum = this.newViewNum;
-//                generateViewChangedMessage();
-//            }
-        }
-
-
-    }
-
-
-    /*the new primary will generate it to be broadcasted to all the network */
-    @Override
-    public void generateViewChangedMessage() throws IOException {
-        IMessage viewChangedMessage = new Message("view changed", this.primaryNodePublicKey, this.seqNum, this.newViewNum, this.nodeSignature, this.block, this.viewChangePool);
-        broadcastMessage(viewChangedMessage);
-    }
-
-
-    /*other nodes will verify that he is right and he is the new primary by checking his commit pool*/
-    @Override
-    public void checkTruthyOfNewView(IMessage viewChangedMessage) {
-        if (viewChangedMessage.getMessageType().equals("view changed") && viewChangedMessage.getSeqNum() == this.seqNum &&
-                viewChangedMessage.getViewNum() == this.viewNum && viewChangedMessage.verifyPeerSignature() &&
-                viewChangedMessage.getBlock().getHeader().getHash().equals(this.block.getHeader().getHash()) &&
-                verifyNewViewPool(viewChangedMessage.getMessagePool())) {
-            this.primaryNodePublicKey = viewChangedMessage.getPrimaryPublicKey();
-            this.viewNum = viewChangedMessage.getViewNum();
-            this.state = this.prevState;
-            System.out.println("View changed to be " + this.viewNum + " for the primary " + this.primaryNodePublicKey);
-        } else {
-            System.out.println("Error with secondary node while receiving the confirmation message for the new view so it will ignore it.");
-        }
-    }
-
-    /*secondary nodes need to check that the new primary is telling the truth by verifying its commit pool*/
-    @Override
-    public boolean verifyNewViewPool(IMessagePool messagePool) {
-        int counter = 0;
-        IMessage[] pool = (IMessage[]) messagePool.getPool().toArray();
-        for (int i = 0; i < pool.length; i++) {
-            if (this.viewChangePool.isMessageExists(pool[i]))
-                counter++;
-        }
-        if (counter >= 2 * this.maxMaliciousNodes + 1)
-            return true;
-        return false;
-    }
 
     @Override
     public INode getPrimaryNode(int nodeIndex) {
