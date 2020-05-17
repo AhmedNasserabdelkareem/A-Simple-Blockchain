@@ -12,13 +12,13 @@ public interface INTW {
     public void setNode(Node node) throws IOException, ClassNotFoundException;
     public void listenForNewConnections(String ip) throws IOException; //listens for any new node request and add it to peers List
     public ArrayList<String> getConnectedPeers();
-    public void listenForTransactions(Transaction t) throws IOException;
+    public void listenForTransactions(Transaction t) throws IOException, InterruptedException;
     public void issueTransaction(Transaction transaction) throws IOException;//to all ips / primary
     public void shareBlock(IBlock block, String peer) throws IOException; //share the block using the agreement method
     public void listenForResponses(Response r);
     public void listenForBlocks(Block b); //listen for any shared blocks and calls agreeOnBlock (only if node type is 1 in pow)
     public String getExternalIP() throws IOException;
-    public void startServer() throws IOException, ClassNotFoundException;
+    public void startServer() throws IOException, ClassNotFoundException, InterruptedException;
     public void setPublicKeys(HashMap<Integer,PublicKey> t);
     public void broadcastlock(IBlock block) throws IOException;
     public void broadcastPK(HashMap<Integer,PublicKey> keys) throws IOException;
@@ -31,7 +31,7 @@ public interface INTW {
 
     public void shareMessage(IMessage message,String peer) throws IOException; //share message to all nodes
     public void broadcastMessage(IMessage message) throws IOException;
-    public void listenForMessages(IMessage t) throws IOException;
+    public void listenForMessages(IMessage t) throws IOException, InterruptedException;
     public boolean isPrimary();
 
     public void setPrimary(boolean primary);

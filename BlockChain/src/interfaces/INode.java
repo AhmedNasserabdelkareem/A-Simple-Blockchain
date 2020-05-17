@@ -15,9 +15,9 @@ public interface INode {
 
     public int getNodeType();
 
-    public void addTransaction(Transaction t) throws IOException; //when # of ts == max , call create block
+    public void addTransaction(Transaction t) throws IOException, InterruptedException; //when # of ts == max , call create block
 
-    public void createBlock() throws IOException; //creates a block using the transactions , prev block and agreement method
+    public void createBlock() throws IOException, InterruptedException; //creates a block using the transactions , prev block and agreement method
 
     public boolean verifyTransaction(ITransaction t);
 
@@ -72,13 +72,13 @@ public interface INode {
     //public IMessagePool getChangeViewPool();
 
 
-    public void generateNewBlockMessage(IBlock block) throws IOException;
+    public void generateNewBlockMessage(IBlock block) throws IOException, InterruptedException;
 
     //public void generateViewChangeMessage(int newViewNum) throws IOException;
 
     //public void generateViewChangedMessage() throws IOException;
 
-    public void generatePreprepareMessage() throws IOException;
+    public void generatePreprepareMessage() throws IOException, InterruptedException;
 
     public void generatePrepareMessage() throws IOException;
 
@@ -96,14 +96,14 @@ public interface INode {
     public void generateNodeSignature();
     public IBlock getNewBlock();
     public void setNewBlock(IBlock newBlock);
-    public void setNewBlock(IMessage newBlockMessage) throws IOException;
+    public void setNewBlock(IMessage newBlockMessage) throws IOException, InterruptedException;
     public void insertPreprepareMessage(IMessage preprepareMessage) throws IOException;
     public void insertPrepareMessageInPool(ArrayList<IMessage> prepareMessages) throws IOException;
     public void insertCommitMessageInPool(ArrayList<IMessage> commitMessages) throws IOException;
     //public void insertChangeViewMessageInPool(ArrayList<IMessage> changeViewMessages) throws IOException;
     //public void checkTruthyOfNewView(IMessage viewChangedMessage);
     //public boolean verifyNewViewPool(IMessagePool messagePool);
-    public void receiveMessage(IMessage t) throws IOException;
+    public void receiveMessage(IMessage t) throws IOException, InterruptedException;
     public void sendConfigMessage(IMessage m) throws IOException;
     public int sizeOfNetwork();
 
