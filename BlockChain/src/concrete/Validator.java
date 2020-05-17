@@ -32,6 +32,7 @@ public class Validator implements IValidator, Serializable {
 //        blockHeader.createPrevBlockHash(prevBlock);
 //        blockHeader.createTransactionsHash(transactions);
 //        this.newBlock = new Block(blockHeader, transactions, prevBlock);
+        System.out.println("primary public key: "+this.primaryPublicKey);
         this.newBlockMessage = new Message("new block",this.primaryPublicKey, this.seqNum, this.viewNum, this.newBlock);
         this.isCommited = false;
 
@@ -39,6 +40,7 @@ public class Validator implements IValidator, Serializable {
 
     @Override
     public IMessage finalizeBlock() {
+        System.out.println("finalize primary public key: "+this.newBlockMessage.getNodePublicKey());
         return this.newBlockMessage;
     }
 

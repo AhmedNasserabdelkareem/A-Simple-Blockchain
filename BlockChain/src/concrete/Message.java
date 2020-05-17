@@ -90,7 +90,7 @@ public class Message implements IMessage, Serializable {
         this.viewNum = viewNum;
         this.nodeSignature = nodeSignature;
         this.block = block;
-        this.nodePublicKey = nodePublicKey;
+        this.nodePublicKey = primaryNodePublicKey;
 
     }
 
@@ -147,6 +147,7 @@ public class Message implements IMessage, Serializable {
 
     @Override
     public boolean verifyPeerSignature() {
+
         String data = Utils.getStringFromKey(this.nodePublicKey) + String.valueOf(this.seqNum) +
                 String.valueOf(this.viewNum) + this.block.getHeader().getTransactionsHash();
         return Utils.verifyECDSASig(this.nodePublicKey, data, this.nodeSignature);
@@ -174,5 +175,18 @@ public class Message implements IMessage, Serializable {
 
     public void setMaxMaliciousNodes(int maxMaliciousNodes) {
         this.maxMaliciousNodes = maxMaliciousNodes;
+    }
+
+    @Override
+    public void setNodePublicKey(PublicKey nodePublicKey) {
+        this.nodePublicKey = nodePublicKey;
+    }
+    @Override
+    public byte[] getNodeSignature() {
+        return nodeSignature;
+    }
+    @Override
+    public void setNodeSignature(byte[] nodeSignature) {
+        this.nodeSignature = nodeSignature;
     }
 }

@@ -121,7 +121,7 @@ public class Network implements INTW ,Runnable{
 
     @Override
 
-    public void listenForTransactions(Transaction t) throws IOException {
+    public void listenForTransactions(Transaction t) throws IOException, InterruptedException {
         this.node.addTransaction(t);
     }
 
@@ -211,7 +211,7 @@ public class Network implements INTW ,Runnable{
     }
 
     @Override
-    public void startServer() throws IOException, ClassNotFoundException {
+    public void startServer() throws IOException, ClassNotFoundException, InterruptedException {
         ss = new ServerSocket(this.PORT);
         while(true){
             Socket s =ss.accept();
@@ -240,7 +240,7 @@ public class Network implements INTW ,Runnable{
         node.receivePK(t);
     }
 
-    public void listenForMessages(IMessage t) throws IOException {
+    public void listenForMessages(IMessage t) throws IOException, InterruptedException {
         node.receiveMessage(t);
     }
 
@@ -307,17 +307,18 @@ public class Network implements INTW ,Runnable{
     @Override
     public void broadcastMessage(IMessage message) throws IOException {
         for (String p:peers) {
+            System.out.println("p: "+p);
             shareMessage(message,p);
         }
         //TODO 1N SOLUTION SEND TO ME THE NEW BLOCK MESSAGE
-        shareMessage(message,this.ExternalIP);
+       // shareMessage(message,this.ExternalIP);
     }
 
     @Override
     public void run() {
         try {
             startServer();
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException | InterruptedException e) {
             e.printStackTrace();
         }
     }
