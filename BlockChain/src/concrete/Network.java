@@ -58,6 +58,22 @@ public class Network implements INTW ,Runnable{
         }
 
     }
+    public void sendConfigMessageAtFirst(IMessage m) throws IOException {
+        for (String peer:peers) {
+            if (peer.equals(getExternalIP())){
+                m.setisPrimary(true);
+                m.setPrimaryPublicKey(getPkfromPairPK(getNextPrimary()));
+            }
+                Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+                outputStream = new ObjectOutputStream(socket.getOutputStream());
+                outputStream.writeObject(m);
+                outputStream.flush();
+                outputStream.close();
+                socket.close();
+
+        }
+
+    }
 
     public PublicKey getPkfromPairPK(String nextPrimary) {
         for (PairKeyPK pk:node.getPublicKeysIP()) {

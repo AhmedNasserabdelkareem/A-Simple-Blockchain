@@ -46,5 +46,6 @@ public interface INTW {
     void sendPeers(ArrayList<String> ips,ArrayList<Integer> types) throws IOException;
     public void listenforPublicKey(PairKeyPK t);
     public PublicKey getPkfromPairPK(String nextPrimary);
+    public void sendConfigMessageAtFirst(IMessage m) throws IOException;
 
     }

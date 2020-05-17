@@ -110,9 +110,14 @@ public class Node implements INode {
         th.start();
         generateKeyPair();
         if(getIsPrimary()) {
-            generateConfigMessage(nodePublicKey);
+            IMessage configMessage = new Message("config", getIsPrimary(), nodePublicKey);
+            sendConfigMessageAtFirst(configMessage);
         }
         prepare2issue(0,100);
+    }
+
+    private void sendConfigMessageAtFirst(IMessage configMessage) throws IOException {
+        network.sendConfigMessageAtFirst(configMessage);
     }
 
     private void prepare2issue(int lowerB, int upperB) {
