@@ -26,7 +26,7 @@ public class Validator implements IValidator, Serializable {
     }
 
     @Override
-    public void initiateNewBlockMessage(IBlock prevBlock, ArrayList<ITransaction> transactions) {
+    public void initiateNewBlockMessage() {
 
 //        IBlockHeader blockHeader = new BlockHeader();
 //        blockHeader.createPrevBlockHash(prevBlock);
