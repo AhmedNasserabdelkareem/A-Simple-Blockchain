@@ -20,9 +20,11 @@ public class Node implements INode {
     }
 
     private int difficulty;
-    private boolean isInterrupt =false;
+    private boolean isInterrupt = false;
 
-    enum Types {client, miner};
+    enum Types {client, miner}
+
+    ;
     HashMap<Integer, ITransaction> AvOps = new HashMap<>();
     ArrayList<Integer> newAddedTs = new ArrayList<>();
     private INTW network;
@@ -76,7 +78,7 @@ public class Node implements INode {
     private ArrayList<PairKeyPK> publicKeysIP;
     private IUtils utils = Utils.getInstance();
     ArrayList<String> ips;
-    ArrayList<Integer> nodeTypes ;
+    ArrayList<Integer> nodeTypes;
 
     public static void main(String[] args) {
 
@@ -105,15 +107,18 @@ public class Node implements INode {
         setNTW(network);
         readConfiguration();
         network.setNode(this);
-        network.sendPeers(ips,nodeTypes);
+        network.sendPeers(ips, nodeTypes);
         Thread th = new Thread((Runnable) network);
         th.start();
         generateKeyPair();
-        if(getIsPrimary()) {
-            IMessage configMessage = new Message("config", getIsPrimary(), nodePublicKey);
+
+        prepare2issue(0, 100);
+        System.out.println("is primary constructor :" + getIsPrimary());
+        if (getIsPrimary()) {
+            IMessage configMessage = new Message("config", false, nodePublicKey);
             sendConfigMessageAtFirst(configMessage);
         }
-        prepare2issue(0,100);
+
     }
 
     private void sendConfigMessageAtFirst(IMessage configMessage) throws IOException {
@@ -121,7 +126,7 @@ public class Node implements INode {
     }
 
     private void prepare2issue(int lowerB, int upperB) {
-        System.out.println("entered issue"+this.nodeType);
+        System.out.println("entered issue" + this.nodeType);
 
         if (this.nodeType == 0) {
             System.out.println("entered issue");
@@ -155,31 +160,32 @@ public class Node implements INode {
         //TODO read from remote file >> config
         URL conf = new URL(CONFIG_FILE);
         BufferedReader in = new BufferedReader(new InputStreamReader(conf.openStream()));
-        String res ="";
+        String res = "";
         StringBuilder sb = new StringBuilder();
-        while((res=in.readLine())!= null){
+        while ((res = in.readLine()) != null) {
             sb.append(res);
             sb.append("\n");
-        };
+        }
+        ;
         //TODO Split file
-        res= sb.toString();
+        res = sb.toString();
 
-        String [] data = res.split("\n");
-        int maxSize =Integer.parseInt( data[0].split(":")[1]);
-        int diff =Integer.parseInt( data[1].split(":")[1]);
-        int pow =Integer.parseInt( data[2].split(":")[1]);
+        String[] data = res.split("\n");
+        int maxSize = Integer.parseInt(data[0].split(":")[1]);
+        int diff = Integer.parseInt(data[1].split(":")[1]);
+        int pow = Integer.parseInt(data[2].split(":")[1]);
         ips = new ArrayList<>();
         nodeTypes = new ArrayList<>();
-        for (int i = 3; i < data.length;i++){
+        for (int i = 3; i < data.length; i++) {
             ips.add(data[i].split(",")[0]);
             nodeTypes.add(Integer.parseInt(data[i].split(",")[1]));
         }
-       // System.out.println(network.getExternalIP()+" "+ips.get(0));
-        setConfigs(pow ==1,maxSize,ips,nodeTypes.get(ips.indexOf(network.getExternalIP())),diff);
+        // System.out.println(network.getExternalIP()+" "+ips.get(0));
+        setConfigs(pow == 1, maxSize, ips, nodeTypes.get(ips.indexOf(network.getExternalIP())), diff);
     }
 
     @Override
-    public void setConfigs(boolean isPow, int maxNumTransactions, ArrayList<String> IPsOfOtherPeers, int nodeType,int diff) {
+    public void setConfigs(boolean isPow, int maxNumTransactions, ArrayList<String> IPsOfOtherPeers, int nodeType, int diff) {
         this.isPow = isPow;
         this.nodeType = nodeType;
         this.maxTransaction = maxNumTransactions;
@@ -205,7 +211,7 @@ public class Node implements INode {
             AvOps.put(t.getID(), t);
 
             transactions.add(t);
-            System.out.println("Verified"+" "+transactions.size());
+            System.out.println("Verified" + " " + transactions.size());
             if (transactions.size() == maxTransaction) {
                 createBlock();
                 transactions.clear();
@@ -220,12 +226,15 @@ public class Node implements INode {
         block = new Block();
         block.setTransactions(transactions);
         block.setPrevBlock(getLastBlock());
+        block.getBlockHash();
         if (isPow) {
-            pow(block,difficulty);
+            pow(block, difficulty);
             System.out.println("Create Block Pow");
         } else {
             System.out.println("Create Block BFT");
-            generateNewBlockMessage(block);
+            //generateNewBlockMessage(block);
+            if (isPrimary)
+                generateConfigMessage(this.nodePublicKey);
         }
     }
 
@@ -426,8 +435,8 @@ public class Node implements INode {
             throw new RuntimeException(e);
         }
         this.nodeIp = this.network.getIP();
-        System.out.println("node ip: "+nodeIp);
-        this.network.broadcastPK(new PairKeyPK(this.nodeIp,this.nodePublicKey));
+        System.out.println("node ip: " + nodeIp);
+        this.network.broadcastPK(new PairKeyPK(this.nodeIp, this.nodePublicKey));
 
         System.out.println("Node keys are generated");
         System.out.println("Node's public key: " + this.nodePublicKey);
@@ -516,10 +525,10 @@ public class Node implements INode {
      * and broadcast it to all nodes*/
     @Override
     public void generatePreprepareMessage() throws IOException {
-        System.out.println("primary node public key: "+ this.primaryNodePublicKey);
-        System.out.println("primary node public key: "+ this.nodeSignature);
-        System.out.println("primary node public key: "+ this.nodePublicKey);
-        System.out.println("primary node public key: "+ this.newBlock.getHeader().getHash());
+        System.out.println("primary node public key: " + this.primaryNodePublicKey);
+        System.out.println("primary node public key: " + this.nodeSignature);
+        System.out.println("primary node public key: " + this.nodePublicKey);
+        System.out.println("primary node public key: " + this.newBlock.getHeader().getHash());
         IMessage prePrepareMessage = new Message("pre-prepare", this.primaryNodePublicKey, this.seqNum, this.viewNum, this.nodeSignature, this.nodePublicKey, this.newBlock);
         System.out.println("pre-prepare message is created");
         broadcastMessage(prePrepareMessage);
@@ -854,13 +863,13 @@ public class Node implements INode {
         boolean b = block.verifyBlockHash();
         this.isInterrupt = true;
         addToChain(block);
-        System.out.println("isVerified: " +b+" "+chain.size());
+        System.out.println("isVerified: " + b + " " + chain.size());
     }
 
 
     @Override
     public IBlock getLastBlock() {
-        if (chain.size()>0) {
+        if (chain.size() > 0) {
             return chain.get(chain.size() - 1);
         }
         return null;
