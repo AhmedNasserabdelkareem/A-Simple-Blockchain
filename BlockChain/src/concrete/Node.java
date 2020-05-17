@@ -10,9 +10,7 @@ import java.net.URL;
 import java.security.*;
 
 import java.security.spec.ECGenParameterSpec;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Timer;
+import java.util.*;
 
 public class Node implements INode {
     static {
@@ -22,9 +20,6 @@ public class Node implements INode {
     private int difficulty;
     private boolean isInterrupt = false;
 
-    enum Types {client, miner}
-
-    ;
     HashMap<Integer, ITransaction> AvOps = new HashMap<>();
     ArrayList<Integer> newAddedTs = new ArrayList<>();
     private INTW network;
@@ -56,8 +51,6 @@ public class Node implements INode {
     private ArrayList<ITransaction> ledger;
     private ArrayList<IBlock> chain;
     private int chainIndex = 0;
-    private int maxNumTransactions;
-    private String[] IPsOfOtherPeers;
     private boolean isPrimary;
     private String nodeIp;
     private boolean isPow;
@@ -66,6 +59,7 @@ public class Node implements INode {
     private int from = 0, to = 0;
     private ArrayList<IMessage> commitMessages;
     private ArrayList<IMessage> prepareMessages;
+    private Queue<Block> queue;
 
     public ArrayList<PairKeyPK> getPublicKeysIP() {
         return publicKeysIP;
@@ -97,11 +91,14 @@ public class Node implements INode {
         nodeTypes = new ArrayList<>();
         chain = new ArrayList<>();
         publicKeysIP = new ArrayList<>();
+        queue= new ArrayDeque<>();//TODO 5N NASSER MAY BE USED TO CACHE ALL BLOCKS AND REMOVE FROM WHEN ADD TO CHAIN
+        //TODO 6AB NASSER WE MAY NEED ANOTHER 2 QUEUES FOR AVOP AND NEWADDS
         INTW network = new Network();
         setNTW(network);
         readConfiguration();
         network.setNode(this);
         network.sendPeers(ips, nodeTypes);
+        setIsPrimary();
         Thread th = new Thread((Runnable) network);
         th.start();
         generateKeyPair();
@@ -114,9 +111,9 @@ public class Node implements INode {
 
     }
 
-    private void sendConfigMessageAtFirst(IMessage configMessage) throws IOException {
-        network.sendConfigMessageAtFirst(configMessage);
-    }
+//    private void sendConfigMessageAtFirst(IMessage configMessage) throws IOException {
+//        network.sendConfigMessageAtFirst(configMessage);
+//    }
 
     private void prepare2issue(int lowerB, int upperB) {
         System.out.println("entered issue" + this.nodeType);
@@ -150,7 +147,6 @@ public class Node implements INode {
 
 
     public void readConfiguration() throws IOException {
-        //TODO read from remote file >> config
         URL conf = new URL(CONFIG_FILE);
         BufferedReader in = new BufferedReader(new InputStreamReader(conf.openStream()));
         String res = "";
@@ -158,9 +154,7 @@ public class Node implements INode {
         while ((res = in.readLine()) != null) {
             sb.append(res);
             sb.append("\n");
-        }
-        ;
-        //TODO Split file
+        };
         res = sb.toString();
 
         String[] data = res.split("\n");
@@ -475,7 +469,7 @@ public class Node implements INode {
             this.newBlock = newBlockMessage.getBlock();
         }
         generateNodeSignature();
-
+// TODO 1S NASSER THE CODE HAS ENDED BASED ON TODO 1B
         if (getIsPrimary()) {
             System.out.println("generate new pre-prepare message as the node is primary");
             generatePreprepareMessage();
@@ -494,6 +488,7 @@ public class Node implements INode {
         IMessage newBlockMessage = validator.finalizeBlock();
         this.newBlock = block;
         System.out.println("new block is created");
+        //TODO 1B NASSER SHOULD CALL GENERATE PRE-PREPARE MESSAGE FIRST ?
         broadcastMessage(newBlockMessage);
     }
 
@@ -585,7 +580,7 @@ public class Node implements INode {
                     !this.preparePool.isMessageExists(prepareMessage)) {
 
                 System.out.println("prepare validation is passed");
-                if (prepareMessage.getNodePublicKey() == this.primaryNodePublicKey) {
+                if (prepareMessage.getNodePublicKey() == this.primaryNodePublicKey) {//TODO 3N NASSER MAY BE CHECKED
                     System.out.println("Error in prepare phase the primary sent a message");
                 } else {
                     /*not sent by a primary*/
@@ -661,7 +656,27 @@ public class Node implements INode {
             System.out.println("node added the block to chain");
         }
 
-        //generateConfigMessage(this.primaryNodePublicKey);
+        generateConfigMessage(this.primaryNodePublicKey);//TODO 4N NASSER MAY BE CHECKED
+
+    }
+    public void generateConfigMessage(PublicKey primaryNodePublicKey) throws IOException {
+        this.maxMaliciousNodes = (sizeOfNetwork() - 1) / 3;
+        IMessage configMessage = new Message("config", isPrimary, primaryNodePublicKey);
+        System.out.println("Generating config message...");
+        sendConfigMessage(configMessage);
+    }
+
+    public void receiveConfigs(IMessage configMessage) {
+        System.out.println("Node received config message");
+        System.out.println("max malicious nodes in config message: " + configMessage.getMaxMaliciousNodes());
+        System.out.println("primary id in config message: " + configMessage.getPrimaryPublicKey().toString());
+        System.out.println("is primary in config message: " + configMessage.isPrimary());
+        System.out.println("is primary from network call: " + getIsPrimary());
+
+        this.maxMaliciousNodes = configMessage.getMaxMaliciousNodes();
+        this.primaryNodePublicKey = configMessage.getPrimaryPublicKey();
+        this.isPrimary = configMessage.isPrimary();
+        //TODO 7N NASSER SHOULD POLL FROM QUEUE AND START (INSIDE) CREATE BLOCK
 
     }
 
@@ -669,6 +684,10 @@ public class Node implements INode {
     public void receiveMessage(IMessage t) throws IOException {
         String type = t.getMessageType();
         switch (type) {
+            case "config":
+                network.setPrimary(t.isPrimary());
+                setIsPrimary();
+                receiveConfigs(t);
             case "new block":
                 setNewBlock(t);
             case "pre-prepare":
@@ -681,7 +700,7 @@ public class Node implements INode {
                 }
             case "prepare":
                 prepareMessages.add(t);
-                if (prepareMessages.size() == network.getsizeofPeers()) {
+                if (prepareMessages.size() == network.getsizeofPeers()) {//TODO 2S NASSER SHOULD BE SIZE-1 EXCLUDE THE PRIMARY
                     insertPrepareMessageInPool(prepareMessages);
                     prepareMessages.clear();
                 }
@@ -699,13 +718,6 @@ public class Node implements INode {
     public int sizeOfNetwork() {
         return network.getsizeofPeers() + 1;
     }
-
-
-    @Override
-    public INode getPrimaryNode(int nodeIndex) {
-        return null;
-    }
-
 
     @Override
     public void broadcastMessage(IMessage message) throws IOException {

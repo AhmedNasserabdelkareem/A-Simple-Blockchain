@@ -3,7 +3,6 @@ package concrete;
 import interfaces.IBlock;
 import interfaces.IMessage;
 import interfaces.INTW;
-import interfaces.INode;
 
 import java.io.*;
 import java.net.*;
@@ -17,7 +16,7 @@ public class Network implements INTW ,Runnable{
     private ArrayList<String> ips = new ArrayList<>();
     private ArrayList<Integer> nodeTypes = new ArrayList<>();
     private ArrayList<String> tableOfNodes = new ArrayList<>();
-    private String PrimaryPeer  ="";
+    private String ExternalIP  ="";
     private Node node;
     private InetAddress sourceIP;
     private final static int PORT =5555;
@@ -104,7 +103,8 @@ public class Network implements INTW ,Runnable{
     @Override
     public void setNode(Node node) throws IOException {
         this.node  =node;
-        this.sourceIP = InetAddress.getByName(getExternalIP());
+        this.ExternalIP = getExternalIP();
+        this.sourceIP = InetAddress.getByName(ExternalIP);
     }
 
     @Override
@@ -187,7 +187,7 @@ public class Network implements INTW ,Runnable{
             }
         }
         constructTable();
-        if (tableOfNodes.get(0).equals(getExternalIP())){
+        if (tableOfNodes.get(0).equals(getExternalIP())&&node.getNodeType()==1){
             setPrimary(true);
         }
     }
@@ -309,16 +309,15 @@ public class Network implements INTW ,Runnable{
         for (String p:peers) {
             shareMessage(message,p);
         }
-
+        //TODO 1N SOLUTION SEND TO ME THE NEW BLOCK MESSAGE
+        shareMessage(message,this.ExternalIP);
     }
 
     @Override
     public void run() {
         try {
             startServer();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

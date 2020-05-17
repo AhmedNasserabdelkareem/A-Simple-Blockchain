@@ -103,7 +103,6 @@ public interface INode {
     //public void insertChangeViewMessageInPool(ArrayList<IMessage> changeViewMessages) throws IOException;
     //public void checkTruthyOfNewView(IMessage viewChangedMessage);
     //public boolean verifyNewViewPool(IMessagePool messagePool);
-    public INode getPrimaryNode(int nodeIndex);
     public void receiveMessage(IMessage t) throws IOException;
     public void sendConfigMessage(IMessage m) throws IOException;
     public int sizeOfNetwork();
