@@ -108,10 +108,10 @@ public class Node implements INode {
 
         prepare2issue(0, 100);
         System.out.println("is primary constructor :" + getIsPrimary());
-        if (getIsPrimary()) {
-            IMessage configMessage = new Message("config", false, nodePublicKey);
-            sendConfigMessageAtFirst(configMessage);
-        }
+//        if (getIsPrimary()) {
+//            IMessage configMessage = new Message("config", false, nodePublicKey);
+//            sendConfigMessageAtFirst(configMessage);
+//        }
 
     }
 
