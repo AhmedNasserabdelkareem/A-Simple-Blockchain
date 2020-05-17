@@ -109,6 +109,9 @@ public class Node implements INode {
         Thread th = new Thread((Runnable) network);
         th.start();
         generateKeyPair();
+        if(getIsPrimary()) {
+            generateConfigMessage(nodePublicKey);
+        }
         prepare2issue(0,100);
     }
 
@@ -926,7 +929,7 @@ public class Node implements INode {
 
     @Override
     public boolean getIsPrimary() {
-        return this.isPrimary;
+        return network.isPrimary();
     }
 
     @Override

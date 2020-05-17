@@ -89,11 +89,6 @@ public class Network implements INTW ,Runnable{
     public void setNode(Node node) throws IOException {
         this.node  =node;
         this.sourceIP = InetAddress.getByName(getExternalIP());
-        constructTable();
-
-        if (tableOfNodes.get(0).equals(getExternalIP())){
-            setPrimary(true);
-        }
     }
 
     @Override
@@ -174,6 +169,10 @@ public class Network implements INTW ,Runnable{
                         peers.add(p);
                 }
             }
+        }
+        constructTable();
+        if (tableOfNodes.get(0).equals(getExternalIP())){
+            setPrimary(true);
         }
     }
 
