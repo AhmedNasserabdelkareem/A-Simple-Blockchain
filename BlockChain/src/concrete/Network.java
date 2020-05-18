@@ -1,5 +1,6 @@
 package concrete;
 
+import interfaces.IAnalyser;
 import interfaces.IBlock;
 import interfaces.IMessage;
 import interfaces.INTW;
@@ -324,4 +325,9 @@ public class Network implements INTW ,Runnable{
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void broadcastAnalytics(IAnalyser.Analytics a) {
+
+    }//TODO and put this         Analyser.getInstance().reportMessageSent(); wherever you send messege related to block/response ...
 }

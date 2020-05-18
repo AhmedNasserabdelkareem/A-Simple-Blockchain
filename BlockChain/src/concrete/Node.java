@@ -368,6 +368,7 @@ public class Node implements INode {
     @Override
     public void addToChain(IBlock block) {
         chain.add(block);
+        Analyser.getInstance().reportBlockDone();
     }
 
     @Override
@@ -390,22 +391,26 @@ public class Node implements INode {
     public void pow(IBlock block, int difficulty) throws IOException {
         System.out.println("Working in pow");
         int nonce = 0;
+        block.getHeader().setNonce(nonce);
         String hash = block.getBlockHash();
-        String merkleRoot = Utils.getMerkleRoot(block.getTransactions());
-        block.getHeader().setTransactionsHash(merkleRoot);
         String target = Utils.getDificultyString(difficulty); //Create a string with difficulty * "0"
+        Analyser.getInstance().reportStartingMining();//AN
         while (!hash.substring(0, difficulty).equals(target) && !isInterrupt) {
             nonce++;
             block.getHeader().setNonce(nonce);
-            hash = block.getHeader().calculateHash();
+            hash = block.getBlockHash();
         }
-        block.getHeader().setHash(hash);
-        block.getHeader().setNonce(nonce);
-        System.out.println("block is mined...");
-        System.out.println("block hash is: " + block.getHeader().getHash());
-        addToChain(block);
-        shareBlock(block);
+        if(isInterrupt){
+            Analyser.getInstance().reportEndingMiningUnsuccessfully();
+        }else {
+            Analyser.getInstance().reportEndingMiningSuccessfully();
+            System.out.println("block is mined...");
+            System.out.println("block hash is: " + block.getBlockHash());
+            addToChain(block);
+            shareBlock(block);
+        }
     }
+
 
 
     /*Generate the public and private key for the node*/
