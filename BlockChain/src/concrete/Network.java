@@ -3,7 +3,6 @@ package concrete;
 import interfaces.IBlock;
 import interfaces.IMessage;
 import interfaces.INTW;
-import interfaces.INode;
 
 import java.io.*;
 import java.net.*;
@@ -17,7 +16,7 @@ public class Network implements INTW ,Runnable{
     private ArrayList<String> ips = new ArrayList<>();
     private ArrayList<Integer> nodeTypes = new ArrayList<>();
     private ArrayList<String> tableOfNodes = new ArrayList<>();
-    private String PrimaryPeer  ="";
+    private String ExternalIP  ="";
     private Node node;
     private InetAddress sourceIP;
     private final static int PORT =5555;
@@ -41,8 +40,6 @@ public class Network implements INTW ,Runnable{
     public void sendConfigMessage(IMessage m) throws IOException {
         isPrimary = false;
         for (String peer:peers) {
-
-
             if (peer.equals(getNextPrimary())){
                 m.setisPrimary(true);
                 m.setPrimaryPublicKey(getPkfromPairPK(getNextPrimary()));
@@ -63,6 +60,8 @@ public class Network implements INTW ,Runnable{
             if (peer.equals(getExternalIP())){
                 m.setisPrimary(true);
                 m.setPrimaryPublicKey(getPkfromPairPK(getNextPrimary()));
+            }else{
+
             }
                 Socket socket = new Socket(InetAddress.getByName(peer), PORT);
                 outputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -104,7 +103,8 @@ public class Network implements INTW ,Runnable{
     @Override
     public void setNode(Node node) throws IOException {
         this.node  =node;
-        this.sourceIP = InetAddress.getByName(getExternalIP());
+        this.ExternalIP = getExternalIP();
+        this.sourceIP = InetAddress.getByName(ExternalIP);
     }
 
     @Override
@@ -121,7 +121,7 @@ public class Network implements INTW ,Runnable{
 
     @Override
 
-    public void listenForTransactions(Transaction t) throws IOException {
+    public void listenForTransactions(Transaction t) throws IOException, InterruptedException {
         this.node.addTransaction(t);
     }
 
@@ -189,7 +189,7 @@ public class Network implements INTW ,Runnable{
             }
         }
         constructTable();
-        if (tableOfNodes.get(0).equals(getExternalIP())){
+        if (tableOfNodes.get(0).equals(getExternalIP())&&node.getNodeType()==1){
             setPrimary(true);
         }
     }
@@ -213,7 +213,7 @@ public class Network implements INTW ,Runnable{
     }
 
     @Override
-    public void startServer() throws IOException, ClassNotFoundException {
+    public void startServer() throws IOException, ClassNotFoundException, InterruptedException {
         ss = new ServerSocket(this.PORT);
         while(true){
             Socket s =ss.accept();
@@ -242,7 +242,7 @@ public class Network implements INTW ,Runnable{
         node.receivePK(t);
     }
 
-    public void listenForMessages(IMessage t) throws IOException {
+    public void listenForMessages(IMessage t) throws IOException, InterruptedException {
         node.receiveMessage(t);
     }
 
@@ -309,18 +309,18 @@ public class Network implements INTW ,Runnable{
     @Override
     public void broadcastMessage(IMessage message) throws IOException {
         for (String p:peers) {
+            System.out.println("p: "+p);
             shareMessage(message,p);
         }
-
+        //TODO 1N SOLUTION SEND TO ME THE NEW BLOCK MESSAGE
+       // shareMessage(message,this.ExternalIP);
     }
 
     @Override
     public void run() {
         try {
             startServer();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException | InterruptedException e) {
             e.printStackTrace();
         }
     }
