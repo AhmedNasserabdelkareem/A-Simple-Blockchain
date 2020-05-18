@@ -40,6 +40,7 @@ public class Validator implements IValidator, Serializable {
 
     @Override
     public IMessage finalizeBlock() {
+        System.out.println("finalize primary public key: "+this.newBlockMessage.getNodePublicKey());
         return this.newBlockMessage;
     }
 

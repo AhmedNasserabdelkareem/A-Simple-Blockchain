@@ -147,6 +147,7 @@ public class Message implements IMessage, Serializable {
 
     @Override
     public boolean verifyPeerSignature() {
+
         String data = Utils.getStringFromKey(this.nodePublicKey) + String.valueOf(this.seqNum) +
                 String.valueOf(this.viewNum) + this.block.getHeader().getTransactionsHash();
         return Utils.verifyECDSASig(this.nodePublicKey, data, this.nodeSignature);

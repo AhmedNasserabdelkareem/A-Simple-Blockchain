@@ -141,12 +141,15 @@ public class Network implements INTW ,Runnable{
 
     @Override
     public void shareBlock(IBlock block, String peer) throws IOException {
+        System.out.println("start share block");
+        System.out.println("start share block peer: "+peer);
         Socket socket = new Socket(InetAddress.getByName(peer), PORT);
         outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(block);
         outputStream.flush();
         outputStream.close();
         socket.close();
+        System.out.println("end share block");
     }
 
 
@@ -217,6 +220,7 @@ public class Network implements INTW ,Runnable{
         ss = new ServerSocket(this.PORT);
         while(true){
             System.out.println("server");
+
             Socket s =ss.accept();
             inputStream = new ObjectInputStream(s.getInputStream());
             Object t = inputStream.readObject();
@@ -312,6 +316,7 @@ public class Network implements INTW ,Runnable{
         +message.getBlock() + " " +message.getMessageType() + " " +message.getViewNum()+" "+message.getMaxMaliciousNodes()+
         " "+message.getSeqNum() + " " + message.getMessagePool());
         outputStream.writeObject(message);
+        //outputStream.reset();
         outputStream.flush();
         outputStream.close();
         System.out.println("out");
@@ -321,7 +326,7 @@ public class Network implements INTW ,Runnable{
 
     @Override
     public void broadcastMessage(IMessage message) throws IOException {
-        for (String p:peers) {            System.out.println("before p: "+p);
+        for (String p:peers) {           System.out.println("before p: "+p);
 
         }
 
@@ -330,9 +335,10 @@ public class Network implements INTW ,Runnable{
             shareMessage(message,p);
             System.out.println("p2: "+p);
         }
-        for (String p:peers) {            System.out.println("after p: "+p);
+        for (String p:peers) {            System.out.println("after p: "+p);}
 
-        }
+
+        System.out.println("for out");
         //TODO 1N SOLUTION SEND TO ME THE NEW BLOCK MESSAGE
 
     }
@@ -341,9 +347,7 @@ public class Network implements INTW ,Runnable{
     public void run() {
         try {
             startServer();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (IOException | ClassNotFoundException | InterruptedException e) {
             e.printStackTrace();
         }
     }
