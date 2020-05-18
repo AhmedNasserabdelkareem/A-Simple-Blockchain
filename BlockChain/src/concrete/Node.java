@@ -197,6 +197,7 @@ public class Node implements INode {
         System.out.println(t.getID());
         if (verifyTransaction(t)) {
             newAddedTs.add(t.getID());
+            System.out.println("3omran");
             AvOps.put(t.getID(), t);
 
             transactions.add(t);
@@ -205,7 +206,6 @@ public class Node implements INode {
                 createBlock();
                 transactions.clear();
                 AvOps.clear();
-
             }
         }
     }
@@ -223,7 +223,7 @@ public class Node implements INode {
             pow(block, difficulty);
             System.out.println("Create Block Pow");
         } else {
-
+            block.setSeqNum(this.seqNum);
             System.out.println("PBFT creating block transactions");
             //generateNewBlockMessage(block);
             if (getIsPrimary())
@@ -252,6 +252,7 @@ public class Node implements INode {
         if (prevID != -1 && t.getIPs().get(0) == 0) {
             ITransaction prev = getUnspentTransactionByID(prevID);
             if (prev == null) {
+                System.out.println("prev == null");
                 return false;
             }
             int out = t.getOutIndex();
@@ -259,12 +260,15 @@ public class Node implements INode {
             for (ITransaction.OutputPair p : t.getOPs()) {
                 totalPayed += p.value;
             }
+            System.out.println("totalPayed "+totalPayed);
+            System.out.println("prev.getOPs().get(out-1).available "+prev.getOPs().get(out-1).available);
             ArrayList<ITransaction.OutputPair> ops = prev.getOPs();
-            boolean av = prev.getOPs().get(out).available >= totalPayed;
+            boolean av = prev.getOPs().get(out-1).available-totalPayed >= -0.001;
+            System.out.println("av "+av);
             if (!av) {
                 return false;
             }
-            prev.getOPs().get(out).available -= totalPayed;
+            prev.getOPs().get(out-1).available -= totalPayed;
 
             return true;
         } else {
@@ -359,6 +363,7 @@ public class Node implements INode {
 
     @Override
     public ITransaction getUnspentTransactionByID(int id) {
+        System.out.println("id "+id);
         return AvOps.get(id);
     }
 
@@ -377,10 +382,13 @@ public class Node implements INode {
 //                return;
 //            }
 //        }
-
-        if (chain.size()==0 || block.getSeqNum() > chain.get(chain.size()-1).getSeqNum()){
+        if (isPow) {
+            if (chain.size() == 0 || block.getSeqNum() > chain.get(chain.size() - 1).getSeqNum()) {
+                chain.add(block);
+                System.out.println("chain size: " + chain.size());
+            }
+        }else {
             chain.add(block);
-            System.out.println("chain size: " + chain.size());
         }
 
     }
@@ -632,6 +640,8 @@ public class Node implements INode {
                         this.preparePool.insertMessage(prepareMessage);
                     }
                 }
+                //sara state
+                this.state = "prepare";
             } else {
                 System.out.println("Error with secondary node in prepare phase validation, the node will ignore this message");
             }
@@ -753,6 +763,7 @@ public class Node implements INode {
 
     public void generateConfigMessage(PublicKey primaryNodePublicKey) throws IOException {
         this.maxMaliciousNodes = (sizeOfNetwork() - 1) / 3;
+        System.out.println("generateConfigMessage primaryNodePublicKey " +primaryNodePublicKey);
         IMessage configMessage = new Message("config", isPrimary, primaryNodePublicKey);
         System.out.println("Generating config message...");
 
