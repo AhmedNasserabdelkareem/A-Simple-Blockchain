@@ -15,7 +15,7 @@ public interface INTW {
     public void issueTransaction(Transaction transaction) throws IOException;//to all ips / primary
     public void shareBlock(IBlock block, String peer) throws IOException; //share the block using the agreement method
     public void listenForResponses(Response r);
-    public void listenForBlocks(Block b); //listen for any shared blocks and calls agreeOnBlock (only if node type is 1 in pow)
+    public void listenForBlocks(Block b) throws IOException; //listen for any shared blocks and calls agreeOnBlock (only if node type is 1 in pow)
     public String getExternalIP() throws IOException;
     public void startServer() throws IOException, ClassNotFoundException, InterruptedException;
     public void setPublicKeys(HashMap<Integer,PublicKey> t);

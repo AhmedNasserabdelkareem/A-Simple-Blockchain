@@ -127,9 +127,7 @@ public class Network implements INTW ,Runnable{
 
     @Override
     public void issueTransaction(Transaction transaction) throws IOException {
-        //System.out.println(peers);
         for (String peer:peers) {
-            //System.out.println(peer);
             Socket socket = new Socket(InetAddress.getByName(peer), PORT);
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             outputStream.writeObject(transaction);
@@ -198,7 +196,7 @@ public class Network implements INTW ,Runnable{
     }
 
     @Override
-    public void listenForBlocks(Block b) {
+    public void listenForBlocks(Block b) throws IOException {
         this.node.receiveBlock(b);
     }
 
@@ -310,9 +308,7 @@ public class Network implements INTW ,Runnable{
     @Override
     public void broadcastMessage(IMessage message) throws IOException {
         for (String p:peers) {
-            System.out.println("p1: "+p);
             shareMessage(message,p);
-            System.out.println("p2: "+p);
         }
         //TODO 1N SOLUTION SEND TO ME THE NEW BLOCK MESSAGE
 
