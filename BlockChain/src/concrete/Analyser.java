@@ -142,17 +142,17 @@ public class Analyser implements IAnalyser {
         StringBuilder sb = new StringBuilder();
         if(this.type==0){//pow
             sb.append("Type:pow\n");
-            sb.append("BlockSize:"+this.blockSize+"\n");
-            sb.append("Difficulty:"+this.difficulty+"\n");
-            sb.append("AMC:"+this.getAvgMessageComplexity()+"\n");
-            sb.append("NSB:"+this.getNumberOfStaleBlocks()+"\n");
-            sb.append("ATM:"+this.getAvgTimeToMine()+"\n");
+            sb.append("BlockSize:").append(this.blockSize).append("\n");
+            sb.append("Difficulty:").append(this.difficulty).append("\n");
+            sb.append("AMC:").append(this.getAvgMessageComplexity()).append("\n");
+            sb.append("NSB:").append(this.getNumberOfStaleBlocks()).append("\n");
+            sb.append("ATM:").append(this.getAvgTimeToMine()).append("\n");
 
         }else{//bft
             sb.append("Type:bft\n");
-            sb.append("NumOfNodes:"+this.numberOfParticipants+"\n");
-            sb.append("MC:"+this.getMessageComplexity()+"\n");
-            sb.append("ATA:"+this.getAvgTimeToAgreeOnBlock()+"\n");
+            sb.append("NumOfNodes:").append(this.numberOfParticipants).append("\n");
+            sb.append("MC:").append(this.getMessageComplexity()).append("\n");
+            sb.append("ATA:").append(this.getAvgTimeToAgreeOnBlock()).append("\n");
 
         }
 
@@ -197,7 +197,6 @@ public class Analyser implements IAnalyser {
     @Override
     public void reportStale() {
         this.myData.stales++;
-
     }
 
     @Override

@@ -71,12 +71,4 @@ public interface IAnalyser {
     public float getMessageComplexity();
     public float getAvgTimeToAgreeOnBlock();
 
-
-
-
-
-
-
-
-
 }

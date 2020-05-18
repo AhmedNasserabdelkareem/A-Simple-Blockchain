@@ -256,7 +256,7 @@ public class Node implements INode {
 
     private boolean verifyTransactionVal(ITransaction t) {
         int prevID = t.getPrevID();
-        if (prevID != -1 && t.getIPs().get(0) == 0) {
+        if (prevID != -1 && t.getIPs().get(0) != 0) {
             ITransaction prev = getUnspentTransactionByID(prevID);
             if (prev == null) {
                 return false;
@@ -267,7 +267,7 @@ public class Node implements INode {
                 totalPayed += p.value;
             }
             ArrayList<ITransaction.OutputPair> ops = prev.getOPs();
-            boolean av = prev.getOPs().get(out).available >= totalPayed;
+            boolean av = prev.getOPs().get(out).available - totalPayed > -0.0001;
             if (!av) {
                 return false;
             }
