@@ -90,7 +90,7 @@ public class Message implements IMessage, Serializable {
         this.viewNum = viewNum;
         this.nodeSignature = nodeSignature;
         this.block = block;
-        this.nodePublicKey = nodePublicKey;
+        this.nodePublicKey = primaryNodePublicKey;
 
     }
 
@@ -174,5 +174,19 @@ public class Message implements IMessage, Serializable {
 
     public void setMaxMaliciousNodes(int maxMaliciousNodes) {
         this.maxMaliciousNodes = maxMaliciousNodes;
+    }
+
+    @Override
+    public void setNodePublicKey(PublicKey nodePublicKey) {
+        this.nodePublicKey = nodePublicKey;
+    }
+
+    @Override
+    public byte[] getNodeSignature() {
+        return nodeSignature;
+    }
+    @Override
+    public void setNodeSignature(byte[] nodeSignature) {
+        this.nodeSignature = nodeSignature;
     }
 }

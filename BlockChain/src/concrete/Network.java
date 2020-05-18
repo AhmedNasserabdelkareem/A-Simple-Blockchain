@@ -121,7 +121,7 @@ public class Network implements INTW ,Runnable{
 
     @Override
 
-    public void listenForTransactions(Transaction t) throws IOException {
+    public void listenForTransactions(Transaction t) throws IOException, InterruptedException {
         this.node.addTransaction(t);
     }
 
@@ -199,7 +199,9 @@ public class Network implements INTW ,Runnable{
 
     @Override
     public void listenForBlocks(Block b) {
+        System.out.println("bb1");
         this.node.receiveBlock(b);
+        System.out.println("bb1");
     }
 
     @Override
@@ -211,16 +213,19 @@ public class Network implements INTW ,Runnable{
     }
 
     @Override
-    public void startServer() throws IOException, ClassNotFoundException {
+    public void startServer() throws IOException, ClassNotFoundException, InterruptedException {
         ss = new ServerSocket(this.PORT);
         while(true){
+            System.out.println("server");
             Socket s =ss.accept();
             inputStream = new ObjectInputStream(s.getInputStream());
             Object t = inputStream.readObject();
             if (t instanceof Transaction){
                 listenForTransactions((Transaction) t);
             }else if (t instanceof Block){
+                System.out.println("hh1");
                 listenForBlocks((Block) t);
+                System.out.println("hh2");
             }else if ( t instanceof Response) {
                 listenForResponses((Response) t);
             }else if ( t instanceof PairKeyPK) {
@@ -240,7 +245,7 @@ public class Network implements INTW ,Runnable{
         node.receivePK(t);
     }
 
-    public void listenForMessages(IMessage t) throws IOException {
+    public void listenForMessages(IMessage t) throws IOException, InterruptedException {
         node.receiveMessage(t);
     }
 
@@ -296,21 +301,40 @@ public class Network implements INTW ,Runnable{
 
     @Override
     public void shareMessage(IMessage message,String peer) throws IOException {
+        System.out.println("in");
         Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+        System.out.println("soc "+socket);
+        System.out.println("socket.getOutputStream() "+socket.getOutputStream());
         outputStream = new ObjectOutputStream(socket.getOutputStream());
+        System.out.println("out stream "+ outputStream);
+        System.out.println("message "+message);
+        System.out.println(message.getPrimaryPublicKey() + " " +message.getNodeSignature()+" "
+        +message.getBlock() + " " +message.getMessageType() + " " +message.getViewNum()+" "+message.getMaxMaliciousNodes()+
+        " "+message.getSeqNum() + " " + message.getMessagePool());
         outputStream.writeObject(message);
         outputStream.flush();
         outputStream.close();
+        System.out.println("out");
         socket.close();
+
     }
 
     @Override
     public void broadcastMessage(IMessage message) throws IOException {
+        for (String p:peers) {            System.out.println("before p: "+p);
+
+        }
+
         for (String p:peers) {
+            System.out.println("p1: "+p);
             shareMessage(message,p);
+            System.out.println("p2: "+p);
+        }
+        for (String p:peers) {            System.out.println("after p: "+p);
+
         }
         //TODO 1N SOLUTION SEND TO ME THE NEW BLOCK MESSAGE
-        shareMessage(message,this.ExternalIP);
+
     }
 
     @Override
@@ -318,6 +342,8 @@ public class Network implements INTW ,Runnable{
         try {
             startServer();
         } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
