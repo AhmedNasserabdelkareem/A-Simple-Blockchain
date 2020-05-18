@@ -501,9 +501,9 @@ public class Node implements INode {
             System.out.println("passing set new block validation");
             this.newBlock = newBlockMessage.getBlock();
         }
-        generateNodeSignature();
+        //generateNodeSignature();
         // TODO 1S NASSER THE CODE HAS ENDED BASED ON TODO 1B
-        generateNodeSignature();//done
+        //generateNodeSignature();//done
         if (getIsPrimary()) {
             System.out.println("generate new pre-prepare message as the node is primary");
             generatePreprepareMessage();
@@ -540,7 +540,7 @@ public class Node implements INode {
     @Override
     public void generatePreprepareMessage() throws IOException, InterruptedException {
         /*node public key is the primary public key as he is the only one who will call this method*/
-        //setSeqNum();
+        setSeqNum();
         generateNodeSignature();
         this.state = "pre-prepare";
         IMessage prePrepareMessage = new Message("pre-prepare", this.nodePublicKey, this.seqNum, this.viewNum, this.nodeSignature, this.nodePublicKey, this.newBlock);
@@ -575,13 +575,14 @@ public class Node implements INode {
 
         if (preprepareMessage.getMessageType().equals("pre-prepare") && preprepareMessage.verifyPeerSignature() &&
                 preprepareMessage.getPrimaryPublicKey().equals(this.primaryNodePublicKey) &&
-                //preprepareMessage.getViewNum() == this.viewNum &&
+                preprepareMessage.getViewNum() == this.viewNum &&
                 preprepareMessage.getBlock().getBlockHash().equals(this.newBlock.getBlockHash())) {
 
             System.out.println("pre-prepare validation is passed");
             this.state = "pre-prepare";
             this.seqNum = preprepareMessage.getSeqNum();
             this.block = preprepareMessage.getBlock();
+            generateNodeSignature();
         } else {
             System.out.println("Error with secondary Node in preprepare phase verification so the node will ignore this message");
         }
@@ -644,8 +645,6 @@ public class Node implements INode {
                         this.preparePool.insertMessage(prepareMessage);
                     }
                 }
-                //sara state
-                //this.state = "prepare";
             } else {
                 System.out.println("Error with secondary node in prepare phase validation, the node will ignore this message");
             }
@@ -772,9 +771,8 @@ public class Node implements INode {
         this.maxMaliciousNodes = (sizeOfNetwork() - 1) / 3;
         System.out.println("generateConfigMessage primaryNodePublicKey " +primaryNodePublicKey);
         IMessage configMessage = new Message("config", isPrimary, primaryNodePublicKey);
-        configMessage.setPrimaryPublicKey(primaryNodePublicKey  );
+        configMessage.setPrimaryPublicKey(primaryNodePublicKey);
         System.out.println("Generating config message...");
-        configMessage.setPrimaryPublicKey(primaryNodePublicKey );//
         sendConfigMessage(configMessage);
     }
 
