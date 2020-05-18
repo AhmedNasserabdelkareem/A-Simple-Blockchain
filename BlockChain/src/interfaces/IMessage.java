@@ -40,10 +40,7 @@ public interface IMessage {
 //    public byte[] getNodeSignature();
 //
 //    public void setNodeSignature(byte[] nodeSignature);
-public void setNodePublicKey(PublicKey nodePublicKey);
 
     public void setNodePublicKey(PublicKey nodePublicKey);
-    public void setNodeSignature(byte[] nodeSignature);
-    public byte[] getNodeSignature();
 
 }
