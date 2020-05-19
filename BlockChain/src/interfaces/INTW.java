@@ -28,7 +28,7 @@ public interface INTW {
     public String getIP() throws IOException;
 
 
-    public void shareMessage(IMessage message,String peer) throws IOException; //share message to all nodes
+    public void shareMessage(IMessage message,String peer) throws IOException, InterruptedException; //share message to all nodes
     public void broadcastMessage(IMessage message) throws IOException;
     public void listenForMessages(IMessage t) throws IOException, InterruptedException;
     public boolean isPrimary();

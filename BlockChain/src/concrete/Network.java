@@ -8,6 +8,7 @@ import interfaces.INTW;
 import java.io.*;
 import java.net.*;
 import java.security.PublicKey;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,7 +29,7 @@ public class Network implements INTW ,Runnable{
     private static ObjectInputStream inputStream;
     private ServerSocket ss;
 
-    private ReentrantLock l;
+    //private ReentrantLock l;
 
     public boolean isPrimary() {
         return isPrimary;
@@ -127,7 +128,7 @@ public class Network implements INTW ,Runnable{
         this.sourceIP = InetAddress.getByName(ExternalIP);
         System.out.println("Before lock");
 
-        l = new ReentrantLock();
+        //l = new ReentrantLock();
         System.out.println("afterlock");
     }
 
@@ -400,10 +401,8 @@ public class Network implements INTW ,Runnable{
 
 
     @Override
-
-     public void shareMessage(IMessage message,String peer) throws IOException {
-
-        l.lock();
+     public void shareMessage(IMessage message,String peer) throws IOException, InterruptedException {
+      //  l.lock();
         try {
             Socket socket = new Socket(InetAddress.getByName(peer), PORT);
             socket.setSendBufferSize(4098*10);
@@ -414,8 +413,19 @@ public class Network implements INTW ,Runnable{
             outputStream.flush();
             outputStream.close();
             socket.close();
-        }finally {
-            l.unlock();
+            Analyser.getInstance().reportMessageSent();
+        }catch (Exception e){
+            //l.unlock();
+            Thread.sleep(500);
+            Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+            socket.setSendBufferSize(4098*10);
+            socket.setReceiveBufferSize(4098*10);
+            ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+            outputStream.writeObject(message);
+            //outputStream.reset();
+            outputStream.flush();
+            outputStream.close();
+            socket.close();
             Analyser.getInstance().reportMessageSent();
         }
     }
@@ -428,7 +438,7 @@ public class Network implements INTW ,Runnable{
                 public void run() {
                     try {
                         shareMessage(message,p);
-                    } catch (IOException e) {
+                    } catch (IOException | InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
