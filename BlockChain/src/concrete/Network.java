@@ -173,17 +173,6 @@ public class Network implements INTW ,Runnable{
             for (String p : ips) {
                 if (!p.equals(getExternalIP())) {
                         peers.add(p);
-                    while(true) {
-                        try {
-                            Socket so = new Socket(p, PORT);
-                            so.setReceiveBufferSize(4098 * 10);
-                            so.setSendBufferSize(4098 * 10);
-                            sockets.add(so);
-                            break;
-                        } catch (Exception ignored){
-                        }
-
-                    }
                 }
             }
         }else {
@@ -191,17 +180,7 @@ public class Network implements INTW ,Runnable{
                 if (!p.equals(getExternalIP())) {
                     if (!p.equals(ips.get(indexOfIssuer)))
                         peers.add(p);
-                    while(true) {
-                        try {
-                            Socket so = new Socket(p, PORT);
-                            so.setReceiveBufferSize(4098 * 10);
-                            so.setSendBufferSize(4098 * 10);
-                            sockets.add(so);
-                            break;
-                        } catch (Exception ignored){
-                        }
 
-                    }
                 }
             }
         }
@@ -230,28 +209,48 @@ public class Network implements INTW ,Runnable{
     }
 
     @Override
-    public void startServer() throws IOException, ClassNotFoundException, InterruptedException {
+    public void startServer() throws  ClassNotFoundException,IOException{
         ss = new ServerSocket(this.PORT);
-        while(true){
-
-            Socket s =ss.accept();
-            inputStream = new ObjectInputStream(s.getInputStream());
-            Object t = inputStream.readObject();
-            if (t instanceof Transaction){
-                listenForTransactions((Transaction) t);
-            }else if (t instanceof Block){
-                listenForBlocks((Block) t);
-            }else if ( t instanceof Response) {
-                listenForResponses((Response) t);
-            }else if ( t instanceof PairKeyPK) {
-                listenforPublicKey((PairKeyPK) t);
-            }else if (t instanceof HashMap){
-                setPublicKeys((HashMap<Integer, PublicKey>) t);
-            }else if (t instanceof Message) {
-                listenForMessages((IMessage) t);
-            }else {
-                listenForNewConnections((String) t);
+        for (String p:peers) {
+            while (true) {
+                try {
+                    Socket so = new Socket(p, PORT);
+                    so.setReceiveBufferSize(4098 * 10);
+                    so.setSendBufferSize(4098 * 10);
+                    sockets.add(so);
+                    System.out.println("Looping");
+                    break;
+                } catch (Exception ignored) {
+                    System.out.println("CATCH");
+                }
             }
+        }
+        try {
+            while (true) {
+                System.out.println("Im in");
+                Socket s = ss.accept();
+                System.out.println("Get socket");
+                inputStream = new ObjectInputStream(s.getInputStream());
+                Object t = inputStream.readObject();
+                System.out.println(t);
+                if (t instanceof Transaction) {
+                    listenForTransactions((Transaction) t);
+                } else if (t instanceof Block) {
+                    listenForBlocks((Block) t);
+                } else if (t instanceof Response) {
+                    listenForResponses((Response) t);
+                } else if (t instanceof PairKeyPK) {
+                    listenforPublicKey((PairKeyPK) t);
+                } else if (t instanceof HashMap) {
+                    setPublicKeys((HashMap<Integer, PublicKey>) t);
+                } else if (t instanceof Message) {
+                    listenForMessages((IMessage) t);
+                } else {
+                    listenForNewConnections((String) t);
+                }
+            }
+        }catch (InterruptedException | IOException e){
+            System.out.println("Interruptes");
         }
 
     }
@@ -337,7 +336,7 @@ public class Network implements INTW ,Runnable{
     public void run() {
         try {
             startServer();
-        } catch (IOException | ClassNotFoundException | InterruptedException e) {
+        } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
     }
