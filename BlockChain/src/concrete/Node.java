@@ -703,6 +703,7 @@ public class Node implements INode {
             System.out.println("this.maxMaliciousNodes "+this.maxMaliciousNodes);
         }
 
+
         generateCommitMessage();
 
     }
@@ -733,6 +734,8 @@ public class Node implements INode {
     @Override
     public void insertCommitMessageInPool(ArrayList<IMessage> commitMessages) throws IOException {
         IMessage commitMessage;
+        Analyser.getInstance().reportStartingBFTVoting();
+
         for (int i = 0; i < commitMessages.size(); i++) {
             commitMessage = commitMessages.get(i);
             System.out.println("commitMessage.getMessageType() "+commitMessage.getMessageType());
@@ -766,6 +769,7 @@ public class Node implements INode {
             System.out.println("node added the block to chain"+ chain.size());
 
         }
+        Analyser.getInstance().reportEndingBFTVoting();
         if (network.isPrimary())
             generateConfigMessage(this.primaryNodePublicKey);//TODO 4N NASSER MAY BE CHECKED
 
