@@ -174,7 +174,9 @@ public class Node implements INode {
         nodeTypes = new ArrayList<>();
         for (int i = 3; i < data.length; i++) {
             ips.add(data[i].split(",")[0]);
+            System.out.println("ip element in read configuration: " + data[i].split(",")[0]);
             nodeTypes.add(Integer.parseInt(data[i].split(",")[1]));
+            System.out.println("node type element in read configuration: " + Integer.parseInt(data[i].split(",")[1]));
         }
         // System.out.println(network.getExternalIP()+" "+ips.get(0));
         setConfigs(pow == 1, maxSize, ips, nodeTypes.get(ips.indexOf(network.getExternalIP())), diff);
@@ -203,7 +205,7 @@ public class Node implements INode {
     @Override
     public void addTransaction(Transaction t) throws IOException, InterruptedException {
         System.out.println(t.getID());
-        if (!this.isPow||verifyTransaction(t)) {
+        if (!this.isPow || verifyTransaction(t)) {
             newAddedTs.add(t.getID());
             System.out.println("transaction accepted");
 
@@ -214,7 +216,7 @@ public class Node implements INode {
             if (transactions.size() == maxTransaction) {
                 createBlock();
                 transactions.clear();
-               // AvOps.clear();
+                // AvOps.clear();
             }
         }
     }
@@ -341,14 +343,14 @@ public class Node implements INode {
     @Override
     public void issueTransactions() { // in terms of transactions' id
         try {
-
+            System.out.println("in issue transaction");
             URL url = getClass().getResource(Utils.getInstance().TransactionsDatasetDir());
             File file = new File(url.getPath());
             FileReader fr = new FileReader(file);
             BufferedReader br = new BufferedReader(fr);
             String line;
-            int num = 50;
-            while ((line = br.readLine()) != null && num >0) {
+            int num = 800;
+            while ((line = br.readLine()) != null && num > 0) {
                 num--;
                 ITransaction t = ITransaction.parseTransaction(line);
                 if (t == null) {
@@ -486,7 +488,8 @@ public class Node implements INode {
         }
         this.nodeIp = this.network.getIP();
         System.out.println("node ip: " + nodeIp);
-        this.network.broadcastPK(new PairKeyPK(this.nodeIp, this.nodePublicKey));
+        /****/
+        //this.network.broadcastPK(new PairKeyPK(this.nodeIp, this.nodePublicKey));
 
         System.out.println("Node keys are generated");
         System.out.println("Node's public key: " + this.nodePublicKey);
@@ -549,7 +552,7 @@ public class Node implements INode {
 
         /*node public key is the primary public key as the primary who will call this function*/
 
-        this.maxMaliciousNodes = (sizeOfNetwork()) / 3 ;
+        this.maxMaliciousNodes = (sizeOfNetwork()) / 3;
 
         System.out.println("new block this.seqNum " + this.seqNum);
 
@@ -847,7 +850,7 @@ public class Node implements INode {
                 break;
             case "commit":
                 commitMessages.add(t);
-                if (commitMessages.size()  == network.getsizeofPeers() ) {
+                if (commitMessages.size() == network.getsizeofPeers()-1) {
                     insertCommitMessageInPool(commitMessages);
                     commitMessages.clear();
                 }
