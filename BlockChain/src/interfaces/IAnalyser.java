@@ -22,15 +22,15 @@ public interface IAnalyser {
 
 
 
-    public void reportMessageSent();
-    public void reportBlockDone();
+    public void reportMessageSent();//ntw
+    public void reportBlockDone();//add/ignore block
 
     public void reportStartingMining();
     public void reportEndingMiningSuccessfully();
     public void reportEndingMiningUnsuccessfully();
 
 
-    public void reportStale();
+    public void reportStale();//pow blo
 
     public void reportStartingBFTVoting();
     public void reportEndingBFTVoting();

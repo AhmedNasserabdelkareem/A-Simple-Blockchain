@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="49dd7726-dacf-4f0b-9429-681c4b7192e1" name="Default" comment="" />
+    <list default="true" id="49dd7726-dacf-4f0b-9429-681c4b7192e1" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/BlockChain/src/concrete/Network.java" beforeDir="false" afterPath="$PROJECT_DIR$/BlockChain/src/concrete/Network.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BlockChain/src/concrete/Node.java" beforeDir="false" afterPath="$PROJECT_DIR$/BlockChain/src/concrete/Node.java" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -19,36 +22,48 @@
       <file leaf-file-name="Node.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Node.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="296">
-              <caret line="207" column="18" selection-start-line="207" selection-start-column="18" selection-end-line="207" selection-end-column="18" />
+            <state relative-caret-position="17">
+              <caret line="447" column="14" selection-start-line="447" selection-start-column="14" selection-end-line="447" selection-end-column="14" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#6966#6967#0" expanded="true" />
-                <element signature="e#7000#7001#0" expanded="true" />
-                <element signature="e#7046#7047#0" expanded="true" />
-                <element signature="e#7077#7078#0" expanded="true" />
-                <element signature="e#10648#10649#0" expanded="true" />
-                <element signature="e#10722#10723#0" expanded="true" />
-                <element signature="e#14162#14163#0" expanded="true" />
-                <element signature="e#14194#14195#0" expanded="true" />
-                <element signature="e#17519#17520#0" expanded="true" />
-                <element signature="e#17555#17556#0" expanded="true" />
-                <element signature="e#17617#17618#0" expanded="true" />
-                <element signature="e#17657#17658#0" expanded="true" />
-                <element signature="e#23692#23693#0" expanded="true" />
-                <element signature="e#23731#23732#0" expanded="true" />
-                <element signature="e#29537#29538#0" expanded="true" />
-                <element signature="e#29575#29576#0" expanded="true" />
+                <element signature="e#10652#10653#0" expanded="true" />
+                <element signature="e#10726#10727#0" expanded="true" />
+                <element signature="e#14988#14989#0" expanded="true" />
+                <element signature="e#15020#15021#0" expanded="true" />
+                <element signature="e#18540#18541#0" expanded="true" />
+                <element signature="e#18576#18577#0" expanded="true" />
+                <element signature="e#18638#18639#0" expanded="true" />
+                <element signature="e#18678#18679#0" expanded="true" />
+                <element signature="e#24715#24716#0" expanded="true" />
+                <element signature="e#24754#24755#0" expanded="true" />
+                <element signature="e#30576#30577#0" expanded="true" />
+                <element signature="e#30614#30615#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Node (2).java" pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/Downloads/Node (2).java">
+      <file leaf-file-name="Analyser.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Analyser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="88">
-              <caret line="15" column="16" selection-end-line="1009" selection-end-column="1" />
+            <state relative-caret-position="287">
+              <caret line="132" column="22" lean-forward="true" selection-start-line="132" selection-start-column="22" selection-end-line="132" selection-end-column="22" />
+              <folding>
+                <element signature="e#1177#1178#0" expanded="true" />
+                <element signature="e#1249#1250#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="IAnalyser.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/BlockChain/src/interfaces/IAnalyser.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="102">
+              <caret line="41" column="24" lean-forward="true" selection-start-line="41" selection-start-column="24" selection-end-line="41" selection-end-column="24" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -65,7 +80,7 @@
       <file leaf-file-name="Block.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Block.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2002">
+            <state relative-caret-position="1914">
               <caret line="104" column="53" selection-start-line="104" selection-start-column="53" selection-end-line="104" selection-end-column="53" />
               <folding>
                 <element signature="e#287#288#0" expanded="true" />
@@ -80,31 +95,20 @@
       <file leaf-file-name="Network.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Network.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="154" column="36" lean-forward="true" selection-start-line="154" selection-start-column="36" selection-end-line="154" selection-end-column="36" />
+            <state relative-caret-position="165">
+              <caret line="320" column="72" selection-start-line="320" selection-start-column="72" selection-end-line="320" selection-end-column="72" />
               <folding>
-                <element signature="e#835#836#0" expanded="true" />
-                <element signature="e#867#868#0" expanded="true" />
-                <element signature="e#914#915#0" expanded="true" />
-                <element signature="e#949#950#0" expanded="true" />
-                <element signature="e#998#999#0" expanded="true" />
-                <element signature="e#1033#1034#0" expanded="true" />
-                <element signature="e#3532#3533#0" expanded="true" />
-                <element signature="e#3560#3561#0" expanded="true" />
-                <element signature="e#7568#7569#0" expanded="true" />
-                <element signature="e#7601#7602#0" expanded="true" />
-                <element signature="e#7792#7793#0" expanded="true" />
-                <element signature="e#7829#7830#0" expanded="true" />
+                <element signature="e#864#865#0" expanded="true" />
+                <element signature="e#896#897#0" expanded="true" />
+                <element signature="e#943#944#0" expanded="true" />
+                <element signature="e#978#979#0" expanded="true" />
+                <element signature="e#1027#1028#0" expanded="true" />
+                <element signature="e#1062#1063#0" expanded="true" />
+                <element signature="e#3975#3976#0" expanded="true" />
+                <element signature="e#4003#4004#0" expanded="true" />
+                <element signature="e#8102#8103#0" expanded="true" />
+                <element signature="e#8139#8140#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Validator.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Validator.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="352">
-              <caret line="20" column="41" selection-start-line="20" selection-start-column="41" selection-end-line="20" selection-end-column="41" />
             </state>
           </provider>
         </entry>
@@ -144,7 +148,7 @@
       <file leaf-file-name="INTW.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/BlockChain/src/interfaces/INTW.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="682">
+            <state relative-caret-position="572">
               <caret line="31" column="26" selection-start-line="31" selection-start-column="26" selection-end-line="31" selection-end-column="26" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -153,37 +157,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Utils.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Utils.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="22">
-              <caret line="1" column="20" selection-start-line="1" selection-start-column="20" selection-end-line="1" selection-end-column="20" />
-            </state>
-          </provider>
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>addTr</find>
-      <find>3o</find>
-      <find>generateConf</find>
-      <find>node</find>
-      <find>add</find>
-      <find>pre-pre</find>
-      <find>node added the block to chain</find>
-      <find>prepare</find>
-      <find>&quot;prepare&quot;</find>
-      <find>node adde</find>
-      <find>ispow</find>
-      <find>print</find>
-      <find>prepare message is created</find>
-      <find>this.vi</find>
-      <find>confi</find>
-      <find>generateNodeSignature();</find>
-      <find>this.primary</find>
-      <find>generateConfigMessage primaryNodePublicKey</find>
       <find>&quot;pre-prepare&quot;</find>
       <find>this.state.equals(&quot;pre-prepare&quot;)</find>
       <find>prepareMessage.getMessageType().equals(&quot;prepare&quot;)</find>
@@ -193,9 +170,27 @@
       <find>prepareMessage.verifyPeerSignature()</find>
       <find>prepareMessage.getBlock().getBlockHash().equals(this.newBlock.getBlockHash()</find>
       <find>!this.preparePool.isMessageExists(prepareMessage)</find>
-      <find>node added</find>
-      <find>node ad</find>
       <find>.clo</find>
+      <find>addtoch</find>
+      <find>commit</find>
+      <find>node ad</find>
+      <find>Unspent</find>
+      <find>analyti</find>
+      <find>Unspent()</find>
+      <find>addto</find>
+      <find>save</find>
+      <find>node add</find>
+      <find>verifytransactionva</find>
+      <find>avops.c</find>
+      <find>commitun</find>
+      <find>node added</find>
+      <find>prev == null</find>
+      <find>repo</find>
+      <find>chain</find>
+      <find>addtocha</find>
+      <find>3omra</find>
+      <find>prev</find>
+      <find>System.o</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -211,6 +206,7 @@
         <option value="$PROJECT_DIR$/BlockChain/src/concrete/Block.java" />
         <option value="$PROJECT_DIR$/BlockChain/src/concrete/Message.java" />
         <option value="$PROJECT_DIR$/BlockChain/src/interfaces/IMessage.java" />
+        <option value="$PROJECT_DIR$/BlockChain/src/interfaces/IAnalyser.java" />
         <option value="$PROJECT_DIR$/BlockChain/src/concrete/Network.java" />
         <option value="$PROJECT_DIR$/BlockChain/src/concrete/Node.java" />
       </list>
@@ -226,7 +222,7 @@
     <packageJsonPaths />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="57" />
+    <option name="x" value="56" />
     <option name="y" value="65" />
     <option name="width" value="1750" />
     <option name="height" value="970" />
@@ -238,6 +234,7 @@
     <panes>
       <pane id="Scope" />
       <pane id="AndroidView" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -263,11 +260,17 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="concrete" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="A-Simple-Blockchain" type="b2602c69:ProjectViewProjectNode" />
+              <item name="A-Simple-Blockchain" type="462c0819:PsiDirectoryNode" />
+              <item name="BlockChain" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="interfaces" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -368,11 +371,10 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="44905000" />
+    <option name="totallyTimeSpent" value="50213000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -384,11 +386,11 @@
       <window_info anchor="right" id="Maven Projects" order="3" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.51282054" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.82051283" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25973153" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25973153" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -422,7 +424,6 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Messages" order="7" weight="0.32905984" />
       <window_info anchor="right" id="Maven Projects" order="3" />
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25637585" />
     </layout>
@@ -434,60 +435,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Utils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22">
-          <caret line="1" column="20" selection-start-line="1" selection-start-column="20" selection-end-line="1" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Node.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15884">
-          <caret line="722" column="50" selection-start-line="722" selection-start-column="50" selection-end-line="722" selection-end-column="50" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#6966#6967#0" expanded="true" />
-            <element signature="e#7000#7001#0" expanded="true" />
-            <element signature="e#7046#7047#0" expanded="true" />
-            <element signature="e#7077#7078#0" expanded="true" />
-            <element signature="e#10648#10649#0" expanded="true" />
-            <element signature="e#10722#10723#0" expanded="true" />
-            <element signature="e#14162#14163#0" expanded="true" />
-            <element signature="e#14194#14195#0" expanded="true" />
-            <element signature="e#17519#17520#0" expanded="true" />
-            <element signature="e#17555#17556#0" expanded="true" />
-            <element signature="e#17617#17618#0" expanded="true" />
-            <element signature="e#17657#17658#0" expanded="true" />
-            <element signature="e#23692#23693#0" expanded="true" />
-            <element signature="e#23731#23732#0" expanded="true" />
-            <element signature="e#29537#29538#0" expanded="true" />
-            <element signature="e#29575#29576#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Network.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="616">
-          <caret line="43" column="37" selection-start-line="43" selection-start-column="37" selection-end-line="43" selection-end-column="37" />
-          <folding>
-            <element signature="e#835#836#0" expanded="true" />
-            <element signature="e#867#868#0" expanded="true" />
-            <element signature="e#914#915#0" expanded="true" />
-            <element signature="e#949#950#0" expanded="true" />
-            <element signature="e#998#999#0" expanded="true" />
-            <element signature="e#1033#1034#0" expanded="true" />
-            <element signature="e#3532#3533#0" expanded="true" />
-            <element signature="e#3560#3561#0" expanded="true" />
-            <element signature="e#7568#7569#0" expanded="true" />
-            <element signature="e#7601#7602#0" expanded="true" />
-            <element signature="e#7792#7793#0" expanded="true" />
-            <element signature="e#7829#7830#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Validator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="682">
@@ -546,22 +493,18 @@
           <caret line="720" column="22" selection-start-line="720" selection-start-column="22" selection-end-line="720" selection-end-column="22" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#6966#6967#0" expanded="true" />
-            <element signature="e#7000#7001#0" expanded="true" />
-            <element signature="e#7046#7047#0" expanded="true" />
-            <element signature="e#7077#7078#0" expanded="true" />
-            <element signature="e#10648#10649#0" expanded="true" />
-            <element signature="e#10722#10723#0" expanded="true" />
-            <element signature="e#14162#14163#0" expanded="true" />
-            <element signature="e#14194#14195#0" expanded="true" />
-            <element signature="e#17519#17520#0" expanded="true" />
-            <element signature="e#17555#17556#0" expanded="true" />
-            <element signature="e#17617#17618#0" expanded="true" />
-            <element signature="e#17657#17658#0" expanded="true" />
-            <element signature="e#23692#23693#0" expanded="true" />
-            <element signature="e#23731#23732#0" expanded="true" />
-            <element signature="e#29537#29538#0" expanded="true" />
-            <element signature="e#29575#29576#0" expanded="true" />
+            <element signature="e#10652#10653#0" expanded="true" />
+            <element signature="e#10726#10727#0" expanded="true" />
+            <element signature="e#14988#14989#0" expanded="true" />
+            <element signature="e#15020#15021#0" expanded="true" />
+            <element signature="e#18540#18541#0" expanded="true" />
+            <element signature="e#18576#18577#0" expanded="true" />
+            <element signature="e#18638#18639#0" expanded="true" />
+            <element signature="e#18678#18679#0" expanded="true" />
+            <element signature="e#24715#24716#0" expanded="true" />
+            <element signature="e#24754#24755#0" expanded="true" />
+            <element signature="e#30576#30577#0" expanded="true" />
+            <element signature="e#30614#30615#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -713,18 +656,16 @@
         <state relative-caret-position="2057">
           <caret line="287" column="24" selection-start-line="287" selection-start-column="24" selection-end-line="287" selection-end-column="24" />
           <folding>
-            <element signature="e#835#836#0" expanded="true" />
-            <element signature="e#867#868#0" expanded="true" />
-            <element signature="e#914#915#0" expanded="true" />
-            <element signature="e#949#950#0" expanded="true" />
-            <element signature="e#998#999#0" expanded="true" />
-            <element signature="e#1033#1034#0" expanded="true" />
-            <element signature="e#3532#3533#0" expanded="true" />
-            <element signature="e#3560#3561#0" expanded="true" />
-            <element signature="e#7568#7569#0" expanded="true" />
-            <element signature="e#7601#7602#0" expanded="true" />
-            <element signature="e#7792#7793#0" expanded="true" />
-            <element signature="e#7829#7830#0" expanded="true" />
+            <element signature="e#864#865#0" expanded="true" />
+            <element signature="e#896#897#0" expanded="true" />
+            <element signature="e#943#944#0" expanded="true" />
+            <element signature="e#978#979#0" expanded="true" />
+            <element signature="e#1027#1028#0" expanded="true" />
+            <element signature="e#1062#1063#0" expanded="true" />
+            <element signature="e#3975#3976#0" expanded="true" />
+            <element signature="e#4003#4004#0" expanded="true" />
+            <element signature="e#8102#8103#0" expanded="true" />
+            <element signature="e#8139#8140#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -735,22 +676,18 @@
           <caret line="99" column="19" lean-forward="true" selection-start-line="99" selection-start-column="19" selection-end-line="99" selection-end-column="19" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#6966#6967#0" expanded="true" />
-            <element signature="e#7000#7001#0" expanded="true" />
-            <element signature="e#7046#7047#0" expanded="true" />
-            <element signature="e#7077#7078#0" expanded="true" />
-            <element signature="e#10648#10649#0" expanded="true" />
-            <element signature="e#10722#10723#0" expanded="true" />
-            <element signature="e#14162#14163#0" expanded="true" />
-            <element signature="e#14194#14195#0" expanded="true" />
-            <element signature="e#17519#17520#0" expanded="true" />
-            <element signature="e#17555#17556#0" expanded="true" />
-            <element signature="e#17617#17618#0" expanded="true" />
-            <element signature="e#17657#17658#0" expanded="true" />
-            <element signature="e#23692#23693#0" expanded="true" />
-            <element signature="e#23731#23732#0" expanded="true" />
-            <element signature="e#29537#29538#0" expanded="true" />
-            <element signature="e#29575#29576#0" expanded="true" />
+            <element signature="e#10652#10653#0" expanded="true" />
+            <element signature="e#10726#10727#0" expanded="true" />
+            <element signature="e#14988#14989#0" expanded="true" />
+            <element signature="e#15020#15021#0" expanded="true" />
+            <element signature="e#18540#18541#0" expanded="true" />
+            <element signature="e#18576#18577#0" expanded="true" />
+            <element signature="e#18638#18639#0" expanded="true" />
+            <element signature="e#18678#18679#0" expanded="true" />
+            <element signature="e#24715#24716#0" expanded="true" />
+            <element signature="e#24754#24755#0" expanded="true" />
+            <element signature="e#30576#30577#0" expanded="true" />
+            <element signature="e#30614#30615#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -761,22 +698,18 @@
           <caret line="722" column="50" selection-start-line="722" selection-start-column="50" selection-end-line="722" selection-end-column="50" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#6966#6967#0" expanded="true" />
-            <element signature="e#7000#7001#0" expanded="true" />
-            <element signature="e#7046#7047#0" expanded="true" />
-            <element signature="e#7077#7078#0" expanded="true" />
-            <element signature="e#10648#10649#0" expanded="true" />
-            <element signature="e#10722#10723#0" expanded="true" />
-            <element signature="e#14162#14163#0" expanded="true" />
-            <element signature="e#14194#14195#0" expanded="true" />
-            <element signature="e#17519#17520#0" expanded="true" />
-            <element signature="e#17555#17556#0" expanded="true" />
-            <element signature="e#17617#17618#0" expanded="true" />
-            <element signature="e#17657#17658#0" expanded="true" />
-            <element signature="e#23692#23693#0" expanded="true" />
-            <element signature="e#23731#23732#0" expanded="true" />
-            <element signature="e#29537#29538#0" expanded="true" />
-            <element signature="e#29575#29576#0" expanded="true" />
+            <element signature="e#10652#10653#0" expanded="true" />
+            <element signature="e#10726#10727#0" expanded="true" />
+            <element signature="e#14988#14989#0" expanded="true" />
+            <element signature="e#15020#15021#0" expanded="true" />
+            <element signature="e#18540#18541#0" expanded="true" />
+            <element signature="e#18576#18577#0" expanded="true" />
+            <element signature="e#18638#18639#0" expanded="true" />
+            <element signature="e#18678#18679#0" expanded="true" />
+            <element signature="e#24715#24716#0" expanded="true" />
+            <element signature="e#24754#24755#0" expanded="true" />
+            <element signature="e#30576#30577#0" expanded="true" />
+            <element signature="e#30614#30615#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -786,18 +719,16 @@
         <state relative-caret-position="616">
           <caret line="43" column="37" selection-start-line="43" selection-start-column="37" selection-end-line="43" selection-end-column="37" />
           <folding>
-            <element signature="e#835#836#0" expanded="true" />
-            <element signature="e#867#868#0" expanded="true" />
-            <element signature="e#914#915#0" expanded="true" />
-            <element signature="e#949#950#0" expanded="true" />
-            <element signature="e#998#999#0" expanded="true" />
-            <element signature="e#1033#1034#0" expanded="true" />
-            <element signature="e#3532#3533#0" expanded="true" />
-            <element signature="e#3560#3561#0" expanded="true" />
-            <element signature="e#7568#7569#0" expanded="true" />
-            <element signature="e#7601#7602#0" expanded="true" />
-            <element signature="e#7792#7793#0" expanded="true" />
-            <element signature="e#7829#7830#0" expanded="true" />
+            <element signature="e#864#865#0" expanded="true" />
+            <element signature="e#896#897#0" expanded="true" />
+            <element signature="e#943#944#0" expanded="true" />
+            <element signature="e#978#979#0" expanded="true" />
+            <element signature="e#1027#1028#0" expanded="true" />
+            <element signature="e#1062#1063#0" expanded="true" />
+            <element signature="e#3975#3976#0" expanded="true" />
+            <element signature="e#4003#4004#0" expanded="true" />
+            <element signature="e#8102#8103#0" expanded="true" />
+            <element signature="e#8139#8140#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -860,22 +791,18 @@
           <caret line="720" column="22" selection-start-line="720" selection-start-column="22" selection-end-line="720" selection-end-column="22" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#6966#6967#0" expanded="true" />
-            <element signature="e#7000#7001#0" expanded="true" />
-            <element signature="e#7046#7047#0" expanded="true" />
-            <element signature="e#7077#7078#0" expanded="true" />
-            <element signature="e#10648#10649#0" expanded="true" />
-            <element signature="e#10722#10723#0" expanded="true" />
-            <element signature="e#14162#14163#0" expanded="true" />
-            <element signature="e#14194#14195#0" expanded="true" />
-            <element signature="e#17519#17520#0" expanded="true" />
-            <element signature="e#17555#17556#0" expanded="true" />
-            <element signature="e#17617#17618#0" expanded="true" />
-            <element signature="e#17657#17658#0" expanded="true" />
-            <element signature="e#23692#23693#0" expanded="true" />
-            <element signature="e#23731#23732#0" expanded="true" />
-            <element signature="e#29537#29538#0" expanded="true" />
-            <element signature="e#29575#29576#0" expanded="true" />
+            <element signature="e#10652#10653#0" expanded="true" />
+            <element signature="e#10726#10727#0" expanded="true" />
+            <element signature="e#14988#14989#0" expanded="true" />
+            <element signature="e#15020#15021#0" expanded="true" />
+            <element signature="e#18540#18541#0" expanded="true" />
+            <element signature="e#18576#18577#0" expanded="true" />
+            <element signature="e#18638#18639#0" expanded="true" />
+            <element signature="e#18678#18679#0" expanded="true" />
+            <element signature="e#24715#24716#0" expanded="true" />
+            <element signature="e#24754#24755#0" expanded="true" />
+            <element signature="e#30576#30577#0" expanded="true" />
+            <element signature="e#30614#30615#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -966,7 +893,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Block.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2002">
+        <state relative-caret-position="1914">
           <caret line="104" column="53" selection-start-line="104" selection-start-column="53" selection-end-line="104" selection-end-column="53" />
           <folding>
             <element signature="e#287#288#0" expanded="true" />
@@ -1000,7 +927,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/BlockChain/src/interfaces/INTW.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="682">
+        <state relative-caret-position="572">
           <caret line="31" column="26" selection-start-line="31" selection-start-column="26" selection-end-line="31" selection-end-column="26" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -1024,47 +951,65 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Network.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="154" column="36" lean-forward="true" selection-start-line="154" selection-start-column="36" selection-end-line="154" selection-end-column="36" />
+        <state relative-caret-position="165">
+          <caret line="320" column="72" selection-start-line="320" selection-start-column="72" selection-end-line="320" selection-end-column="72" />
           <folding>
-            <element signature="e#835#836#0" expanded="true" />
-            <element signature="e#867#868#0" expanded="true" />
-            <element signature="e#914#915#0" expanded="true" />
-            <element signature="e#949#950#0" expanded="true" />
-            <element signature="e#998#999#0" expanded="true" />
-            <element signature="e#1033#1034#0" expanded="true" />
-            <element signature="e#3532#3533#0" expanded="true" />
-            <element signature="e#3560#3561#0" expanded="true" />
-            <element signature="e#7568#7569#0" expanded="true" />
-            <element signature="e#7601#7602#0" expanded="true" />
-            <element signature="e#7792#7793#0" expanded="true" />
-            <element signature="e#7829#7830#0" expanded="true" />
+            <element signature="e#864#865#0" expanded="true" />
+            <element signature="e#896#897#0" expanded="true" />
+            <element signature="e#943#944#0" expanded="true" />
+            <element signature="e#978#979#0" expanded="true" />
+            <element signature="e#1027#1028#0" expanded="true" />
+            <element signature="e#1062#1063#0" expanded="true" />
+            <element signature="e#3975#3976#0" expanded="true" />
+            <element signature="e#4003#4004#0" expanded="true" />
+            <element signature="e#8102#8103#0" expanded="true" />
+            <element signature="e#8139#8140#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Node.java">
+    <entry file="file://$PROJECT_DIR$/BlockChain/src/interfaces/IAnalyser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="296">
-          <caret line="207" column="18" selection-start-line="207" selection-start-column="18" selection-end-line="207" selection-end-column="18" />
+        <state relative-caret-position="102">
+          <caret line="41" column="24" lean-forward="true" selection-start-line="41" selection-start-column="24" selection-end-line="41" selection-end-column="24" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#6966#6967#0" expanded="true" />
-            <element signature="e#7000#7001#0" expanded="true" />
-            <element signature="e#7046#7047#0" expanded="true" />
-            <element signature="e#7077#7078#0" expanded="true" />
-            <element signature="e#10648#10649#0" expanded="true" />
-            <element signature="e#10722#10723#0" expanded="true" />
-            <element signature="e#14162#14163#0" expanded="true" />
-            <element signature="e#14194#14195#0" expanded="true" />
-            <element signature="e#17519#17520#0" expanded="true" />
-            <element signature="e#17555#17556#0" expanded="true" />
-            <element signature="e#17617#17618#0" expanded="true" />
-            <element signature="e#17657#17658#0" expanded="true" />
-            <element signature="e#23692#23693#0" expanded="true" />
-            <element signature="e#23731#23732#0" expanded="true" />
-            <element signature="e#29537#29538#0" expanded="true" />
-            <element signature="e#29575#29576#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Analyser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="287">
+          <caret line="132" column="22" lean-forward="true" selection-start-line="132" selection-start-column="22" selection-end-line="132" selection-end-column="22" />
+          <folding>
+            <element signature="e#1177#1178#0" expanded="true" />
+            <element signature="e#1249#1250#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/report_bft_50_1_1.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Node.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="447" column="14" selection-start-line="447" selection-start-column="14" selection-end-line="447" selection-end-column="14" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#10652#10653#0" expanded="true" />
+            <element signature="e#10726#10727#0" expanded="true" />
+            <element signature="e#14988#14989#0" expanded="true" />
+            <element signature="e#15020#15021#0" expanded="true" />
+            <element signature="e#18540#18541#0" expanded="true" />
+            <element signature="e#18576#18577#0" expanded="true" />
+            <element signature="e#18638#18639#0" expanded="true" />
+            <element signature="e#18678#18679#0" expanded="true" />
+            <element signature="e#24715#24716#0" expanded="true" />
+            <element signature="e#24754#24755#0" expanded="true" />
+            <element signature="e#30576#30577#0" expanded="true" />
+            <element signature="e#30614#30615#0" expanded="true" />
           </folding>
         </state>
       </provider>

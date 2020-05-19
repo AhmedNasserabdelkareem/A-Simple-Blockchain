@@ -180,6 +180,14 @@ public class Node implements INode {
         this.maxTransaction = maxNumTransactions;
         this.peers = IPsOfOtherPeers;
         this.difficulty = diff;
+        Analyser.getInstance().setBlockSize(maxTransaction);
+        Analyser.getInstance().setDifficulty(difficulty);
+        Analyser.getInstance().setNumOfParticipants(sizeOfNetwork());
+        if (isPow)
+            Analyser.getInstance().setType(0);
+        else
+            Analyser.getInstance().setType(1);
+
     }
 
     @Override
@@ -197,7 +205,7 @@ public class Node implements INode {
         System.out.println(t.getID());
         if (verifyTransaction(t)) {
             newAddedTs.add(t.getID());
-            System.out.println("3omran");
+            System.out.println("transcation accepted");
             AvOps.put(t.getID(), t);
 
             transactions.add(t);
@@ -252,7 +260,7 @@ public class Node implements INode {
         if (prevID != -1 && t.getIPs().get(0) != 0) {
             ITransaction prev = getUnspentTransactionByID(prevID);
             if (prev == null) {
-                System.out.println("prev == null");
+                System.out.println("transaction rejected");
                 return false;
             }
             int out = t.getOutIndex();
@@ -260,15 +268,15 @@ public class Node implements INode {
             for (ITransaction.OutputPair p : t.getOPs()) {
                 totalPayed += p.value;
             }
-            System.out.println("totalPayed "+totalPayed);
-            System.out.println("prev.getOPs().get(out-1).available "+prev.getOPs().get(out-1).available);
+//            System.out.println("totalPayed " + totalPayed);
+//            System.out.println("prev.getOPs().get(out-1).available " + prev.getOPs().get(out - 1).available);
             ArrayList<ITransaction.OutputPair> ops = prev.getOPs();
-            boolean av = prev.getOPs().get(out-1).available-totalPayed >= -0.001;
+            boolean av = prev.getOPs().get(out - 1).available - totalPayed >= -0.001;
 
             if (!av) {
                 return false;
             }
-            prev.getOPs().get(out-1).available -= totalPayed;
+            prev.getOPs().get(out - 1).available -= totalPayed;
 
             return true;
         } else {
@@ -341,7 +349,7 @@ public class Node implements INode {
             while ((line = br.readLine()) != null) {
                 ITransaction t = ITransaction.parseTransaction(line);
                 if (t == null) {
-                    System.out.println("t null");
+                    //System.out.println("t null");
                     continue;
                 }
                 t.setPrevTransaction(issuedTransactions.get(t.getPrevID()));
@@ -363,7 +371,7 @@ public class Node implements INode {
 
     @Override
     public ITransaction getUnspentTransactionByID(int id) {
-        System.out.println("id "+id);
+        System.out.println("id " + id);
         return AvOps.get(id);
     }
 
@@ -382,17 +390,25 @@ public class Node implements INode {
 //                return;
 //            }
 //        }
-        if(isPow) {
+        if (isPow) {
             if (chain.size() == 0 || block.getSeqNum() > chain.get(chain.size() - 1).getSeqNum()) {
                 Analyser.getInstance().reportBlockDone();
                 chain.add(block);
                 System.out.println("chain size: " + chain.size());
-            }else{
+            } else {
                 Analyser.getInstance().reportStale();
             }
+
         }else{
             Analyser.getInstance().reportBlockDone();
             chain.add(block);
+            System.out.println("chain size: " + chain.size());
+        }
+
+        if (chain.size() == 1){
+            Analyser.getInstance().broadcastData(network);
+            while (!Analyser.getInstance().isDoneExchanging())
+                Analyser.getInstance().saveReport();
         }
 
     }
@@ -429,7 +445,7 @@ public class Node implements INode {
             block.getHeader().setNonce(nonce);
             block.setHash(null);
             hash = block.getBlockHash();
-            System.out.println("loop hash " + hash);
+            //System.out.println("loop hash " + hash);
         }
         if (!isInterrupt) {
             Analyser.getInstance().reportEndingMiningSuccessfully();
@@ -527,7 +543,7 @@ public class Node implements INode {
 
         /*node public key is the primary public key as the primary who will call this function*/
         this.maxMaliciousNodes = (sizeOfNetwork() - 1) / 3;
-        System.out.println("new block this.seqNum "+this.seqNum);
+        System.out.println("new block this.seqNum " + this.seqNum);
 
         this.validator = new Validator(this.nodePublicKey, this.seqNum, this.viewNum, this.maxMaliciousNodes, block);
         this.validator.initiateNewBlockMessage();
@@ -630,11 +646,11 @@ public class Node implements INode {
      * the node has to receive min 2*f+1 prepare message to be able to move to the next phase*/
     @Override
     public void insertPrepareMessageInPool(ArrayList<IMessage> prepareMessages) throws IOException {
-        System.out.println("Entered prep"+" "+prepareMessages.size()+this.state);
+        System.out.println("Entered prep" + " " + prepareMessages.size() + this.state);
         IMessage prepareMessage;
         for (int i = 0; i < prepareMessages.size(); i++) {
             prepareMessage = prepareMessages.get(i);
-            System.out.println("IN PRE" +this.seqNum+" "+prepareMessage.getSeqNum());
+            System.out.println("IN PRE" + this.seqNum + " " + prepareMessage.getSeqNum());
             if (this.state.equals("pre-prepare") && prepareMessage.getMessageType().equals("prepare") &&
                     prepareMessage.getPrimaryPublicKey().equals(this.primaryNodePublicKey) &&
                     prepareMessage.getViewNum() == this.viewNum && prepareMessage.getSeqNum() == this.seqNum &&
@@ -694,16 +710,16 @@ public class Node implements INode {
 //        }else{ System.out.println("check 1 out"); }
 
 
-
         }
         if (this.preparePool.getPoolSize() >= 2 * this.maxMaliciousNodes + 1) {
             this.state = "prepare";
             System.out.println("node passed prepare phase");
             this.preparePool.clean();
-        }else {
-            System.out.println("this.preparePool.getPoolSize() "+this.preparePool.getPoolSize());
-            System.out.println("this.maxMaliciousNodes "+this.maxMaliciousNodes);
+        } else {
+            System.out.println("this.preparePool.getPoolSize() " + this.preparePool.getPoolSize());
+            System.out.println("this.maxMaliciousNodes " + this.maxMaliciousNodes);
         }
+
 
         generateCommitMessage();
 
@@ -735,14 +751,16 @@ public class Node implements INode {
     @Override
     public void insertCommitMessageInPool(ArrayList<IMessage> commitMessages) throws IOException {
         IMessage commitMessage;
+        Analyser.getInstance().reportStartingBFTVoting();
+
         for (int i = 0; i < commitMessages.size(); i++) {
             commitMessage = commitMessages.get(i);
-            System.out.println("commitMessage.getMessageType() "+commitMessage.getMessageType());
-            System.out.println("this.state "+this.state);
-            System.out.println("commitMessage.getViewNum() "+commitMessage.getViewNum());
-            System.out.println("this.viewNum "+this.viewNum);
-            System.out.println("commitMessage.verifyPeerSignature() "+commitMessage.verifyPeerSignature());
-            System.out.println("!commitPool.isMessageExists(commitMessage) "+!commitPool.isMessageExists(commitMessage));
+            System.out.println("commitMessage.getMessageType() " + commitMessage.getMessageType());
+            System.out.println("this.state " + this.state);
+            System.out.println("commitMessage.getViewNum() " + commitMessage.getViewNum());
+            System.out.println("this.viewNum " + this.viewNum);
+            System.out.println("commitMessage.verifyPeerSignature() " + commitMessage.verifyPeerSignature());
+            System.out.println("!commitPool.isMessageExists(commitMessage) " + !commitPool.isMessageExists(commitMessage));
             if (this.state.equals("prepare") && commitMessage.getMessageType().equals("commit") &&
                     commitMessage.getPrimaryPublicKey().equals(this.primaryNodePublicKey) &&
                     commitMessage.getSeqNum() == this.seqNum && commitMessage.getViewNum() == this.viewNum &&
@@ -765,9 +783,10 @@ public class Node implements INode {
             System.out.println("node passed commit phase");
             this.commitPool.clean();
             addToChain(this.block);
-            System.out.println("node added the block to chain"+ chain.size());
+            System.out.println("node added the block to chain" + chain.size());
 
         }
+        Analyser.getInstance().reportEndingBFTVoting();
         if (network.isPrimary())
             generateConfigMessage(this.primaryNodePublicKey);//TODO 4N NASSER MAY BE CHECKED
 
@@ -775,7 +794,7 @@ public class Node implements INode {
 
     public void generateConfigMessage(PublicKey primaryNodePublicKey) throws IOException {
         this.maxMaliciousNodes = (sizeOfNetwork() - 1) / 3;
-        System.out.println("generateConfigMessage primaryNodePublicKey " +primaryNodePublicKey);
+        System.out.println("generateConfigMessage primaryNodePublicKey " + primaryNodePublicKey);
         IMessage configMessage = new Message("config", isPrimary, primaryNodePublicKey);
         configMessage.setPrimaryPublicKey(primaryNodePublicKey);
         System.out.println("Generating config message...");
