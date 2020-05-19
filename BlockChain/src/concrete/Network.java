@@ -175,11 +175,18 @@ public class Network implements INTW ,Runnable{
         if (node.getNodeType() ==0){
             for (String p : ips) {
                 if (!p.equals(getExternalIP())) {
-                        peers.add(p);
-                        Socket so = new Socket(p,PORT);
-                        so.setReceiveBufferSize(4098*10);
-                        so.setSendBufferSize(4098*10);
-                        sockets.add(so);
+                    peers.add(p);
+                    while(true) {
+                        try {
+                            Socket so = new Socket(p, PORT);
+                            so.setReceiveBufferSize(4098 * 10);
+                            so.setSendBufferSize(4098 * 10);
+                            sockets.add(so);
+                            break;
+                        } catch (Exception e) {
+                            continue;
+                        }
+                    }
                 }
             }
         }else {
@@ -304,15 +311,8 @@ public class Network implements INTW ,Runnable{
 
     @Override
     public void shareMessage(IMessage message,String peer) throws IOException {
-<<<<<<< HEAD
 
-        socket = new Socket(InetAddress.getByName(peer), PORT);
-        socket.setReceiveBufferSize(4098*10);
-        socket.setSendBufferSize(4098*10);
-        outputStream = new ObjectOutputStream(socket.getOutputStream());
-=======
         outputStream = new ObjectOutputStream(sockets.get(peers.indexOf(peer)).getOutputStream());
->>>>>>> 365b07afd89bcf17848dc963aafb41dc60fe41a0
         //outputStream.flush();
         outputStream.writeObject(message);
         //outputStream.reset();
