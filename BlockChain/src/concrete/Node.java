@@ -105,6 +105,13 @@ public class Node implements INode {
         generateKeyPair();
         prepare2issue(0, 100);
         System.out.println("is primary constructor :" + getIsPrimary());
+        Analyser.getInstance().setBlockSize(maxTransaction);
+        Analyser.getInstance().setDifficulty(difficulty);
+        Analyser.getInstance().setNumOfParticipants(sizeOfNetwork());
+        if (isPow)
+            Analyser.getInstance().setType(0);
+        else
+            Analyser.getInstance().setType(1);
 //        if (getIsPrimary()) {
 //            IMessage configMessage = new Message("config", false, nodePublicKey);
 //            sendConfigMessageAtFirst(configMessage);
@@ -180,13 +187,6 @@ public class Node implements INode {
         this.maxTransaction = maxNumTransactions;
         this.peers = IPsOfOtherPeers;
         this.difficulty = diff;
-        Analyser.getInstance().setBlockSize(maxTransaction);
-        Analyser.getInstance().setDifficulty(difficulty);
-        Analyser.getInstance().setNumOfParticipants(sizeOfNetwork());
-        if (isPow)
-            Analyser.getInstance().setType(0);
-        else
-            Analyser.getInstance().setType(1);
 
     }
 
@@ -399,16 +399,18 @@ public class Node implements INode {
                 Analyser.getInstance().reportStale();
             }
 
-        }else{
+        } else {
             Analyser.getInstance().reportBlockDone();
             chain.add(block);
             System.out.println("chain size: " + chain.size());
         }
 
-        if (chain.size() == 1){
+        if (chain.size() == 1) {
             Analyser.getInstance().broadcastData(network);
-            while (!Analyser.getInstance().isDoneExchanging())
-                Analyser.getInstance().saveReport();
+            while (!Analyser.getInstance().isDoneExchanging()) {
+                System.out.println("hh");
+            }
+            Analyser.getInstance().saveReport();
         }
 
     }

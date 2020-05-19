@@ -139,23 +139,39 @@ public class Analyser implements IAnalyser {
 
     @Override
     public String getReport() {
+        System.out.println("repoort =============");
+        System.out.println(this.blockSize);
+        System.out.println(this.numberOfParticipants);
+        System.out.println(this.difficulty);
+
+        System.out.println(this.getAvgMessageComplexity());
+        System.out.println(this.getNumberOfStaleBlocks());
+        System.out.println(this.getAvgTimeToMine());
+        System.out.println(this.getAvgTimeToAgreeOnBlock());
+        System.out.println("repoort +==============");
         StringBuilder sb = new StringBuilder();
-        if(this.type==0){//pow
-            sb.append("Type:pow\n");
-            sb.append("BlockSize:").append(this.blockSize).append("\n");
-            sb.append("Difficulty:").append(this.difficulty).append("\n");
-            sb.append("AMC:").append(this.getAvgMessageComplexity()).append("\n");
-            sb.append("NSB:").append(this.getNumberOfStaleBlocks()).append("\n");
-            sb.append("ATM:").append(this.getAvgTimeToMine()).append("\n");
+        sb.append("FILE\n");
 
-        }else{//bft
-            sb.append("Type:bft\n");
-            sb.append("NumOfNodes:").append(this.numberOfParticipants).append("\n");
-            sb.append("MC:").append(this.getMessageComplexity()).append("\n");
-            sb.append("ATA:").append(this.getAvgTimeToAgreeOnBlock()).append("\n");
+        try {
+            if (this.type == 0) {//pow
+                sb.append("Type:pow\n");
+                sb.append("BlockSize:").append(this.blockSize).append("\n");
+                sb.append("Difficulty:").append(this.difficulty).append("\n");
+                sb.append("AMC:").append(this.getAvgMessageComplexity()).append("\n");
+                sb.append("NSB:").append(this.getNumberOfStaleBlocks()).append("\n");
+                sb.append("ATM:").append(this.getAvgTimeToMine()).append("\n");
 
+            } else {//bft
+                sb.append("Type:bft\n");
+                sb.append("NumOfNodes:").append(this.numberOfParticipants).append("\n");
+                sb.append("MC:").append(this.getMessageComplexity()).append("\n");
+                sb.append("ATA:").append(this.getAvgTimeToAgreeOnBlock()).append("\n");
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
+        System.out.println("report : "+ sb.toString());
         return sb.toString();
     }
     //reporting ====================================================================
