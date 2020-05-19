@@ -11,6 +11,10 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
 public class Network implements INTW ,Runnable{
     private ArrayList<String> peers = new ArrayList<>();
@@ -23,6 +27,7 @@ public class Network implements INTW ,Runnable{
     private final static int PORT =5555;
     private static ObjectInputStream inputStream;
     private ServerSocket ss;
+    private ReadWriteLock l;
 
     public boolean isPrimary() {
         return isPrimary;
@@ -119,6 +124,7 @@ public class Network implements INTW ,Runnable{
         this.node  =node;
         this.ExternalIP = getExternalIP();
         this.sourceIP = InetAddress.getByName(ExternalIP);
+        l= new ReentrantReadWriteLock();
     }
 
     @Override
@@ -388,7 +394,8 @@ public class Network implements INTW ,Runnable{
 
 
     @Override
-    public void shareMessage(IMessage message,String peer) throws IOException {
+    synchronized public void shareMessage(IMessage message,String peer) throws IOException {
+        l.writeLock().lock();
         Socket socket = new Socket(InetAddress.getByName(peer), PORT);
         socket.setSendBufferSize(4098*10);
         socket.setReceiveBufferSize(4098*10);
@@ -398,9 +405,8 @@ public class Network implements INTW ,Runnable{
         outputStream.flush();
         outputStream.close();
         socket.close();
+        l.writeLock().unlock();
         Analyser.getInstance().reportMessageSent();
-
-
     }
 
     @Override
