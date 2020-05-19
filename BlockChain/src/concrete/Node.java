@@ -383,10 +383,11 @@ public class Node implements INode {
 //            }
 //        }
         if(isPow) {
-
             if (chain.size() == 0 || block.getSeqNum() > chain.get(chain.size() - 1).getSeqNum()) {
                 chain.add(block);
                 System.out.println("chain size: " + chain.size());
+            }else{
+                Analyser.getInstance().reportStale();
             }
         }else{
             chain.add(block);
@@ -419,6 +420,7 @@ public class Node implements INode {
         //block.getHeader().setTransactionsHash(merkleRoot);
         String target = Utils.getDificultyString(difficulty); //Create a string with difficulty * "0"
         isInterrupt = false;
+        Analyser.getInstance().reportStartingMining();
         while (!hash.substring(0, difficulty).equals(target) && !isInterrupt) {
             nonce++;
             //System.out.println("isInterrupt "+isInterrupt);
@@ -428,6 +430,7 @@ public class Node implements INode {
             System.out.println("loop hash " + hash);
         }
         if (!isInterrupt) {
+            Analyser.getInstance().reportEndingMiningSuccessfully();
             //block.getHeader().setHash(hash);
             //block.getHeader().setNonce(nonce);
             System.out.println("block is mined...");
@@ -435,6 +438,7 @@ public class Node implements INode {
             addToChain(block);
             shareBlock(block);
         } else {
+            Analyser.getInstance().reportEndingMiningUnsuccessfully();
             isInterrupt = false;
         }
     }
