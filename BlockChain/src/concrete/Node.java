@@ -384,12 +384,14 @@ public class Node implements INode {
 //        }
         if(isPow) {
             if (chain.size() == 0 || block.getSeqNum() > chain.get(chain.size() - 1).getSeqNum()) {
+                Analyser.getInstance().reportBlockDone();
                 chain.add(block);
                 System.out.println("chain size: " + chain.size());
             }else{
                 Analyser.getInstance().reportStale();
             }
         }else{
+            Analyser.getInstance().reportBlockDone();
             chain.add(block);
         }
 
