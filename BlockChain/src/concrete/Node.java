@@ -411,6 +411,7 @@ public class Node implements INode {
                 System.out.println("hh");
             }
             Analyser.getInstance().saveReport();
+
         }
 
     }
@@ -755,6 +756,8 @@ public class Node implements INode {
         IMessage commitMessage;
         Analyser.getInstance().reportStartingBFTVoting();
 
+        System.out.println("commit size : " + commitMessages.size());
+
         for (int i = 0; i < commitMessages.size(); i++) {
             commitMessage = commitMessages.get(i);
             System.out.println("commitMessage.getMessageType() " + commitMessage.getMessageType());
@@ -1046,6 +1049,6 @@ public class Node implements INode {
 
     @Override
     public void receiveReport(Object t) {
-
+        Analyser.getInstance().receiveData((IAnalyser.Analytics) t);
     }
 }

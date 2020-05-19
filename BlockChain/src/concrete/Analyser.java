@@ -49,7 +49,8 @@ public class Analyser implements IAnalyser {
 
     @Override
     public boolean isDoneExchanging() {
-        return this.allData.size() == this.numberOfParticipants ;
+        System.out.println(this.allData.size() +"---"+this.numberOfParticipants );
+        return this.allData.size() >= this.numberOfParticipants ;
     }
 
     //POW ===============================================================
