@@ -203,7 +203,7 @@ public class Node implements INode {
     @Override
     public void addTransaction(Transaction t) throws IOException, InterruptedException {
         System.out.println(t.getID());
-        if (verifyTransaction(t)) {
+        if (!this.isPow||verifyTransaction(t)) {
             newAddedTs.add(t.getID());
             System.out.println("transaction accepted");
 
@@ -546,7 +546,7 @@ public class Node implements INode {
         this.viewNum++;
 
         /*node public key is the primary public key as the primary who will call this function*/
-        this.maxMaliciousNodes = (sizeOfNetwork() - 1) / 3;
+        this.maxMaliciousNodes = (sizeOfNetwork()) / 3 ;
         System.out.println("new block this.seqNum " + this.seqNum);
 
         this.validator = new Validator(this.nodePublicKey, this.seqNum, this.viewNum, this.maxMaliciousNodes, block);
@@ -636,8 +636,10 @@ public class Node implements INode {
             this.preparePool.insertMessage(prepareMessage);
             System.out.println("prepare message is created");
             broadcastMessage(prepareMessage);
+            System.out.println("prepare message is broadcasted");
             if (sizeOfNetwork() <= 2) {
                 this.state = "prepare";
+                /*** Acting as malicious***/
                 generateCommitMessage();
             }
         } else {
@@ -725,7 +727,7 @@ public class Node implements INode {
         }
 
 
-
+        /*** Acting as malicious***/
         generateCommitMessage();
 
     }
@@ -800,7 +802,7 @@ public class Node implements INode {
     }
 
     public void generateConfigMessage(PublicKey primaryNodePublicKey) throws IOException {
-        this.maxMaliciousNodes = (sizeOfNetwork() - 1) / 3;
+        this.maxMaliciousNodes = (sizeOfNetwork()) / 3;
         System.out.println("generateConfigMessage primaryNodePublicKey " + primaryNodePublicKey);
         IMessage configMessage = new Message("config", isPrimary, primaryNodePublicKey);
         configMessage.setPrimaryPublicKey(primaryNodePublicKey);
