@@ -132,10 +132,14 @@ public class Network implements INTW ,Runnable{
     public void issueTransaction(Transaction transaction) throws IOException {
 
         for (String peer:peers) {
+
+            System.out.println("sending to "+ peer);
+            System.out.println("sockets.get(peers.indexOf(peer)).getOutputStream()"+sockets.get(peers.indexOf(peer)).getOutputStream());
             outputStream = new ObjectOutputStream(sockets.get(peers.indexOf(peer)).getOutputStream());
             outputStream.writeObject(transaction);
-            outputStream.flush();
-            outputStream.close();
+            System.out.println("sent..");
+            //outputStream.flush();
+            //outputStream.close();
 
             //socket.close();
         }
@@ -175,17 +179,20 @@ public class Network implements INTW ,Runnable{
         if (node.getNodeType() ==0){
             for (String p : ips) {
                 if (!p.equals(getExternalIP())) {
-                    peers.add(p);
+            peers.add(p);
                     while(true) {
                         try {
+                            //System.out.println("in"+p);
                             Socket so = new Socket(p, PORT);
                             so.setReceiveBufferSize(4098 * 10);
                             so.setSendBufferSize(4098 * 10);
                             sockets.add(so);
+                            System.out.println("out"+p);
                             break;
-                        } catch (Exception e) {
-                            continue;
+                        } catch (Exception ignored){
+                            //ignored.printStackTrace();
                         }
+
                     }
                 }
             }
@@ -201,7 +208,7 @@ public class Network implements INTW ,Runnable{
                             so.setSendBufferSize(4098 * 10);
                             sockets.add(so);
                             break;
-                        } catch (Exception e){
+                        } catch (Exception ignored){
                         }
 
                     }
