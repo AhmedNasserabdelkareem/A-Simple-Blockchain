@@ -128,9 +128,8 @@ public class Network implements INTW ,Runnable{
 
     @Override
     public void issueTransaction(Transaction transaction) throws IOException {
-        System.out.println(peers);
+
         for (String peer:peers) {
-            System.out.println(peer);
             Socket socket = new Socket(InetAddress.getByName(peer), PORT);
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             outputStream.writeObject(transaction);
@@ -144,15 +143,12 @@ public class Network implements INTW ,Runnable{
 
     @Override
     public void shareBlock(IBlock block, String peer) throws IOException {
-        System.out.println("start share block");
-        System.out.println("start share block peer: "+peer);
         Socket socket = new Socket(InetAddress.getByName(peer), PORT);
         outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(block);
         outputStream.flush();
         outputStream.close();
         socket.close();
-        System.out.println("end share block");
     }
 
 
@@ -204,7 +200,7 @@ public class Network implements INTW ,Runnable{
     }
 
     @Override
-    public void listenForBlocks(Block b) {
+    public void listenForBlocks(Block b) throws IOException {
         this.node.receiveBlock(b);
     }
 
@@ -220,7 +216,7 @@ public class Network implements INTW ,Runnable{
     public void startServer() throws IOException, ClassNotFoundException, InterruptedException {
         ss = new ServerSocket(this.PORT);
         while(true){
-            System.out.println("in server loop");
+
             Socket s =ss.accept();
             inputStream = new ObjectInputStream(s.getInputStream());
             Object t = inputStream.readObject();
@@ -304,24 +300,26 @@ public class Network implements INTW ,Runnable{
     @Override
     public void shareMessage(IMessage message,String peer) throws IOException {
         Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+        socket.setSendBufferSize(4098 * 10);
+        socket.setReceiveBufferSize(4098 * 10);
+        
         outputStream = new ObjectOutputStream(socket.getOutputStream());
+        outputStream.flush();
         outputStream.writeObject(message);
         //outputStream.reset();
         outputStream.flush();
         outputStream.close();
         socket.close();
+
     }
 
     @Override
     public void broadcastMessage(IMessage message) throws IOException {
         for (String p:peers) {
-            System.out.println("p before sharing: "+p);
             shareMessage(message,p);
-            System.out.println("p after sharing: "+p);
         }
-        System.out.println("for out");
         //TODO 1N SOLUTION SEND TO ME THE NEW BLOCK MESSAGE
-       // shareMessage(message,this.ExternalIP);
+
     }
 
     @Override

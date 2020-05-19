@@ -28,12 +28,12 @@ public interface INode {
     //called if the block was accepted to decrease the values to be equal to availabl
     public void commitUnspent();
     public void shareBlock(IBlock block) throws IOException; //share the block over the network
-    public void pow(IBlock block, int difficulty) throws IOException;
+    public void pow(IBlock block, int difficulty) throws IOException, InterruptedException;
     // agree/disagree on a block coming from the ntw..send the decision to the ntw and add/not to the chain
     // use th agreementmethod (BFT/pow) to agree/not
-    public void receiveBlock(IBlock block);//flag : 0 block , 1 response
+    public void receiveBlock(IBlock block) throws IOException;//flag : 0 block , 1 response
 
-    public void addToChain(IBlock block);
+    public void addToChain(IBlock block) throws IOException;
 
     public IBlock getLastBlock();
 

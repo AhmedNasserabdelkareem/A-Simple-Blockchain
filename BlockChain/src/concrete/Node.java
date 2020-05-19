@@ -4,6 +4,7 @@ import interfaces.*;
 
 import org.bouncycastle.*;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.math.ec.ScaleYNegateXPointMap;
 
 import java.io.*;
 import java.net.URL;
@@ -196,15 +197,15 @@ public class Node implements INode {
         System.out.println(t.getID());
         if (verifyTransaction(t)) {
             newAddedTs.add(t.getID());
+            System.out.println("3omran");
             AvOps.put(t.getID(), t);
 
             transactions.add(t);
-            System.out.println("Verified" + " " + transactions.size());
+            //System.out.println("Verified" + " " + transactions.size());
             if (transactions.size() == maxTransaction) {
                 createBlock();
                 transactions.clear();
                 AvOps.clear();
-
             }
         }
     }
@@ -217,10 +218,12 @@ public class Node implements INode {
         block.getBlockHash();
 
         if (isPow) {
+            setSeqNum();
+            block.setSeqNum(this.seqNum);
             pow(block, difficulty);
             System.out.println("Create Block Pow");
         } else {
-
+            //block.setSeqNum(this.seqNum);
             System.out.println("PBFT creating block transactions");
             //generateNewBlockMessage(block);
             if (getIsPrimary())
@@ -249,6 +252,7 @@ public class Node implements INode {
         if (prevID != -1 && t.getIPs().get(0) != 0) {
             ITransaction prev = getUnspentTransactionByID(prevID);
             if (prev == null) {
+                System.out.println("prev == null");
                 return false;
             }
             int out = t.getOutIndex();
@@ -256,12 +260,16 @@ public class Node implements INode {
             for (ITransaction.OutputPair p : t.getOPs()) {
                 totalPayed += p.value;
             }
+            System.out.println("totalPayed "+totalPayed);
+            System.out.println("prev.getOPs().get(out-1).available "+prev.getOPs().get(out-1).available);
             ArrayList<ITransaction.OutputPair> ops = prev.getOPs();
-            boolean av = prev.getOPs().get(out).available - totalPayed > -0.001;
+
+            boolean av = prev.getOPs().get(out-1).available-totalPayed >= -0.001;
+
             if (!av) {
                 return false;
             }
-            prev.getOPs().get(out).available -= totalPayed;
+            prev.getOPs().get(out-1).available -= totalPayed;
 
             return true;
         } else {
@@ -358,6 +366,7 @@ public class Node implements INode {
 
     @Override
     public ITransaction getUnspentTransactionByID(int id) {
+        System.out.println("id "+id);
         return AvOps.get(id);
     }
 
@@ -368,22 +377,25 @@ public class Node implements INode {
 
 
     @Override
-    public void addToChain(IBlock block) {
-
-
-        if ((chain.size() > 0 && !block.getHeader().getHash().equals(chain.get(chain.size() - 1).getHeader().calculateHash()))
-                || chain.size() == 0) {
-            chain.add(block);
-            System.out.println("chain size: " + chain.size());
-        }
-
-
-//        if(chain.size()==3){
-//            for (int i =0;i<chain.size();i++){
-//                System.out.println("chain block "+i+" hash: "+chain.get(i).getBlockHash());
-//                System.out.println("chain block "+i+" prev hash: "+chain.get(i).getPrevBlock().getBlockHash());
+    public void addToChain(IBlock block) throws IOException {
+//        for (int i = 0 ; i <chain.size() ; i++) {
+//            System.out.println("block.getBlockHash() "+block.getHeader().getTransactionsHash());
+//            System.out.println("chain.get(i).getBlockHash()) "+chain.get(i).getHeader().getTransactionsHash());
+//            if (block.getHeader().getTransactionsHash().equals(chain.get(i).getHeader().getTransactionsHash())) {
+//                return;
 //            }
 //        }
+        if(isPow) {
+
+
+            if (chain.size() == 0 || block.getSeqNum() > chain.get(chain.size() - 1).getSeqNum()) {
+                chain.add(block);
+                System.out.println("chain size: " + chain.size());
+            }
+        }else{
+            chain.add(block);
+        }
+
     }
 
     @Override
@@ -403,26 +415,33 @@ public class Node implements INode {
 
     //apply POW (mining) verification by Increasing nonce value until hash target is reached.
     @Override
-    public void pow(IBlock block, int difficulty) throws IOException {
+    public void pow(IBlock block, int difficulty) throws IOException, InterruptedException {
         System.out.println("Working in pow");
         int nonce = 0;
         block.getHeader().setNonce(nonce);
         String hash = block.getBlockHash();
+
+        //String merkleRoot = Utils.getMerkleRoot(block.getTransactions());
+        //block.getHeader().setTransactionsHash(merkleRoot);
         String target = Utils.getDificultyString(difficulty); //Create a string with difficulty * "0"
 
         isInterrupt = false;
         while (!hash.substring(0, difficulty).equals(target) && !isInterrupt) {
             nonce++;
+            //System.out.println("isInterrupt "+isInterrupt);
             block.getHeader().setNonce(nonce);
+
+            block.setHash(null);
             hash = block.getBlockHash();
+            System.out.println("loop hash " + hash);
         }
 
 
         if (!isInterrupt) {
-            block.getHeader().setHash(hash);
-            block.getHeader().setNonce(nonce);
+            //block.getHeader().setHash(hash);
+            //block.getHeader().setNonce(nonce);
             System.out.println("block is mined...");
-            System.out.println("block hash is: " + block.getHeader().getHash());
+            System.out.println("block hash is: " + block.getBlockHash());
             addToChain(block);
             shareBlock(block);
         } else {
@@ -493,8 +512,9 @@ public class Node implements INode {
             System.out.println("passing set new block validation");
             this.newBlock = newBlockMessage.getBlock();
         }
-//        generateNodeSignature();
-// TODO 1S NASSER THE CODE HAS ENDED BASED ON TODO 1B
+        //generateNodeSignature();
+        // TODO 1S NASSER THE CODE HAS ENDED BASED ON TODO 1B
+        //generateNodeSignature();//done
         if (getIsPrimary()) {
             System.out.println("generate new pre-prepare message as the node is primary");
             generatePreprepareMessage();
@@ -504,13 +524,16 @@ public class Node implements INode {
     /*this is only for the primary which will let the client to sent the block*/
     @Override
     public void generateNewBlockMessage(IBlock block) throws IOException, InterruptedException {
-        //setSeqNum();
+
         System.out.println("new Block hash: " + block.getBlockHash());
         if (network.isPrimary())
             this.primaryNodePublicKey = this.nodePublicKey;
-        /*node public key is the primary public key as the primary who will call this function*/
         this.viewNum++;
+
+        /*node public key is the primary public key as the primary who will call this function*/
         this.maxMaliciousNodes = (sizeOfNetwork() - 1) / 3;
+        System.out.println("new block this.seqNum "+this.seqNum);
+
         this.validator = new Validator(this.nodePublicKey, this.seqNum, this.viewNum, this.maxMaliciousNodes, block);
         this.validator.initiateNewBlockMessage();
         // timer
@@ -548,7 +571,8 @@ public class Node implements INode {
     @Override
     public void insertPreprepareMessage(IMessage preprepareMessage) throws IOException {
         System.out.println("preprepare message max malicious nodes: " + preprepareMessage.getMaxMaliciousNodes());
-        System.out.println("preprepare message block hash: " + preprepareMessage.getBlock().calculateHash());
+        System.out.println("preprepare message block hash: " + preprepareMessage.getBlock().getBlockHash());
+
         System.out.println("preprepare message type: " + preprepareMessage.getMessageType());
         System.out.println("preprepare message sending node public key: " + preprepareMessage.getNodePublicKey());
         System.out.println("preprepare message primary public key the same the above: " + preprepareMessage.getPrimaryPublicKey());
@@ -558,7 +582,7 @@ public class Node implements INode {
         System.out.println("verify peer signature : " + preprepareMessage.verifyPeerSignature());
         System.out.println("primary ley for the current node: " + this.primaryNodePublicKey);
         System.out.println("node view num: " + this.viewNum);
-        System.out.println("Node new block hash: " + this.newBlock.getHeader().getHash());
+        System.out.println("Node new block hash: " + this.newBlock.getBlockHash());
 
         if (preprepareMessage.getMessageType().equals("pre-prepare") && preprepareMessage.verifyPeerSignature() &&
                 preprepareMessage.getPrimaryPublicKey().equals(this.primaryNodePublicKey) &&
@@ -591,8 +615,8 @@ public class Node implements INode {
      * the node has to finish the pre-prepare state before entering prepare state*/
     @Override
     public void generatePrepareMessage() throws IOException {
+        System.out.println("Entered pre gen");
         if (this.state.equals("pre-prepare")) {
-            System.out.println("signature of node while generating prepare: " + this.nodeSignature);
             IMessage prepareMessage = new Message("prepare", this.primaryNodePublicKey, this.seqNum, this.viewNum, this.nodeSignature, this.block, this.nodePublicKey);
             this.preparePool.insertMessage(prepareMessage);
             System.out.println("prepare message is created");
@@ -611,15 +635,16 @@ public class Node implements INode {
      * the node has to receive min 2*f+1 prepare message to be able to move to the next phase*/
     @Override
     public void insertPrepareMessageInPool(ArrayList<IMessage> prepareMessages) throws IOException {
+        System.out.println("Entered prep"+" "+prepareMessages.size()+this.state);
         IMessage prepareMessage;
         for (int i = 0; i < prepareMessages.size(); i++) {
             prepareMessage = prepareMessages.get(i);
-
+            System.out.println("IN PRE" +this.seqNum+" "+prepareMessage.getSeqNum());
             if (this.state.equals("pre-prepare") && prepareMessage.getMessageType().equals("prepare") &&
                     prepareMessage.getPrimaryPublicKey().equals(this.primaryNodePublicKey) &&
                     prepareMessage.getViewNum() == this.viewNum && prepareMessage.getSeqNum() == this.seqNum &&
                     prepareMessage.verifyPeerSignature() &&
-                    prepareMessage.getBlock().getBlockHash().equals(this.block.getBlockHash()) &&
+                    prepareMessage.getBlock().getBlockHash().equals(this.newBlock.getBlockHash()) &&
                     !this.preparePool.isMessageExists(prepareMessage)) {
 
                 System.out.println("prepare validation is passed");
@@ -662,19 +687,27 @@ public class Node implements INode {
 //                          }
 //                      }
 //                      else{ System.out.println("check 5 out"); }
-//                  }else{ System.out.println("check 4 out"); }
+//                  }else{
+//                      System.out.println(prepareMessage.getViewNum() + " "+ this.viewNum);
+//                      System.out.println("check 4 out"); }
 //                }else{ System.out.println("check 3 out");
 //                System.out.println(" PK1 :" +prepareMessage.getPrimaryPublicKey() + "  PK2 " +this.primaryNodePublicKey );}
-//            }else{ System.out.println("check 2 out"); }
+//            }else{ System.out.println("check 2 out");
+//                System.out.println("this.nodeSignature "+this.nodeSignature);
+//                System.out.println("prepareMessage.getNodeSignature() "+prepareMessage.getNodeSignature());
+//            }
 //        }else{ System.out.println("check 1 out"); }
-//
+
+
 
         }
-
         if (this.preparePool.getPoolSize() >= 2 * this.maxMaliciousNodes + 1) {
             this.state = "prepare";
             System.out.println("node passed prepare phase");
             this.preparePool.clean();
+        }else {
+            System.out.println("this.preparePool.getPoolSize() "+this.preparePool.getPoolSize());
+            System.out.println("this.maxMaliciousNodes "+this.maxMaliciousNodes);
         }
 
         generateCommitMessage();
@@ -709,7 +742,12 @@ public class Node implements INode {
         IMessage commitMessage;
         for (int i = 0; i < commitMessages.size(); i++) {
             commitMessage = commitMessages.get(i);
-
+            System.out.println("commitMessage.getMessageType() "+commitMessage.getMessageType());
+            System.out.println("this.state "+this.state);
+            System.out.println("commitMessage.getViewNum() "+commitMessage.getViewNum());
+            System.out.println("this.viewNum "+this.viewNum);
+            System.out.println("commitMessage.verifyPeerSignature() "+commitMessage.verifyPeerSignature());
+            System.out.println("!commitPool.isMessageExists(commitMessage) "+!commitPool.isMessageExists(commitMessage));
             if (this.state.equals("prepare") && commitMessage.getMessageType().equals("commit") &&
                     commitMessage.getPrimaryPublicKey().equals(this.primaryNodePublicKey) &&
                     commitMessage.getSeqNum() == this.seqNum && commitMessage.getViewNum() == this.viewNum &&
@@ -724,6 +762,7 @@ public class Node implements INode {
         }
 
         if (this.commitPool.getPoolSize() >= 2 * this.maxMaliciousNodes + 1) {
+
             /*mark transactions as spent*/
             verifyBlockTransactions(this.block.getTransactions());
             commitUnspent();
@@ -731,7 +770,8 @@ public class Node implements INode {
             System.out.println("node passed commit phase");
             this.commitPool.clean();
             addToChain(this.block);
-            System.out.println("node added the block to chain");
+            System.out.println("node added the block to chain"+ chain.size());
+
         }
         if (network.isPrimary())
             generateConfigMessage(this.primaryNodePublicKey);//TODO 4N NASSER MAY BE CHECKED
@@ -740,9 +780,10 @@ public class Node implements INode {
 
     public void generateConfigMessage(PublicKey primaryNodePublicKey) throws IOException {
         this.maxMaliciousNodes = (sizeOfNetwork() - 1) / 3;
+        System.out.println("generateConfigMessage primaryNodePublicKey " +primaryNodePublicKey);
         IMessage configMessage = new Message("config", isPrimary, primaryNodePublicKey);
+        configMessage.setPrimaryPublicKey(primaryNodePublicKey);
         System.out.println("Generating config message...");
-
         sendConfigMessage(configMessage);
     }
 
@@ -752,7 +793,7 @@ public class Node implements INode {
         System.out.println("primary id in config message: " + configMessage.getPrimaryPublicKey().toString());
         System.out.println("is primary in config message: " + configMessage.isPrimary());
         System.out.println("is primary from network call: " + getIsPrimary());
-
+        //this.viewNum = configMessage.getViewNum();
         this.maxMaliciousNodes = configMessage.getMaxMaliciousNodes();
         this.primaryNodePublicKey = configMessage.getPrimaryPublicKey();
         this.isPrimary = configMessage.isPrimary();
@@ -818,7 +859,7 @@ public class Node implements INode {
 
 
     @Override
-    public void receiveBlock(IBlock block) {
+    public void receiveBlock(IBlock block) throws IOException {
         this.block = block;
         boolean b = block.verifyBlockHash();
         this.isInterrupt = true;

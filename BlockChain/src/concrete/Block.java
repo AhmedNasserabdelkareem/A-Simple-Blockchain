@@ -8,6 +8,21 @@ public class Block implements IBlock, Serializable {
     private IBlockHeader header;
     private ArrayList<ITransaction> ts;
     private IBlock prevBlock=null;
+
+    public int getSeqNum() {
+        return seqNum;
+    }
+
+    public void setSeqNum(int seqNum) {
+        this.seqNum = seqNum;
+    }
+
+    private int seqNum = 0;
+    @Override
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
+
     private String hash = null;
 
 
@@ -61,6 +76,8 @@ public class Block implements IBlock, Serializable {
         sb.append(String.valueOf(h.getTimeStamp()));
         sb.append("-");
         sb.append(String.valueOf(h.getTransactionsHash()));
+        sb.append("-");
+        sb.append(String.valueOf(b.getSeqNum()));
         return Utils.applySha256(sb.toString());
     }
     @Override
@@ -86,6 +103,8 @@ public class Block implements IBlock, Serializable {
         sb.append(String.valueOf(this.header.getTimeStamp()));
         sb.append("-");
         sb.append(String.valueOf(this.header.getTransactionsHash()));
+        sb.append("-");
+        sb.append(String.valueOf(this.getSeqNum()));
         String hash =Utils.applySha256(sb.toString());
         System.out.println("verifying block hash ..");
         return hash.equals( this.hash);

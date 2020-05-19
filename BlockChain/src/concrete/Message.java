@@ -181,6 +181,7 @@ public class Message implements IMessage, Serializable {
     public void setNodePublicKey(PublicKey nodePublicKey) {
         this.nodePublicKey = nodePublicKey;
     }
+
     @Override
     public byte[] getNodeSignature() {
         return nodeSignature;
