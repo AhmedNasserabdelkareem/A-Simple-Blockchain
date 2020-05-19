@@ -407,7 +407,7 @@ public class Node implements INode {
 
         if (chain.size() == 1){
             Analyser.getInstance().broadcastData(network);
-            while (!Analyser.getInstance().isDoneExchanging())
+            while (!Analyser.getInstance().isDoneExchanging());
                 Analyser.getInstance().saveReport();
         }
 
