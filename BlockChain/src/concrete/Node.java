@@ -346,7 +346,9 @@ public class Node implements INode {
             FileReader fr = new FileReader(file);
             BufferedReader br = new BufferedReader(fr);
             String line;
-            while ((line = br.readLine()) != null) {
+            int num = 50;
+            while ((line = br.readLine()) != null && num >0) {
+                num--;
                 ITransaction t = ITransaction.parseTransaction(line);
                 if (t == null) {
                     //System.out.println("t null");

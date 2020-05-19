@@ -66,17 +66,17 @@ public class Analyser implements IAnalyser {
     }
 
     @Override
-    public float getAvgMessageComplexity() {
-        float numExch =0;
+    public double getAvgMessageComplexity() {
+        double numExch =0;
         for(Analytics a : this.allData){
             numExch += a.avgNumOfMessExch4Block;
         }
 
-        return numExch / (float)this.numberOfParticipants;
+        return ( numExch / (double) this.numberOfParticipants);
     }
 
     @Override
-    public float getNumberOfStaleBlocks() {
+    public double getNumberOfStaleBlocks() {
         int n =0;
         for(Analytics a : this.allData){
             n += a.stales;
@@ -85,14 +85,14 @@ public class Analyser implements IAnalyser {
     }
 
     @Override
-    public float getAvgTimeToMine() {
-        float tttm =0;
+    public double getAvgTimeToMine() {
+        double tttm =0;
         int nosm=0;
         for(Analytics a : this.allData){
             tttm +=a.totalTTM;
             nosm+= a.numberOfSuccessfulMines;
         }
-        return tttm/(float)nosm;
+        return  (tttm/(double)nosm);
     }
     //BFT =======================================================================
 
@@ -102,8 +102,8 @@ public class Analyser implements IAnalyser {
     }
 
     @Override
-    public float getMessageComplexity() {
-        float numExch =0;
+    public double getMessageComplexity() {
+        double numExch =0;
         for(Analytics a : this.allData){
             numExch += a.avgNumOfMessExch4Block;
         }
@@ -112,14 +112,14 @@ public class Analyser implements IAnalyser {
     }
 
     @Override
-    public float getAvgTimeToAgreeOnBlock() {
-        float totT =0;
+    public double getAvgTimeToAgreeOnBlock() {
+        double totT =0;
         int numAg = 0;
         for(Analytics a : this.allData){
             totT += a.totalAgreeOnBlockTime;
             numAg += a.numberOfAgreedOnBlocks;
         }
-        return totT / numAg;
+        return ( totT / (double) numAg);
     }
     //reporting
 
@@ -190,7 +190,7 @@ public class Analyser implements IAnalyser {
 
     @Override
     public void reportBlockDone() {
-        this.myData.avgNumOfMessExch4Block = ((this.myData.avgNumOfMessExch4Block *this.numOfBlocks) +(float) this.numOfMessages) / (this.numOfBlocks+1);
+        this.myData.avgNumOfMessExch4Block = ((this.myData.avgNumOfMessExch4Block *this.numOfBlocks) +(double) this.numOfMessages) / (this.numOfBlocks+1);
         this.numOfBlocks ++;
         this.numOfMessages=0;
 
