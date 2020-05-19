@@ -2,9 +2,7 @@ package concrete;
 
 import interfaces.*;
 
-import org.bouncycastle.*;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.math.ec.ScaleYNegateXPointMap;
 
 import java.io.*;
 import java.net.URL;
@@ -176,7 +174,7 @@ public class Node implements INode {
             ips.add(data[i].split(",")[0]);
             nodeTypes.add(Integer.parseInt(data[i].split(",")[1]));
         }
-        // System.out.println(network.getExternalIP()+" "+ips.get(0));
+        System.out.println(network.getExternalIP()+" "+ips.get(0));
         setConfigs(pow == 1, maxSize, ips, nodeTypes.get(ips.indexOf(network.getExternalIP())), diff);
     }
 
@@ -346,7 +344,7 @@ public class Node implements INode {
             FileReader fr = new FileReader(file);
             BufferedReader br = new BufferedReader(fr);
             String line;
-            int num = 50;
+            int num = 400;
             while ((line = br.readLine()) != null && num >0) {
                 num--;
                 ITransaction t = ITransaction.parseTransaction(line);
@@ -485,7 +483,7 @@ public class Node implements INode {
         }
         this.nodeIp = this.network.getIP();
         System.out.println("node ip: " + nodeIp);
-        this.network.broadcastPK(new PairKeyPK(this.nodeIp, this.nodePublicKey));
+        //this.network.broadcastPK(new PairKeyPK(this.nodeIp, this.nodePublicKey));
 
         System.out.println("Node keys are generated");
         System.out.println("Node's public key: " + this.nodePublicKey);
