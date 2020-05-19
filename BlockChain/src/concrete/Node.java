@@ -347,7 +347,9 @@ public class Node implements INode {
             FileReader fr = new FileReader(file);
             BufferedReader br = new BufferedReader(fr);
             String line;
-            while ((line = br.readLine()) != null) {
+            int num = 50;
+            while ((line = br.readLine()) != null && num >0) {
+                num--;
                 ITransaction t = ITransaction.parseTransaction(line);
                 if (t == null) {
                     //System.out.println("t null");
@@ -546,7 +548,9 @@ public class Node implements INode {
         this.viewNum++;
 
         /*node public key is the primary public key as the primary who will call this function*/
+
         this.maxMaliciousNodes = (sizeOfNetwork()) / 3 ;
+
         System.out.println("new block this.seqNum " + this.seqNum);
 
         this.validator = new Validator(this.nodePublicKey, this.seqNum, this.viewNum, this.maxMaliciousNodes, block);
@@ -670,6 +674,7 @@ public class Node implements INode {
                 } else {
                     /*not sent by a primary*/
                     if (verifyBlockTransactions(prepareMessage.getBlock().getTransactions())) {
+                        System.out.println("in belal");
                         this.preparePool.insertMessage(prepareMessage);
                     }
                 }
@@ -786,7 +791,7 @@ public class Node implements INode {
         if (this.commitPool.getPoolSize() >= 2 * this.maxMaliciousNodes + 1) {
 
             /*mark transactions as spent*/
-            verifyBlockTransactions(this.block.getTransactions());
+            //verifyBlockTransactions(this.block.getTransactions());
             //commitUnspent();
             this.state = "commit";
             System.out.println("node passed commit phase");
@@ -842,7 +847,7 @@ public class Node implements INode {
                 break;
             case "commit":
                 commitMessages.add(t);
-                if (commitMessages.size() == network.getsizeofPeers()) {
+                if (commitMessages.size()  == network.getsizeofPeers() -1) {
                     insertCommitMessageInPool(commitMessages);
                     commitMessages.clear();
                 }
@@ -1053,6 +1058,7 @@ public class Node implements INode {
 
     @Override
     public void receiveReport(Object t) {
+        System.out.println("ay 7aga");
         Analyser.getInstance().receiveData((IAnalyser.Analytics) t);
     }
 }

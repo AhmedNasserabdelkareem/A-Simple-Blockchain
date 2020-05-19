@@ -5,15 +5,15 @@ import java.io.Serializable;
 
 public interface IAnalyser {
     public class Analytics implements Serializable {
-        public float avgNumOfMessExch4Block = 0; //pow 1 , bft 1
+        public double avgNumOfMessExch4Block = 0; //pow 1 , bft 1
 
-        public float totalTTM = 0;               //pow 3
+        public double totalTTM = 0;               //pow 3
         public int numberOfSuccessfulMines = 0;
 
         public int stales = 0;              //pow 2
 
         public int numberOfAgreedOnBlocks = 0;  //bft 2
-        public float totalAgreeOnBlockTime = 0;
+        public double totalAgreeOnBlockTime = 0;
     }
     public void setType(int i);//0 for pow , 1 for bft
     public void setBlockSize(int size);
@@ -63,13 +63,13 @@ public interface IAnalyser {
 
     //pow
 
-    public float getAvgMessageComplexity();
-    public float getNumberOfStaleBlocks();
-    public float getAvgTimeToMine();
+    public double getAvgMessageComplexity();
+    public double getNumberOfStaleBlocks();
+    public double getAvgTimeToMine();
 
     //bft
 
-    public float getMessageComplexity();
-    public float getAvgTimeToAgreeOnBlock();
+    public double getMessageComplexity();
+    public double getAvgTimeToAgreeOnBlock();
 
 }
