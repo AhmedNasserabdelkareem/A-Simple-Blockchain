@@ -257,7 +257,7 @@ public class Node implements INode {
 
     private boolean verifyTransactionVal(ITransaction t) {
         int prevID = t.getPrevID();
-        if (prevID != -1 && t.getIPs().get(0) != 0) {
+        if (prevID != -1 && t.getIPs().get(0) == 0) {
             ITransaction prev = getUnspentTransactionByID(prevID);
             if (prev == null) {
                 System.out.println("transaction rejected");
