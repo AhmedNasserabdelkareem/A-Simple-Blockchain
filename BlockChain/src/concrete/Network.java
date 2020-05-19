@@ -242,17 +242,26 @@ public class Network implements INTW ,Runnable{
     @Override
     public void startServer() throws IOException, ClassNotFoundException, InterruptedException {
         ss = new ServerSocket(this.PORT);
+        Object t;
         while(true){
 
             Socket s =ss.accept();
             inputStream = new ObjectInputStream(s.getInputStream());
-            Object t = inputStream.readObject();
+            while(true) {
+                try {
+                    t = inputStream.readObject();
+                    break;
+                } catch (Exception e) {
+                    continue;
+                }
+            }
             if (t instanceof Transaction){
+                Object finalT2 = t;
                 Thread tmp = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            listenForTransactions((Transaction) t);
+                            listenForTransactions((Transaction) finalT2);
                         } catch (IOException | InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -260,11 +269,12 @@ public class Network implements INTW ,Runnable{
                 });
                 tmp.start();
             }else if (t instanceof Block){
+                Object finalT1 = t;
                 Thread tmp = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            listenForBlocks((Block) t);
+                            listenForBlocks((Block) finalT1);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -272,45 +282,50 @@ public class Network implements INTW ,Runnable{
                 });
                 tmp.start();
             }else if ( t instanceof Response) {
+                Object finalT = t;
                 Thread tmp = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        listenForResponses((Response) t);
+                        listenForResponses((Response) finalT);
                     }
                 });
                 tmp.start();
             }else if ( t instanceof PairKeyPK) {
+                Object finalT3 = t;
                 Thread tmp = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        listenforPublicKey((PairKeyPK) t);
+                        listenforPublicKey((PairKeyPK) finalT3);
 
                     }
                 });
                 tmp.start();
             }else if (t  instanceof  IAnalyser.Analytics){
+                Object finalT4 = t;
                 Thread tmp = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        listenForAnalytics(t);
+                        listenForAnalytics(finalT4);
                     }
                 });
                 tmp.start();
             }else if (t instanceof HashMap){
+                Object finalT5 = t;
                 Thread tmp = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        setPublicKeys((HashMap<Integer, PublicKey>) t);
+                        setPublicKeys((HashMap<Integer, PublicKey>) finalT5);
                     }
                 });
                 tmp.start();
 
             }else if (t instanceof Message) {
+                Object finalT6 = t;
                 Thread tmp = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            listenForMessages((IMessage) t);
+                            listenForMessages((IMessage) finalT6);
                         } catch (IOException | InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -318,11 +333,12 @@ public class Network implements INTW ,Runnable{
                 });
                 tmp.start();
             }else {
+                Object finalT7 = t;
                 Thread tmp = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            listenForNewConnections((String) t);
+                            listenForNewConnections((String) finalT7);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
