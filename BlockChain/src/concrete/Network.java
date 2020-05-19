@@ -21,7 +21,6 @@ public class Network implements INTW ,Runnable{
     private Node node;
     private InetAddress sourceIP;
     private final static int PORT =5555;
-    private static ObjectOutputStream outputStream;
     private static ObjectInputStream inputStream;
     private ServerSocket ss;
 
@@ -47,7 +46,7 @@ public class Network implements INTW ,Runnable{
             }
             if (!getExternalIP().equals(getNextPrimary())) {
                 Socket socket = new Socket(InetAddress.getByName(peer), PORT);
-                outputStream = new ObjectOutputStream(socket.getOutputStream());
+                ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
                 outputStream.writeObject(m);
                 outputStream.flush();
                 outputStream.close();
@@ -65,7 +64,7 @@ public class Network implements INTW ,Runnable{
 
             }
             Socket socket = new Socket(InetAddress.getByName(peer), PORT);
-            outputStream = new ObjectOutputStream(socket.getOutputStream());
+            ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
             outputStream.writeObject(m);
             outputStream.flush();
             outputStream.close();
@@ -79,7 +78,7 @@ public class Network implements INTW ,Runnable{
     public void broadcastAnalytics(IAnalyser.Analytics myData) throws IOException {
         for (String p:peers) {
             Socket socket = new Socket(InetAddress.getByName(p), PORT);
-            outputStream = new ObjectOutputStream(socket.getOutputStream());
+            ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
             outputStream.writeObject(myData);
             outputStream.flush();
             outputStream.close();
@@ -144,7 +143,7 @@ public class Network implements INTW ,Runnable{
     public void issueTransaction(Transaction transaction) throws IOException {
         for (String peer:peers) {
             Socket socket = new Socket(InetAddress.getByName(peer), PORT);
-            outputStream = new ObjectOutputStream(socket.getOutputStream());
+            ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
             outputStream.writeObject(transaction);
             outputStream.flush();
             outputStream.close();
@@ -155,7 +154,7 @@ public class Network implements INTW ,Runnable{
     @Override
     public void shareBlock(IBlock block, String peer) throws IOException {
         Socket socket = new Socket(InetAddress.getByName(peer), PORT);
-        outputStream = new ObjectOutputStream(socket.getOutputStream());
+        ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(block);
         outputStream.flush();
         outputStream.close();
@@ -168,7 +167,7 @@ public class Network implements INTW ,Runnable{
     @Override
     public void shareResponse(Response r,String peer) throws IOException {
         Socket socket = new Socket(InetAddress.getByName(peer), PORT);
-        outputStream = new ObjectOutputStream(socket.getOutputStream());
+        ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(r);
         outputStream.flush();
         outputStream.close();
@@ -358,7 +357,7 @@ public class Network implements INTW ,Runnable{
 
     public void sharepublickeys(HashMap<Integer, PublicKey> keys, String peer) throws IOException {
         Socket socket = new Socket(InetAddress.getByName(peer), PORT);
-        outputStream = new ObjectOutputStream(socket.getOutputStream());
+        ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(keys);
         outputStream.flush();
         outputStream.close();
@@ -375,7 +374,7 @@ public class Network implements INTW ,Runnable{
     @Override
     public void sharepublickeys(PairKeyPK pair, String peer) throws IOException {
         Socket socket = new Socket(InetAddress.getByName(peer), PORT);
-        outputStream = new ObjectOutputStream(socket.getOutputStream());
+        ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(pair);
         outputStream.flush();
         outputStream.close();
@@ -393,7 +392,7 @@ public class Network implements INTW ,Runnable{
         Socket socket = new Socket(InetAddress.getByName(peer), PORT);
         socket.setSendBufferSize(4098*10);
         socket.setReceiveBufferSize(4098*10);
-        outputStream = new ObjectOutputStream(socket.getOutputStream());
+        ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(message);
         //outputStream.reset();
         outputStream.flush();
