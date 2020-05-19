@@ -238,21 +238,88 @@ public class Network implements INTW ,Runnable{
             inputStream = new ObjectInputStream(s.getInputStream());
             Object t = inputStream.readObject();
             if (t instanceof Transaction){
-                listenForTransactions((Transaction) t);
+                Thread tmp = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            listenForTransactions((Transaction) t);
+                        } catch (IOException | InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                tmp.start();
             }else if (t instanceof Block){
-                listenForBlocks((Block) t);
+                Thread tmp = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            listenForBlocks((Block) t);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                tmp.start();
             }else if ( t instanceof Response) {
-                listenForResponses((Response) t);
+                Thread tmp = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        listenForResponses((Response) t);
+                    }
+                });
+                tmp.start();
             }else if ( t instanceof PairKeyPK) {
-                listenforPublicKey((PairKeyPK) t);
+                Thread tmp = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        listenforPublicKey((PairKeyPK) t);
+
+                    }
+                });
+                tmp.start();
             }else if (t  instanceof  IAnalyser.Analytics){
-                listenForAnalytics(t);
+                Thread tmp = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        listenForAnalytics(t);
+                    }
+                });
+                tmp.start();
             }else if (t instanceof HashMap){
-                setPublicKeys((HashMap<Integer, PublicKey>) t);
+                Thread tmp = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setPublicKeys((HashMap<Integer, PublicKey>) t);
+                    }
+                });
+                tmp.start();
+
             }else if (t instanceof Message) {
-                listenForMessages((IMessage) t);
+                Thread tmp = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            listenForMessages((IMessage) t);
+                        } catch (IOException | InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                tmp.start();
             }else {
-                listenForNewConnections((String) t);
+                Thread tmp = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            listenForNewConnections((String) t);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
+                tmp.start();
             }
         }
 
