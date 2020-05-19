@@ -192,7 +192,6 @@ public class Network implements INTW ,Runnable{
                             sockets.add(so);
                             break;
                         } catch (Exception e){
-                            continue;
                         }
 
                     }
