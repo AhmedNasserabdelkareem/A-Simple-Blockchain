@@ -259,7 +259,8 @@ public class Network implements INTW ,Runnable{
     }
 
     public void listenForAnalytics(Object t) {
-        node.receiveReport(t);
+        Analyser.getInstance().receiveData((IAnalyser.Analytics) t);
+        //node.receiveReport(t);
     }
 
     public void listenforPublicKey(PairKeyPK t) {
