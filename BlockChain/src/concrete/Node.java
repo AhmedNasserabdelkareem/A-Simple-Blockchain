@@ -59,6 +59,7 @@ public class Node implements INode {
     private ArrayList<IMessage> commitMessages;
     private ArrayList<IMessage> prepareMessages;
     private Queue<Block> queue;
+    private int malicious =0;
 
     public ArrayList<PairKeyPK> getPublicKeysIP() {
         return publicKeysIP;
@@ -172,25 +173,27 @@ public class Node implements INode {
         int maxSize = Integer.parseInt(data[0].split(":")[1]);
         int diff = Integer.parseInt(data[1].split(":")[1]);
         int pow = Integer.parseInt(data[2].split(":")[1]);
+        int malicious = Integer.parseInt(data[3].split(":")[1]);
         ips = new ArrayList<>();
         nodeTypes = new ArrayList<>();
-        for (int i = 3; i < data.length; i++) {
+        for (int i = 4; i < data.length; i++) {
             ips.add(data[i].split(",")[0]);
             System.out.println("ip element in read configuration: " + data[i].split(",")[0]);
             nodeTypes.add(Integer.parseInt(data[i].split(",")[1]));
             System.out.println("node type element in read configuration: " + Integer.parseInt(data[i].split(",")[1]));
         }
-        System.out.println(network.getExternalIP()+" "+ips.get(0));
-        setConfigs(pow == 1, maxSize, ips, nodeTypes.get(ips.indexOf(network.getExternalIP())), diff);
+        System.out.println(network.getExternalIP() + " " + ips.get(0));
+        setConfigs(pow == 1, maxSize, ips, nodeTypes.get(ips.indexOf(network.getExternalIP())), diff,malicious);
     }
 
     @Override
-    public void setConfigs(boolean isPow, int maxNumTransactions, ArrayList<String> IPsOfOtherPeers, int nodeType, int diff) {
+    public void setConfigs(boolean isPow, int maxNumTransactions, ArrayList<String> IPsOfOtherPeers, int nodeType, int diff, int malicious) {
         this.isPow = isPow;
         this.nodeType = nodeType;
         this.maxTransaction = maxNumTransactions;
         this.peers = IPsOfOtherPeers;
         this.difficulty = diff;
+        this.malicious = malicious;
 
     }
 
@@ -354,7 +357,7 @@ public class Node implements INode {
             String line;
 
             int num = 400;
-            while ((line = br.readLine()) != null && num >0) {
+            while ((line = br.readLine()) != null && num > 0) {
                 num--;
                 ITransaction t = ITransaction.parseTransaction(line);
                 if (t == null) {
@@ -609,6 +612,7 @@ public class Node implements INode {
         System.out.println("verify peer signature : " + preprepareMessage.verifyPeerSignature());
         System.out.println("primary ley for the current node: " + this.primaryNodePublicKey);
         System.out.println("node view num: " + this.viewNum);
+
         System.out.println("Node new block hash: " + this.newBlock.getBlockHash());
 
         if (preprepareMessage.getMessageType().equals("pre-prepare") && preprepareMessage.verifyPeerSignature() &&
@@ -652,7 +656,7 @@ public class Node implements INode {
             if (sizeOfNetwork() <= 2) {
                 this.state = "prepare";
                 /*** Acting as malicious***/
-             //  generateCommitMessage();
+                //generateCommitMessage();
             }
         } else {
             System.out.println("Node is out it won't generate a prepare message");
@@ -730,7 +734,7 @@ public class Node implements INode {
 
 
         }
-        if (this.preparePool.getPoolSize() >= 2 * this.maxMaliciousNodes + 1) {
+        if (this.preparePool.getPoolSize() >= 2 * this.maxMaliciousNodes) {
             this.state = "prepare";
             System.out.println("node passed prepare phase");
             this.preparePool.clean();
@@ -741,7 +745,7 @@ public class Node implements INode {
 
 
         /*** Acting as malicious***/
-      //  generateCommitMessage();
+        //generateCommitMessage();
 
     }
 
@@ -796,7 +800,7 @@ public class Node implements INode {
             }
         }
 
-        if (this.commitPool.getPoolSize() >= 2 * this.maxMaliciousNodes + 1) {
+        if (this.commitPool.getPoolSize() >= 2 * this.maxMaliciousNodes) {
 
             /*mark transactions as spent*/
             //verifyBlockTransactions(this.block.getTransactions());
@@ -831,9 +835,9 @@ public class Node implements INode {
         System.out.println("is primary from network call: " + getIsPrimary());
         //this.viewNum = configMessage.getViewNum();
         this.maxMaliciousNodes = configMessage.getMaxMaliciousNodes();
-       // this.primaryNodePublicKey = configMessage.getPrimaryPublicKey();
+        // this.primaryNodePublicKey = configMessage.getPrimaryPublicKey();
         for (int i = 0; i < publicKeysIP.size(); i++) {
-            if (publicKeysIP.get(i).getIp().equals(nodeIp)){
+            if (publicKeysIP.get(i).getIp().equals(nodeIp)) {
                 this.primaryNodePublicKey = publicKeysIP.get(i).getPk();
             }
         }
@@ -861,7 +865,7 @@ public class Node implements INode {
             case "commit":
                 commitMessages.add(t);
 
-                if (commitMessages.size()  == network.getsizeofPeers()-1) {
+                if (commitMessages.size() == network.getsizeofPeers() - this.malicious) {
                     insertCommitMessageInPool(commitMessages);
                     commitMessages.clear();
                 }

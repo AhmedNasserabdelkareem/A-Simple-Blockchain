@@ -1,5 +1,5 @@
 FILE
 Type:bft
 NumOfNodes:3
-MC:9.2
-ATA:4.5
+MC:16.0
+ATA:12.8

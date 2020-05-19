@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface INode {
-    public void setConfigs(boolean isPow,int maxNumTransactions, ArrayList<String> IPsOfOtherPeers, int nodeType,int diff);//0 for client , 1 for miner
+    public void setConfigs(boolean isPow,int maxNumTransactions, ArrayList<String> IPsOfOtherPeers, int nodeType,int diff, int malicious);//0 for client , 1 for miner
     public void issueTransactions();//for client nodes, issue for ids from .. to ..
     public void setNTW(INTW ntw);
 
