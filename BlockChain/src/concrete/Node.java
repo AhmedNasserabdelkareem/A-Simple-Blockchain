@@ -409,10 +409,10 @@ public class Node implements INode {
 
         if (chain.size() == 1) {
             Analyser.getInstance().broadcastData(network);
-            while (!Analyser.getInstance().isDoneExchanging()) {
-                System.out.println("hh");
-            }
-            Analyser.getInstance().saveReport();
+//            while (!Analyser.getInstance().isDoneExchanging()) {
+//                //System.out.println("hh");
+//            }
+//            Analyser.getInstance().saveReport();
 
         }
 
@@ -841,7 +841,7 @@ public class Node implements INode {
                 break;
             case "commit":
                 commitMessages.add(t);
-                if (commitMessages.size()  == network.getsizeofPeers() -1) {
+                if (commitMessages.size()  == network.getsizeofPeers() ) {
                     insertCommitMessageInPool(commitMessages);
                     commitMessages.clear();
                 }

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Analyser implements IAnalyser {
+    private boolean broadcasted = false;
     private static IAnalyser ins = null;
     public static IAnalyser getInstance(){
         if(ins == null){
@@ -39,19 +40,26 @@ public class Analyser implements IAnalyser {
 
     @Override
     public void broadcastData(INTW ntw) throws IOException {
-        System.out.println("ay 7aga tani");
-        ntw.broadcastAnalytics(this.myData);
+        if(!this.broadcasted ) {
+            System.out.println("Analytics sent ... ");
+            ntw.broadcastAnalytics(this.myData);
+            this.broadcasted = true;
+        }
     }
 
     @Override
     public void receiveData(Analytics data) {
+        System.out.println("Analytics received ... ");
         allData.add(data);
+        if(this.isDoneExchanging()){
+            this.saveReport();
+        }
     }
 
     @Override
     public boolean isDoneExchanging() {
-        System.out.println(this.allData.size() +"---"+this.numberOfParticipants );
-        return this.allData.size() >= this.numberOfParticipants ;
+        //System.out.println(this.allData.size() +"---"+this.numberOfParticipants );
+        return this.allData.size() == this.numberOfParticipants ;
     }
 
     //POW ===============================================================
@@ -190,7 +198,7 @@ public class Analyser implements IAnalyser {
 
     @Override
     public void reportBlockDone() {
-        this.myData.avgNumOfMessExch4Block = ((this.myData.avgNumOfMessExch4Block *this.numOfBlocks) +(double) this.numOfMessages) / (this.numOfBlocks+1);
+        this.myData.avgNumOfMessExch4Block = ((this.myData.avgNumOfMessExch4Block *this.numOfBlocks) +(double) this.numOfMessages) /(double) (this.numOfBlocks+1);
         this.numOfBlocks ++;
         this.numOfMessages=0;
 
