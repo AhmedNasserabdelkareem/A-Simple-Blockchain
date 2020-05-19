@@ -1,5 +1,6 @@
 package concrete;
 
+import interfaces.IAnalyser;
 import interfaces.IBlock;
 import interfaces.IMessage;
 import interfaces.INTW;
@@ -70,6 +71,19 @@ public class Network implements INTW ,Runnable{
             outputStream.close();
             socket.close();
 
+        }
+
+    }
+
+    @Override
+    public void broadcastAnalytics(IAnalyser.Analytics myData) throws IOException {
+        for (String p:peers) {
+            Socket socket = new Socket(InetAddress.getByName(p), PORT);
+            outputStream = new ObjectOutputStream(socket.getOutputStream());
+            outputStream.writeObject(myData);
+            outputStream.flush();
+            outputStream.close();
+            socket.close();
         }
 
     }
@@ -224,6 +238,8 @@ public class Network implements INTW ,Runnable{
                 listenForResponses((Response) t);
             }else if ( t instanceof PairKeyPK) {
                 listenforPublicKey((PairKeyPK) t);
+            }else if (t  instanceof  IAnalyser.Analytics){
+                listenForAnalytics(t);
             }else if (t instanceof HashMap){
                 setPublicKeys((HashMap<Integer, PublicKey>) t);
             }else if (t instanceof Message) {
@@ -233,6 +249,10 @@ public class Network implements INTW ,Runnable{
             }
         }
 
+    }
+
+    public void listenForAnalytics(Object t) {
+        node.receiveReport(t);
     }
 
     public void listenforPublicKey(PairKeyPK t) {

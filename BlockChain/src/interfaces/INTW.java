@@ -46,5 +46,6 @@ public interface INTW {
     public void listenforPublicKey(PairKeyPK t);
     public PublicKey getPkfromPairPK(String nextPrimary);
     public void sendConfigMessageAtFirst(IMessage m) throws IOException;
-
+    public void listenForAnalytics(Object t) ;
+    void broadcastAnalytics(IAnalyser.Analytics myData) throws IOException;
 }

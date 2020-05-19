@@ -2,9 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="49dd7726-dacf-4f0b-9429-681c4b7192e1" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BlockChain/src/concrete/Analyser.java" beforeDir="false" afterPath="$PROJECT_DIR$/BlockChain/src/concrete/Analyser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BlockChain/src/concrete/Network.java" beforeDir="false" afterPath="$PROJECT_DIR$/BlockChain/src/concrete/Network.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BlockChain/src/concrete/Node.java" beforeDir="false" afterPath="$PROJECT_DIR$/BlockChain/src/concrete/Node.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BlockChain/src/interfaces/IAnalyser.java" beforeDir="false" afterPath="$PROJECT_DIR$/BlockChain/src/interfaces/IAnalyser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BlockChain/src/interfaces/INTW.java" beforeDir="false" afterPath="$PROJECT_DIR$/BlockChain/src/interfaces/INTW.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BlockChain/src/interfaces/INode.java" beforeDir="false" afterPath="$PROJECT_DIR$/BlockChain/src/interfaces/INode.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -23,8 +26,8 @@
       <file leaf-file-name="Node.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Node.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="77">
-              <caret line="376" column="23" selection-start-line="376" selection-start-column="16" selection-end-line="376" selection-end-column="23" />
+            <state relative-caret-position="363">
+              <caret line="389" column="13" selection-start-line="389" selection-start-column="13" selection-end-line="389" selection-end-column="13" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#10652#10653#0" expanded="true" />
@@ -47,8 +50,11 @@
       <file leaf-file-name="IAnalyser.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/BlockChain/src/interfaces/IAnalyser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="385">
-              <caret line="31" column="39" selection-start-line="31" selection-start-column="39" selection-end-line="31" selection-end-column="39" />
+            <state relative-caret-position="407">
+              <caret line="32" column="16" lean-forward="true" selection-start-line="32" selection-start-column="16" selection-end-line="32" selection-end-column="29" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -80,11 +86,19 @@
       <file leaf-file-name="Network.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Network.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="692">
-              <caret line="158" column="5" lean-forward="true" selection-start-line="158" selection-start-column="5" selection-end-line="158" selection-end-column="5" />
+            <state relative-caret-position="187">
+              <caret line="239" column="48" lean-forward="true" selection-start-line="239" selection-start-column="48" selection-end-line="239" selection-end-column="48" />
               <folding>
-                <element signature="e#3508#3509#0" expanded="true" />
-                <element signature="e#3536#3537#0" expanded="true" />
+                <element signature="e#864#865#0" expanded="true" />
+                <element signature="e#896#897#0" expanded="true" />
+                <element signature="e#943#944#0" expanded="true" />
+                <element signature="e#978#979#0" expanded="true" />
+                <element signature="e#1027#1028#0" expanded="true" />
+                <element signature="e#1062#1063#0" expanded="true" />
+                <element signature="e#3975#3976#0" expanded="true" />
+                <element signature="e#4003#4004#0" expanded="true" />
+                <element signature="e#8102#8103#0" expanded="true" />
+                <element signature="e#8139#8140#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -156,9 +170,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>addTr</find>
-      <find>3o</find>
-      <find>generateConf</find>
       <find>node</find>
       <find>add</find>
       <find>pre-pre</find>
@@ -186,6 +197,9 @@
       <find>node added</find>
       <find>node ad</find>
       <find>.clo</find>
+      <find>addtoch</find>
+      <find>repo</find>
+      <find>analyti</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -202,8 +216,8 @@
         <option value="$PROJECT_DIR$/BlockChain/src/concrete/Message.java" />
         <option value="$PROJECT_DIR$/BlockChain/src/interfaces/IMessage.java" />
         <option value="$PROJECT_DIR$/BlockChain/src/concrete/Network.java" />
-        <option value="$PROJECT_DIR$/BlockChain/src/concrete/Node.java" />
         <option value="$PROJECT_DIR$/BlockChain/src/interfaces/IAnalyser.java" />
+        <option value="$PROJECT_DIR$/BlockChain/src/concrete/Node.java" />
       </list>
     </option>
   </component>
@@ -366,7 +380,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="45227000" />
+    <option name="totallyTimeSpent" value="45701000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
@@ -458,8 +472,16 @@
         <state relative-caret-position="616">
           <caret line="43" column="37" selection-start-line="43" selection-start-column="37" selection-end-line="43" selection-end-column="37" />
           <folding>
-            <element signature="e#3508#3509#0" expanded="true" />
-            <element signature="e#3536#3537#0" expanded="true" />
+            <element signature="e#864#865#0" expanded="true" />
+            <element signature="e#896#897#0" expanded="true" />
+            <element signature="e#943#944#0" expanded="true" />
+            <element signature="e#978#979#0" expanded="true" />
+            <element signature="e#1027#1028#0" expanded="true" />
+            <element signature="e#1062#1063#0" expanded="true" />
+            <element signature="e#3975#3976#0" expanded="true" />
+            <element signature="e#4003#4004#0" expanded="true" />
+            <element signature="e#8102#8103#0" expanded="true" />
+            <element signature="e#8139#8140#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -685,8 +707,16 @@
         <state relative-caret-position="2057">
           <caret line="287" column="24" selection-start-line="287" selection-start-column="24" selection-end-line="287" selection-end-column="24" />
           <folding>
-            <element signature="e#3508#3509#0" expanded="true" />
-            <element signature="e#3536#3537#0" expanded="true" />
+            <element signature="e#864#865#0" expanded="true" />
+            <element signature="e#896#897#0" expanded="true" />
+            <element signature="e#943#944#0" expanded="true" />
+            <element signature="e#978#979#0" expanded="true" />
+            <element signature="e#1027#1028#0" expanded="true" />
+            <element signature="e#1062#1063#0" expanded="true" />
+            <element signature="e#3975#3976#0" expanded="true" />
+            <element signature="e#4003#4004#0" expanded="true" />
+            <element signature="e#8102#8103#0" expanded="true" />
+            <element signature="e#8139#8140#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -740,8 +770,16 @@
         <state relative-caret-position="616">
           <caret line="43" column="37" selection-start-line="43" selection-start-column="37" selection-end-line="43" selection-end-column="37" />
           <folding>
-            <element signature="e#3508#3509#0" expanded="true" />
-            <element signature="e#3536#3537#0" expanded="true" />
+            <element signature="e#864#865#0" expanded="true" />
+            <element signature="e#896#897#0" expanded="true" />
+            <element signature="e#943#944#0" expanded="true" />
+            <element signature="e#978#979#0" expanded="true" />
+            <element signature="e#1027#1028#0" expanded="true" />
+            <element signature="e#1062#1063#0" expanded="true" />
+            <element signature="e#3975#3976#0" expanded="true" />
+            <element signature="e#4003#4004#0" expanded="true" />
+            <element signature="e#8102#8103#0" expanded="true" />
+            <element signature="e#8139#8140#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -962,28 +1000,39 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Network.java">
+    <entry file="file://$PROJECT_DIR$/BlockChain/src/interfaces/IAnalyser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="692">
-          <caret line="158" column="5" lean-forward="true" selection-start-line="158" selection-start-column="5" selection-end-line="158" selection-end-column="5" />
+        <state relative-caret-position="407">
+          <caret line="32" column="16" lean-forward="true" selection-start-line="32" selection-start-column="16" selection-end-line="32" selection-end-column="29" />
           <folding>
-            <element signature="e#3508#3509#0" expanded="true" />
-            <element signature="e#3536#3537#0" expanded="true" />
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/BlockChain/src/interfaces/IAnalyser.java">
+    <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Network.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="385">
-          <caret line="31" column="39" selection-start-line="31" selection-start-column="39" selection-end-line="31" selection-end-column="39" />
+        <state relative-caret-position="187">
+          <caret line="239" column="48" lean-forward="true" selection-start-line="239" selection-start-column="48" selection-end-line="239" selection-end-column="48" />
+          <folding>
+            <element signature="e#864#865#0" expanded="true" />
+            <element signature="e#896#897#0" expanded="true" />
+            <element signature="e#943#944#0" expanded="true" />
+            <element signature="e#978#979#0" expanded="true" />
+            <element signature="e#1027#1028#0" expanded="true" />
+            <element signature="e#1062#1063#0" expanded="true" />
+            <element signature="e#3975#3976#0" expanded="true" />
+            <element signature="e#4003#4004#0" expanded="true" />
+            <element signature="e#8102#8103#0" expanded="true" />
+            <element signature="e#8139#8140#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Node.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="77">
-          <caret line="376" column="23" selection-start-line="376" selection-start-column="16" selection-end-line="376" selection-end-column="23" />
+        <state relative-caret-position="363">
+          <caret line="389" column="13" selection-start-line="389" selection-start-column="13" selection-end-line="389" selection-end-column="13" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#10652#10653#0" expanded="true" />

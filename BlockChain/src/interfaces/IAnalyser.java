@@ -1,5 +1,6 @@
 package interfaces;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 public interface IAnalyser {
@@ -35,7 +36,7 @@ public interface IAnalyser {
     public void reportEndingBFTVoting();
 
 
-    public void broadcastData(INTW ntw);
+    public void broadcastData(INTW ntw) throws IOException;
     public void receiveData(Analytics data);
     public boolean isDoneExchanging();
     public String saveReport();

@@ -1016,4 +1016,9 @@ public class Node implements INode {
     public void receivePK(PairKeyPK t) {
         publicKeysIP.add(t);
     }
+
+    @Override
+    public void receiveReport(Object t) {
+
+    }
 }
