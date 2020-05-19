@@ -173,7 +173,10 @@ public class Network implements INTW ,Runnable{
             for (String p : ips) {
                 if (!p.equals(getExternalIP())) {
                         peers.add(p);
-                        sockets.add(new Socket(p,PORT));
+                        Socket so = new Socket(p,PORT);
+                        so.setReceiveBufferSize(4098*10);
+                        so.setSendBufferSize(4098*10);
+                        sockets.add(so);
                 }
             }
         }else {
