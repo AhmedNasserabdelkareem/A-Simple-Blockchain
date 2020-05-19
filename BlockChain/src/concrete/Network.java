@@ -11,10 +11,8 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
 public class Network implements INTW ,Runnable{
     private ArrayList<String> peers = new ArrayList<>();
@@ -27,7 +25,7 @@ public class Network implements INTW ,Runnable{
     private final static int PORT =5555;
     private static ObjectInputStream inputStream;
     private ServerSocket ss;
-    private ReadWriteLock l;
+    //private ReadWriteLock l;
 
     public boolean isPrimary() {
         return isPrimary;
@@ -124,7 +122,12 @@ public class Network implements INTW ,Runnable{
         this.node  =node;
         this.ExternalIP = getExternalIP();
         this.sourceIP = InetAddress.getByName(ExternalIP);
-        l= new ReentrantReadWriteLock();
+        System.out.println("Before lock");
+        //l= new ReentrantReadWriteLock();
+        System.out.println("afterlock");
+        //l.readLock().lock();
+        System.out.println("unlock");
+        //l.readLock().unlock();
     }
 
     @Override
@@ -148,12 +151,14 @@ public class Network implements INTW ,Runnable{
     @Override
     public void issueTransaction(Transaction transaction) throws IOException {
         for (String peer:peers) {
+            System.out.println("Start"+peer);
             Socket socket = new Socket(InetAddress.getByName(peer), PORT);
             ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
             outputStream.writeObject(transaction);
             outputStream.flush();
             outputStream.close();
             socket.close();
+            System.out.println("done"+peer);
         }
     }
 
@@ -394,9 +399,14 @@ public class Network implements INTW ,Runnable{
 
 
     @Override
+<<<<<<< HEAD
 
      public void shareMessage(IMessage message,String peer) throws IOException {
         l.writeLock().lock();
+=======
+     public void shareMessage(IMessage message,String peer) throws IOException {
+       // l.writeLock().lock();
+>>>>>>> 42a91c695bad93292aa6d325d2a2909e862b6ad7
         Socket socket = new Socket(InetAddress.getByName(peer), PORT);
         socket.setSendBufferSize(4098*10);
         socket.setReceiveBufferSize(4098*10);
@@ -406,7 +416,7 @@ public class Network implements INTW ,Runnable{
         outputStream.flush();
         outputStream.close();
         socket.close();
-        l.writeLock().unlock();
+        //l.writeLock().unlock();
         Analyser.getInstance().reportMessageSent();
     }
 
