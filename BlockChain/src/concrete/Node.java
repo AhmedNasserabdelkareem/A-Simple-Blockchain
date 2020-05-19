@@ -92,8 +92,6 @@ public class Node implements INode {
         nodeTypes = new ArrayList<>();
         chain = new ArrayList<>();
         publicKeysIP = new ArrayList<>();
-        queue = new ArrayDeque<>();//TODO 5N NASSER MAY BE USED TO CACHE ALL BLOCKS AND REMOVE FROM WHEN ADD TO CHAIN
-        //TODO 6AB NASSER WE MAY NEED ANOTHER 2 QUEUES FOR AVOP AND NEWADDS
         INTW network = new Network();
         setNTW(network);
         readConfiguration();
