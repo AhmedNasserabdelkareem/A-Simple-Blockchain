@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="49dd7726-dacf-4f0b-9429-681c4b7192e1" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/BlockChain/src/concrete/Network.java" beforeDir="false" afterPath="$PROJECT_DIR$/BlockChain/src/concrete/Network.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BlockChain/src/concrete/Node.java" beforeDir="false" afterPath="$PROJECT_DIR$/BlockChain/src/concrete/Node.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BlockChain/src/concrete/Validator.java" beforeDir="false" afterPath="$PROJECT_DIR$/BlockChain/src/concrete/Validator.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -22,8 +22,8 @@
       <file leaf-file-name="Node.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Node.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="447" column="14" selection-start-line="447" selection-start-column="14" selection-end-line="447" selection-end-column="14" />
+            <state relative-caret-position="15">
+              <caret line="648" column="41" selection-start-line="648" selection-start-column="41" selection-end-line="648" selection-end-column="41" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#10652#10653#0" expanded="true" />
@@ -88,6 +88,15 @@
                 <element signature="e#357#358#0" expanded="true" />
                 <element signature="e#393#394#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Validator.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Validator.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="77">
+              <caret line="42" column="10" selection-start-line="42" selection-start-column="10" selection-end-line="42" selection-end-column="10" />
             </state>
           </provider>
         </entry>
@@ -161,8 +170,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>&quot;pre-prepare&quot;</find>
-      <find>this.state.equals(&quot;pre-prepare&quot;)</find>
       <find>prepareMessage.getMessageType().equals(&quot;prepare&quot;)</find>
       <find>prepareMessage.getPrimaryPublicKey().equals(this.primaryNodePublicKey)</find>
       <find>prepareMessage.getViewNum() == this.viewNum</find>
@@ -191,6 +198,8 @@
       <find>3omra</find>
       <find>prev</find>
       <find>System.o</find>
+      <find>chain si</find>
+      <find>finalize primary public key:</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -201,13 +210,13 @@
       <list>
         <option value="$PROJECT_DIR$/BlockChain/src/concrete/Utils.java" />
         <option value="$PROJECT_DIR$/BlockChain/src/interfaces/INTW.java" />
-        <option value="$PROJECT_DIR$/BlockChain/src/concrete/Validator.java" />
         <option value="$PROJECT_DIR$/BlockChain/src/interfaces/IBlock.java" />
         <option value="$PROJECT_DIR$/BlockChain/src/concrete/Block.java" />
         <option value="$PROJECT_DIR$/BlockChain/src/concrete/Message.java" />
         <option value="$PROJECT_DIR$/BlockChain/src/interfaces/IMessage.java" />
         <option value="$PROJECT_DIR$/BlockChain/src/interfaces/IAnalyser.java" />
         <option value="$PROJECT_DIR$/BlockChain/src/concrete/Network.java" />
+        <option value="$PROJECT_DIR$/BlockChain/src/concrete/Validator.java" />
         <option value="$PROJECT_DIR$/BlockChain/src/concrete/Node.java" />
       </list>
     </option>
@@ -371,7 +380,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="50213000" />
+    <option name="totallyTimeSpent" value="50752000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
@@ -386,7 +395,7 @@
       <window_info anchor="right" id="Maven Projects" order="3" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.82051283" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.8333333" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
@@ -870,13 +879,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Validator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="20" column="41" selection-start-line="20" selection-start-column="41" selection-end-line="20" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/BlockChain/src/interfaces/IBlock.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="484">
@@ -992,10 +994,17 @@
     <entry file="file://$PROJECT_DIR$/report_bft_50_1_1.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Validator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="77">
+          <caret line="42" column="10" selection-start-line="42" selection-start-column="10" selection-end-line="42" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Node.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="447" column="14" selection-start-line="447" selection-start-column="14" selection-end-line="447" selection-end-column="14" />
+        <state relative-caret-position="15">
+          <caret line="648" column="41" selection-start-line="648" selection-start-column="41" selection-end-line="648" selection-end-column="41" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#10652#10653#0" expanded="true" />

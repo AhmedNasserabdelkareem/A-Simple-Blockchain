@@ -646,7 +646,7 @@ public class Node implements INode {
      * the node has to receive min 2*f+1 prepare message to be able to move to the next phase*/
     @Override
     public void insertPrepareMessageInPool(ArrayList<IMessage> prepareMessages) throws IOException {
-        System.out.println("Entered prep" + " " + prepareMessages.size() + this.state);
+        System.out.println("Entered prep");
         IMessage prepareMessage;
         for (int i = 0; i < prepareMessages.size(); i++) {
             prepareMessage = prepareMessages.get(i);
