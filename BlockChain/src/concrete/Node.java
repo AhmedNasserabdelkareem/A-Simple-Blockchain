@@ -205,7 +205,7 @@ public class Node implements INode {
         System.out.println(t.getID());
         if (verifyTransaction(t)) {
             newAddedTs.add(t.getID());
-            System.out.println("3omran");
+            System.out.println("transaction accepted");
             AvOps.put(t.getID(), t);
 
             transactions.add(t);
@@ -213,7 +213,7 @@ public class Node implements INode {
             if (transactions.size() == maxTransaction) {
                 createBlock();
                 transactions.clear();
-                //AvOps.clear();
+               // AvOps.clear();
             }
         }
     }
@@ -260,7 +260,7 @@ public class Node implements INode {
         if (prevID != -1 && t.getIPs().get(0) != 0) {
             ITransaction prev = getUnspentTransactionByID(prevID);
             if (prev == null) {
-                System.out.println("prev == null");
+                System.out.println("transaction rejected");
                 return false;
             }
             int out = t.getOutIndex();
@@ -402,9 +402,11 @@ public class Node implements INode {
         }else{
             Analyser.getInstance().reportBlockDone();
             chain.add(block);
+
+            System.out.println("chain size: " + chain.size());
         }
 
-        if (chain.size() == 3){
+        if (chain.size() == 1){
             Analyser.getInstance().broadcastData(network);
             while (!Analyser.getInstance().isDoneExchanging())
                 Analyser.getInstance().saveReport();
@@ -718,6 +720,7 @@ public class Node implements INode {
             System.out.println("this.preparePool.getPoolSize() " + this.preparePool.getPoolSize());
             System.out.println("this.maxMaliciousNodes " + this.maxMaliciousNodes);
         }
+
 
 
         generateCommitMessage();
