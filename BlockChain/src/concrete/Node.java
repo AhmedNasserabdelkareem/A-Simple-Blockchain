@@ -205,7 +205,7 @@ public class Node implements INode {
         System.out.println(t.getID());
         if (verifyTransaction(t)) {
             newAddedTs.add(t.getID());
-            System.out.println("3omran");
+            System.out.println("transcation accepted");
             AvOps.put(t.getID(), t);
 
             transactions.add(t);
@@ -260,7 +260,7 @@ public class Node implements INode {
         if (prevID != -1 && t.getIPs().get(0) != 0) {
             ITransaction prev = getUnspentTransactionByID(prevID);
             if (prev == null) {
-                System.out.println("prev == null");
+                System.out.println("transaction rejected");
                 return false;
             }
             int out = t.getOutIndex();
@@ -268,8 +268,8 @@ public class Node implements INode {
             for (ITransaction.OutputPair p : t.getOPs()) {
                 totalPayed += p.value;
             }
-            System.out.println("totalPayed " + totalPayed);
-            System.out.println("prev.getOPs().get(out-1).available " + prev.getOPs().get(out - 1).available);
+//            System.out.println("totalPayed " + totalPayed);
+//            System.out.println("prev.getOPs().get(out-1).available " + prev.getOPs().get(out - 1).available);
             ArrayList<ITransaction.OutputPair> ops = prev.getOPs();
             boolean av = prev.getOPs().get(out - 1).available - totalPayed >= -0.001;
 
@@ -349,7 +349,7 @@ public class Node implements INode {
             while ((line = br.readLine()) != null) {
                 ITransaction t = ITransaction.parseTransaction(line);
                 if (t == null) {
-                    System.out.println("t null");
+                    //System.out.println("t null");
                     continue;
                 }
                 t.setPrevTransaction(issuedTransactions.get(t.getPrevID()));
@@ -402,9 +402,10 @@ public class Node implements INode {
         }else{
             Analyser.getInstance().reportBlockDone();
             chain.add(block);
+            System.out.println("chain size: " + chain.size());
         }
 
-        if (chain.size() == 3){
+        if (chain.size() == 1){
             Analyser.getInstance().broadcastData(network);
             while (!Analyser.getInstance().isDoneExchanging())
                 Analyser.getInstance().saveReport();
@@ -444,7 +445,7 @@ public class Node implements INode {
             block.getHeader().setNonce(nonce);
             block.setHash(null);
             hash = block.getBlockHash();
-            System.out.println("loop hash " + hash);
+            //System.out.println("loop hash " + hash);
         }
         if (!isInterrupt) {
             Analyser.getInstance().reportEndingMiningSuccessfully();

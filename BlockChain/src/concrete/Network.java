@@ -316,6 +316,8 @@ public class Network implements INTW ,Runnable{
     @Override
     public void shareMessage(IMessage message,String peer) throws IOException {
         Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+        socket.setSendBufferSize(4098*10);
+        socket.setReceiveBufferSize(4098*10);
         outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(message);
         //outputStream.reset();
