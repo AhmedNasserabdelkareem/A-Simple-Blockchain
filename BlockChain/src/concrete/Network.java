@@ -86,6 +86,7 @@ public class Network implements INTW ,Runnable{
             socket.close();
         }
 
+
     }
 
     public PublicKey getPkfromPairPK(String nextPrimary) {
@@ -159,6 +160,8 @@ public class Network implements INTW ,Runnable{
         outputStream.flush();
         outputStream.close();
         socket.close();
+        Analyser.getInstance().reportMessageSent();
+
     }
 
 
@@ -170,12 +173,16 @@ public class Network implements INTW ,Runnable{
         outputStream.flush();
         outputStream.close();
         socket.close();
+        Analyser.getInstance().reportMessageSent();
+
     }
     public void broadcastResponse(Block block,boolean response) throws IOException {
         Response r = new Response(block,response);
         for (String p:peers) {
             shareResponse(r,p);
         }
+        Analyser.getInstance().reportMessageSent();
+
     }
 
     @Override
@@ -252,7 +259,8 @@ public class Network implements INTW ,Runnable{
     }
 
     public void listenForAnalytics(Object t) {
-        node.receiveReport(t);
+        Analyser.getInstance().receiveData((IAnalyser.Analytics) t);
+        //node.receiveReport(t);
     }
 
     public void listenforPublicKey(PairKeyPK t) {
@@ -324,6 +332,8 @@ public class Network implements INTW ,Runnable{
         outputStream.flush();
         outputStream.close();
         socket.close();
+        Analyser.getInstance().reportMessageSent();
+
 
     }
 
@@ -332,7 +342,9 @@ public class Network implements INTW ,Runnable{
         for (String p:peers) {
             shareMessage(message,p);
         }
-        //TODO 1N SOLUTION SEND TO ME THE NEW BLOCK MESSAGE
+
+        Analyser.getInstance().reportMessageSent();
+                //TODO 1N SOLUTION SEND TO ME THE NEW BLOCK MESSAGE
 
     }
 

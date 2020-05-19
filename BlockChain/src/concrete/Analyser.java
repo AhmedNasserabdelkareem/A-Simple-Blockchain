@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Analyser implements IAnalyser {
+    private boolean broadcasted = false;
     private static IAnalyser ins = null;
     public static IAnalyser getInstance(){
         if(ins == null){
@@ -39,16 +40,25 @@ public class Analyser implements IAnalyser {
 
     @Override
     public void broadcastData(INTW ntw) throws IOException {
-        ntw.broadcastAnalytics(this.myData);
+        if(!this.broadcasted ) {
+            System.out.println("Analytics sent ... ");
+            ntw.broadcastAnalytics(this.myData);
+            this.broadcasted = true;
+        }
     }
 
     @Override
     public void receiveData(Analytics data) {
+        System.out.println("Analytics received ... ");
         allData.add(data);
+        if(this.isDoneExchanging()){
+            this.saveReport();
+        }
     }
 
     @Override
     public boolean isDoneExchanging() {
+        //System.out.println(this.allData.size() +"---"+this.numberOfParticipants );
         return this.allData.size() == this.numberOfParticipants ;
     }
 
@@ -64,17 +74,17 @@ public class Analyser implements IAnalyser {
     }
 
     @Override
-    public float getAvgMessageComplexity() {
-        float numExch =0;
+    public double getAvgMessageComplexity() {
+        double numExch =0;
         for(Analytics a : this.allData){
             numExch += a.avgNumOfMessExch4Block;
         }
 
-        return numExch / (float)this.numberOfParticipants;
+        return ( (double) numExch /(double) this.numOfBlocks /(double) this.numberOfParticipants);
     }
 
     @Override
-    public float getNumberOfStaleBlocks() {
+    public double getNumberOfStaleBlocks() {
         int n =0;
         for(Analytics a : this.allData){
             n += a.stales;
@@ -83,14 +93,14 @@ public class Analyser implements IAnalyser {
     }
 
     @Override
-    public float getAvgTimeToMine() {
-        float tttm =0;
+    public double getAvgTimeToMine() {
+        double tttm =0;
         int nosm=0;
         for(Analytics a : this.allData){
             tttm +=a.totalTTM;
             nosm+= a.numberOfSuccessfulMines;
         }
-        return tttm/(float)nosm;
+        return  (tttm/(double)nosm);
     }
     //BFT =======================================================================
 
@@ -100,24 +110,24 @@ public class Analyser implements IAnalyser {
     }
 
     @Override
-    public float getMessageComplexity() {
-        float numExch =0;
+    public double getMessageComplexity() {
+        double numExch =0;
         for(Analytics a : this.allData){
             numExch += a.avgNumOfMessExch4Block;
         }
 
-        return numExch ;
+        return numExch / (double) this.numOfBlocks ;
     }
 
     @Override
-    public float getAvgTimeToAgreeOnBlock() {
-        float totT =0;
+    public double getAvgTimeToAgreeOnBlock() {
+        double totT =0;
         int numAg = 0;
         for(Analytics a : this.allData){
             totT += a.totalAgreeOnBlockTime;
             numAg += a.numberOfAgreedOnBlocks;
         }
-        return totT / numAg;
+        return ( totT / (double) numAg);
     }
     //reporting
 
@@ -139,23 +149,39 @@ public class Analyser implements IAnalyser {
 
     @Override
     public String getReport() {
+        System.out.println("repoort =============");
+        System.out.println(this.blockSize);
+        System.out.println(this.numberOfParticipants);
+        System.out.println(this.difficulty);
+
+        System.out.println(this.getAvgMessageComplexity());
+        System.out.println(this.getNumberOfStaleBlocks());
+        System.out.println(this.getAvgTimeToMine());
+        System.out.println(this.getAvgTimeToAgreeOnBlock());
+        System.out.println("repoort +==============");
         StringBuilder sb = new StringBuilder();
-        if(this.type==0){//pow
-            sb.append("Type:pow\n");
-            sb.append("BlockSize:").append(this.blockSize).append("\n");
-            sb.append("Difficulty:").append(this.difficulty).append("\n");
-            sb.append("AMC:").append(this.getAvgMessageComplexity()).append("\n");
-            sb.append("NSB:").append(this.getNumberOfStaleBlocks()).append("\n");
-            sb.append("ATM:").append(this.getAvgTimeToMine()).append("\n");
+        sb.append("FILE\n");
 
-        }else{//bft
-            sb.append("Type:bft\n");
-            sb.append("NumOfNodes:").append(this.numberOfParticipants).append("\n");
-            sb.append("MC:").append(this.getMessageComplexity()).append("\n");
-            sb.append("ATA:").append(this.getAvgTimeToAgreeOnBlock()).append("\n");
+        try {
+            if (this.type == 0) {//pow
+                sb.append("Type:pow\n");
+                sb.append("BlockSize:").append(this.blockSize).append("\n");
+                sb.append("Difficulty:").append(this.difficulty).append("\n");
+                sb.append("AMC:").append(this.getAvgMessageComplexity()).append("\n");
+                sb.append("NSB:").append(this.getNumberOfStaleBlocks()).append("\n");
+                sb.append("ATM:").append(this.getAvgTimeToMine()).append("\n");
 
+            } else {//bft
+                sb.append("Type:bft\n");
+                sb.append("NumOfNodes:").append(this.numberOfParticipants).append("\n");
+                sb.append("MC:").append(this.getMessageComplexity()).append("\n");
+                sb.append("ATA:").append(this.getAvgTimeToAgreeOnBlock()).append("\n");
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
+        System.out.println("report : "+ sb.toString());
         return sb.toString();
     }
     //reporting ====================================================================
@@ -167,14 +193,15 @@ public class Analyser implements IAnalyser {
 
     @Override
     public void reportMessageSent() {
-        this.numOfMessages ++;
+        //this.numOfMessages ++;
+        this.myData.avgNumOfMessExch4Block++;
     }
 
     @Override
     public void reportBlockDone() {
-        this.myData.avgNumOfMessExch4Block = ((this.myData.avgNumOfMessExch4Block *this.numOfBlocks) +(float) this.numOfMessages) / (this.numOfBlocks+1);
+        //this.myData.avgNumOfMessExch4Block = ((this.myData.avgNumOfMessExch4Block *this.numOfBlocks) +(double) this.numOfMessages) /(double) (this.numOfBlocks+1);
         this.numOfBlocks ++;
-        this.numOfMessages=0;
+        //this.numOfMessages=0;
 
     }
 
