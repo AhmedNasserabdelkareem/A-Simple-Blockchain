@@ -184,10 +184,18 @@ public class Network implements INTW ,Runnable{
                 if (!p.equals(getExternalIP())) {
                     if (!p.equals(ips.get(indexOfIssuer)))
                         peers.add(p);
-                        Socket so = new Socket(p,PORT);
-                        so.setReceiveBufferSize(4098*10);
-                        so.setSendBufferSize(4098*10);
-                        sockets.add(so);
+                    while(true) {
+                        try {
+                            Socket so = new Socket(p, PORT);
+                            so.setReceiveBufferSize(4098 * 10);
+                            so.setSendBufferSize(4098 * 10);
+                            sockets.add(so);
+                            break;
+                        } catch (Exception e){
+                            continue;
+                        }
+
+                    }
                 }
             }
         }
