@@ -203,7 +203,7 @@ public class Node implements INode {
     @Override
     public void addTransaction(Transaction t) throws IOException, InterruptedException {
         System.out.println(t.getID());
-        if (verifyTransaction(t)) {
+        if (!this.isPow||verifyTransaction(t)) {
             newAddedTs.add(t.getID());
             System.out.println("transcation accepted");
             AvOps.put(t.getID(), t);
@@ -545,7 +545,7 @@ public class Node implements INode {
         this.viewNum++;
 
         /*node public key is the primary public key as the primary who will call this function*/
-        this.maxMaliciousNodes = (sizeOfNetwork() - 1) / 3;
+        this.maxMaliciousNodes = (sizeOfNetwork()) / 3;
         System.out.println("new block this.seqNum " + this.seqNum);
 
         this.validator = new Validator(this.nodePublicKey, this.seqNum, this.viewNum, this.maxMaliciousNodes, block);
@@ -667,6 +667,7 @@ public class Node implements INode {
                 } else {
                     /*not sent by a primary*/
                     if (verifyBlockTransactions(prepareMessage.getBlock().getTransactions())) {
+                        System.out.println("in belal");
                         this.preparePool.insertMessage(prepareMessage);
                     }
                 }
@@ -782,7 +783,7 @@ public class Node implements INode {
         if (this.commitPool.getPoolSize() >= 2 * this.maxMaliciousNodes + 1) {
 
             /*mark transactions as spent*/
-            verifyBlockTransactions(this.block.getTransactions());
+            //verifyBlockTransactions(this.block.getTransactions());
             //commitUnspent();
             this.state = "commit";
             System.out.println("node passed commit phase");
@@ -798,7 +799,7 @@ public class Node implements INode {
     }
 
     public void generateConfigMessage(PublicKey primaryNodePublicKey) throws IOException {
-        this.maxMaliciousNodes = (sizeOfNetwork() - 1) / 3;
+        this.maxMaliciousNodes = (sizeOfNetwork()) / 3;
         System.out.println("generateConfigMessage primaryNodePublicKey " + primaryNodePublicKey);
         IMessage configMessage = new Message("config", isPrimary, primaryNodePublicKey);
         configMessage.setPrimaryPublicKey(primaryNodePublicKey);
@@ -838,7 +839,7 @@ public class Node implements INode {
                 break;
             case "commit":
                 commitMessages.add(t);
-                if (commitMessages.size() == network.getsizeofPeers()) {
+                if (commitMessages.size()  == network.getsizeofPeers() -1) {
                     insertCommitMessageInPool(commitMessages);
                     commitMessages.clear();
                 }
@@ -1049,6 +1050,7 @@ public class Node implements INode {
 
     @Override
     public void receiveReport(Object t) {
+        System.out.println("ay 7aga");
         Analyser.getInstance().receiveData((IAnalyser.Analytics) t);
     }
 }

@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="49dd7726-dacf-4f0b-9429-681c4b7192e1" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BlockChain/src/concrete/Analyser.java" beforeDir="false" afterPath="$PROJECT_DIR$/BlockChain/src/concrete/Analyser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BlockChain/src/concrete/Network.java" beforeDir="false" afterPath="$PROJECT_DIR$/BlockChain/src/concrete/Network.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BlockChain/src/concrete/Node.java" beforeDir="false" afterPath="$PROJECT_DIR$/BlockChain/src/concrete/Node.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -21,11 +19,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Node.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Node.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Node.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="437">
-              <caret line="1051" column="66" selection-start-line="1051" selection-start-column="66" selection-end-line="1051" selection-end-column="66" />
+              <caret line="1052" column="17" selection-start-line="1052" selection-end-line="1053" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#10652#10653#0" expanded="true" />
@@ -104,8 +102,6 @@
                 <element signature="e#40197#40198#0" expanded="true" />
                 <element signature="e#40253#40254#0" expanded="true" />
                 <element signature="e#40288#40289#0" expanded="true" />
-                <element signature="e#40472#40473#0" expanded="true" />
-                <element signature="e#40495#40496#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -120,15 +116,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Analyser.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Analyser.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Analyser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="41">
-              <caret line="142" column="28" lean-forward="true" selection-start-line="142" selection-start-column="28" selection-end-line="142" selection-end-column="35" />
-              <folding>
-                <element signature="e#1177#1178#0" expanded="true" />
-                <element signature="e#1249#1250#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="12">
+              <caret line="41" column="43" selection-start-line="41" selection-start-column="43" selection-end-line="41" selection-end-column="43" />
             </state>
           </provider>
         </entry>
@@ -163,7 +155,7 @@
       <file leaf-file-name="Validator.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Validator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="77">
+            <state relative-caret-position="385">
               <caret line="42" column="10" selection-start-line="42" selection-start-column="10" selection-end-line="42" selection-end-column="10" />
             </state>
           </provider>
@@ -238,12 +230,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>addtoch</find>
-      <find>commit</find>
-      <find>node ad</find>
-      <find>Unspent</find>
-      <find>Unspent()</find>
-      <find>addto</find>
       <find>save</find>
       <find>node add</find>
       <find>verifytransactionva</find>
@@ -257,17 +243,23 @@
       <find>prev</find>
       <find>System.o</find>
       <find>chain si</find>
-      <find>finalize primary public key:</find>
       <find>Entered prep</find>
       <find>prepare</find>
       <find>repoor</find>
       <find>node(</find>
       <find>setconfig</find>
       <find>analyti</find>
-      <find>broa</find>
       <find>shareB</find>
       <find>inser</find>
       <find>chain</find>
+      <find>3</find>
+      <find>Node is out it won't generate a commit message as it doesn't finish her prepare phase</find>
+      <find>reje</find>
+      <find>in belal</find>
+      <find>in b</find>
+      <find>broa</find>
+      <find>finalize primary public key:</find>
+      <find>ay 7aga</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -286,6 +278,7 @@
         <option value="$PROJECT_DIR$/BlockChain/src/concrete/Validator.java" />
         <option value="$PROJECT_DIR$/BlockChain/src/concrete/Network.java" />
         <option value="$PROJECT_DIR$/BlockChain/src/concrete/Node.java" />
+        <option value="$PROJECT_DIR$/BlockChain/src/concrete/Analyser.java" />
       </list>
     </option>
   </component>
@@ -448,7 +441,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="53111000" />
+    <option name="totallyTimeSpent" value="56599000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
@@ -464,7 +457,7 @@
       <window_info anchor="right" id="Maven Projects" order="3" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.7507123" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.84045583" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
@@ -647,8 +640,6 @@
             <element signature="e#40197#40198#0" expanded="true" />
             <element signature="e#40253#40254#0" expanded="true" />
             <element signature="e#40288#40289#0" expanded="true" />
-            <element signature="e#40472#40473#0" expanded="true" />
-            <element signature="e#40495#40496#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -896,8 +887,6 @@
             <element signature="e#40197#40198#0" expanded="true" />
             <element signature="e#40253#40254#0" expanded="true" />
             <element signature="e#40288#40289#0" expanded="true" />
-            <element signature="e#40472#40473#0" expanded="true" />
-            <element signature="e#40495#40496#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -984,8 +973,6 @@
             <element signature="e#40197#40198#0" expanded="true" />
             <element signature="e#40253#40254#0" expanded="true" />
             <element signature="e#40288#40289#0" expanded="true" />
-            <element signature="e#40472#40473#0" expanded="true" />
-            <element signature="e#40495#40496#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1143,8 +1130,6 @@
             <element signature="e#40197#40198#0" expanded="true" />
             <element signature="e#40253#40254#0" expanded="true" />
             <element signature="e#40288#40289#0" expanded="true" />
-            <element signature="e#40472#40473#0" expanded="true" />
-            <element signature="e#40495#40496#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1294,24 +1279,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Validator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="77">
-          <caret line="42" column="10" selection-start-line="42" selection-start-column="10" selection-end-line="42" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Analyser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="41">
-          <caret line="142" column="28" lean-forward="true" selection-start-line="142" selection-start-column="28" selection-end-line="142" selection-end-column="35" />
-          <folding>
-            <element signature="e#1177#1178#0" expanded="true" />
-            <element signature="e#1249#1250#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/report_bft_50_1_1.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="66">
@@ -1341,7 +1308,7 @@
     <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Node.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="437">
-          <caret line="1051" column="66" selection-start-line="1051" selection-start-column="66" selection-end-line="1051" selection-end-column="66" />
+          <caret line="1052" column="17" selection-start-line="1052" selection-end-line="1053" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#10652#10653#0" expanded="true" />
@@ -1420,9 +1387,21 @@
             <element signature="e#40197#40198#0" expanded="true" />
             <element signature="e#40253#40254#0" expanded="true" />
             <element signature="e#40288#40289#0" expanded="true" />
-            <element signature="e#40472#40473#0" expanded="true" />
-            <element signature="e#40495#40496#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Validator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="385">
+          <caret line="42" column="10" selection-start-line="42" selection-start-column="10" selection-end-line="42" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/BlockChain/src/concrete/Analyser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="12">
+          <caret line="41" column="43" selection-start-line="41" selection-start-column="43" selection-end-line="41" selection-end-column="43" />
         </state>
       </provider>
     </entry>

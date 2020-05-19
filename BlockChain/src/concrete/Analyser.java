@@ -39,6 +39,7 @@ public class Analyser implements IAnalyser {
 
     @Override
     public void broadcastData(INTW ntw) throws IOException {
+        System.out.println("ay 7aga tani");
         ntw.broadcastAnalytics(this.myData);
     }
 
