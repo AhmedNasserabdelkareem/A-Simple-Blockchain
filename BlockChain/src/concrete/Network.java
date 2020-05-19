@@ -419,7 +419,17 @@ public class Network implements INTW ,Runnable{
     @Override
     public void broadcastMessage(IMessage message) throws IOException {
         for (String p:peers) {
-            shareMessage(message,p);
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        shareMessage(message,p);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            t.start();
         }
 
         Analyser.getInstance().reportMessageSent();
