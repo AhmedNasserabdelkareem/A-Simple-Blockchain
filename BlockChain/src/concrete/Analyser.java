@@ -38,7 +38,7 @@ public class Analyser implements IAnalyser {
 
 
     @Override
-    public void broadcastData(INTW ntw) {
+    public void broadcastData(INTW ntw) throws IOException {
         ntw.broadcastAnalytics(this.myData);
     }
 

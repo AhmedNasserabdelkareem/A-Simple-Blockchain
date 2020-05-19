@@ -125,4 +125,6 @@ public interface INode {
     public void setPrevState(String prevState);
 
     void receivePK(PairKeyPK t);
+
+    void receiveReport(Object t);
 }
