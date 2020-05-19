@@ -96,10 +96,14 @@ public class Node implements INode {
         setNTW(network);
         readConfiguration();
         network.setNode(this);
+        System.out.println("Befor send peers");
         network.sendPeers(ips, nodeTypes);
+        System.out.println("Before set pri");
         setIsPrimary();
+        System.out.println("Before thread");
         Thread th = new Thread((Runnable) network);
         th.start();
+        System.out.println("Before ");
         generateKeyPair();
         prepare2issue(0, 100);
         System.out.println("is primary constructor :" + getIsPrimary());
@@ -218,6 +222,7 @@ public class Node implements INode {
 
     @Override
     public void createBlock() throws IOException, InterruptedException {
+        this.network.broadcastPK(new PairKeyPK(this.nodeIp, this.nodePublicKey));
         block = new Block();
         block.setTransactions(transactions);
         block.setPrevBlock(getLastBlock());
@@ -483,8 +488,6 @@ public class Node implements INode {
         }
         this.nodeIp = this.network.getIP();
         System.out.println("node ip: " + nodeIp);
-        //this.network.broadcastPK(new PairKeyPK(this.nodeIp, this.nodePublicKey));
-
         System.out.println("Node keys are generated");
         System.out.println("Node's public key: " + this.nodePublicKey);
         System.out.println("Node's pirivate key: " + this.nodePrivateKey);
@@ -815,7 +818,12 @@ public class Node implements INode {
         System.out.println("is primary from network call: " + getIsPrimary());
         //this.viewNum = configMessage.getViewNum();
         this.maxMaliciousNodes = configMessage.getMaxMaliciousNodes();
-        this.primaryNodePublicKey = configMessage.getPrimaryPublicKey();
+       // this.primaryNodePublicKey = configMessage.getPrimaryPublicKey();
+        for (int i = 0; i < publicKeysIP.size(); i++) {
+            if (publicKeysIP.get(i).getIp().equals(nodeIp)){
+                this.primaryNodePublicKey = publicKeysIP.get(i).getPk();
+            }
+        }
         this.isPrimary = configMessage.isPrimary();
         //TODO 7N NASSER SHOULD POLL FROM QUEUE AND START (INSIDE) CREATE BLOCK
 
@@ -839,7 +847,7 @@ public class Node implements INode {
                 break;
             case "commit":
                 commitMessages.add(t);
-                if (commitMessages.size()  == network.getsizeofPeers() ) {
+                if (commitMessages.size()  == network.getsizeofPeers()-1) {
                     insertCommitMessageInPool(commitMessages);
                     commitMessages.clear();
                 }
