@@ -80,7 +80,7 @@ public class Analyser implements IAnalyser {
             numExch += a.avgNumOfMessExch4Block;
         }
 
-        return ( numExch / (double) this.numberOfParticipants);
+        return ( (double) numExch /(double) this.numOfBlocks /(double) this.numberOfParticipants);
     }
 
     @Override
@@ -116,7 +116,7 @@ public class Analyser implements IAnalyser {
             numExch += a.avgNumOfMessExch4Block;
         }
 
-        return numExch ;
+        return numExch / (double) this.numOfBlocks ;
     }
 
     @Override
@@ -193,14 +193,15 @@ public class Analyser implements IAnalyser {
 
     @Override
     public void reportMessageSent() {
-        this.numOfMessages ++;
+        //this.numOfMessages ++;
+        this.myData.avgNumOfMessExch4Block++;
     }
 
     @Override
     public void reportBlockDone() {
-        this.myData.avgNumOfMessExch4Block = ((this.myData.avgNumOfMessExch4Block *this.numOfBlocks) +(double) this.numOfMessages) /(double) (this.numOfBlocks+1);
+        //this.myData.avgNumOfMessExch4Block = ((this.myData.avgNumOfMessExch4Block *this.numOfBlocks) +(double) this.numOfMessages) /(double) (this.numOfBlocks+1);
         this.numOfBlocks ++;
-        this.numOfMessages=0;
+        //this.numOfMessages=0;
 
     }
 
