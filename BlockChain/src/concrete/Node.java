@@ -96,11 +96,10 @@ public class Node implements INode {
         setNTW(network);
         readConfiguration();
         network.setNode(this);
-
-        Thread th = new Thread((Runnable) network);
-        th.start();
         network.sendPeers(ips, nodeTypes);
         setIsPrimary();
+        Thread th = new Thread((Runnable) network);
+        th.start();
         generateKeyPair();
         prepare2issue(0, 100);
         System.out.println("is primary constructor :" + getIsPrimary());
