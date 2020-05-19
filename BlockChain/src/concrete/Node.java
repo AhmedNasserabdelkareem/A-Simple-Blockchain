@@ -279,7 +279,7 @@ public class Node implements INode {
     public boolean verifyBlockTransactions(ArrayList<ITransaction> transactions) {
         for (int i = 0; i < transactions.size(); i++) {
             if (verifyTransaction(transactions.get(i))) {
-               // resetUnspent();
+                //resetUnspent();
             } else {
                 return false;
             }
