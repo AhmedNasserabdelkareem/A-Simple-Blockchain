@@ -205,7 +205,7 @@ public class Node implements INode {
             if (transactions.size() == maxTransaction) {
                 createBlock();
                 transactions.clear();
-                AvOps.clear();
+                //AvOps.clear();
             }
         }
     }
@@ -281,7 +281,7 @@ public class Node implements INode {
     public boolean verifyBlockTransactions(ArrayList<ITransaction> transactions) {
         for (int i = 0; i < transactions.size(); i++) {
             if (verifyTransaction(transactions.get(i))) {
-                resetUnspent();
+               // resetUnspent();
             } else {
                 return false;
             }
@@ -765,7 +765,7 @@ public class Node implements INode {
 
             /*mark transactions as spent*/
             verifyBlockTransactions(this.block.getTransactions());
-            commitUnspent();
+            //commitUnspent();
             this.state = "commit";
             System.out.println("node passed commit phase");
             this.commitPool.clean();

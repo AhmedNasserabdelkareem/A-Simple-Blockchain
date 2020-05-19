@@ -24,6 +24,7 @@ public class Network implements INTW ,Runnable{
     private static ObjectOutputStream outputStream;
     private static ObjectInputStream inputStream;
     private ServerSocket ss;
+    private Socket socket;
 
     public boolean isPrimary() {
         return isPrimary;
@@ -130,36 +131,35 @@ public class Network implements INTW ,Runnable{
     public void issueTransaction(Transaction transaction) throws IOException {
 
         for (String peer:peers) {
-            Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+            socket = new Socket(InetAddress.getByName(peer), PORT);
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             outputStream.writeObject(transaction);
             outputStream.flush();
             outputStream.close();
-            socket.close();
-            System.out.println(peer);
 
+            //socket.close();
         }
     }
 
     @Override
     public void shareBlock(IBlock block, String peer) throws IOException {
-        Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+        socket = new Socket(InetAddress.getByName(peer), PORT);
         outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(block);
         outputStream.flush();
         outputStream.close();
-        socket.close();
+        //socket.close();
     }
 
 
     @Override
     public void shareResponse(Response r,String peer) throws IOException {
-        Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+        socket = new Socket(InetAddress.getByName(peer), PORT);
         outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(r);
         outputStream.flush();
         outputStream.close();
-        socket.close();
+        //socket.close();
     }
     public void broadcastResponse(Block block,boolean response) throws IOException {
         Response r = new Response(block,response);
@@ -266,12 +266,12 @@ public class Network implements INTW ,Runnable{
     }
 
     public void sharepublickeys(HashMap<Integer, PublicKey> keys, String peer) throws IOException {
-        Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+        socket = new Socket(InetAddress.getByName(peer), PORT);
         outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(keys);
         outputStream.flush();
         outputStream.close();
-        socket.close();
+        //socket.close();
     }
 
     @Override
@@ -283,12 +283,13 @@ public class Network implements INTW ,Runnable{
 
     @Override
     public void sharepublickeys(PairKeyPK pair, String peer) throws IOException {
-        Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+        socket = new Socket(InetAddress.getByName(peer), PORT);
+        //outputStream.flush();
         outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(pair);
         outputStream.flush();
         outputStream.close();
-        socket.close();
+        //socket.close();
     }
 
     @Override
@@ -299,17 +300,16 @@ public class Network implements INTW ,Runnable{
 
     @Override
     public void shareMessage(IMessage message,String peer) throws IOException {
-        Socket socket = new Socket(InetAddress.getByName(peer), PORT);
-        socket.setSendBufferSize(4098 * 10);
-        socket.setReceiveBufferSize(4098 * 10);
-        
+
+        socket = new Socket(InetAddress.getByName(peer), PORT);
+        socket.setReceiveBufferSize(4098*10);
+        socket.setSendBufferSize(4098*10);
         outputStream = new ObjectOutputStream(socket.getOutputStream());
-        outputStream.flush();
+        //outputStream.flush();
         outputStream.writeObject(message);
         //outputStream.reset();
         outputStream.flush();
-        outputStream.close();
-        socket.close();
+        //outputStream.close();
 
     }
 
