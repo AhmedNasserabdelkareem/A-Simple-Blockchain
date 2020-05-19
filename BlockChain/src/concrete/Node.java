@@ -346,7 +346,9 @@ public class Node implements INode {
             FileReader fr = new FileReader(file);
             BufferedReader br = new BufferedReader(fr);
             String line;
-            while ((line = br.readLine()) != null) {
+            int num = 50;
+            while ((line = br.readLine()) != null && num >0) {
+                num--;
                 ITransaction t = ITransaction.parseTransaction(line);
                 if (t == null) {
                     //System.out.println("t null");
@@ -545,7 +547,7 @@ public class Node implements INode {
         this.viewNum++;
 
         /*node public key is the primary public key as the primary who will call this function*/
-        this.maxMaliciousNodes = (sizeOfNetwork() - 1) / 3;
+        this.maxMaliciousNodes = (sizeOfNetwork() ) / 3;
         System.out.println("new block this.seqNum " + this.seqNum);
 
         this.validator = new Validator(this.nodePublicKey, this.seqNum, this.viewNum, this.maxMaliciousNodes, block);
@@ -798,7 +800,7 @@ public class Node implements INode {
     }
 
     public void generateConfigMessage(PublicKey primaryNodePublicKey) throws IOException {
-        this.maxMaliciousNodes = (sizeOfNetwork() - 1) / 3;
+        this.maxMaliciousNodes = (sizeOfNetwork() ) / 3;
         System.out.println("generateConfigMessage primaryNodePublicKey " + primaryNodePublicKey);
         IMessage configMessage = new Message("config", isPrimary, primaryNodePublicKey);
         configMessage.setPrimaryPublicKey(primaryNodePublicKey);
