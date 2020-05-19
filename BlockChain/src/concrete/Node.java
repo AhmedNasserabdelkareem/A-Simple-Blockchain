@@ -92,6 +92,8 @@ public class Node implements INode {
         nodeTypes = new ArrayList<>();
         chain = new ArrayList<>();
         publicKeysIP = new ArrayList<>();
+        queue = new ArrayDeque<>();//TODO 5N NASSER MAY BE USED TO CACHE ALL BLOCKS AND REMOVE FROM WHEN ADD TO CHAIN
+        //TODO 6AB NASSER WE MAY NEED ANOTHER 2 QUEUES FOR AVOP AND NEWADDS
         INTW network = new Network();
         setNTW(network);
         readConfiguration();
@@ -261,7 +263,6 @@ public class Node implements INode {
             System.out.println("totalPayed "+totalPayed);
             System.out.println("prev.getOPs().get(out-1).available "+prev.getOPs().get(out-1).available);
             ArrayList<ITransaction.OutputPair> ops = prev.getOPs();
-
             boolean av = prev.getOPs().get(out-1).available-totalPayed >= -0.001;
 
             if (!av) {
@@ -337,9 +338,7 @@ public class Node implements INode {
             FileReader fr = new FileReader(file);
             BufferedReader br = new BufferedReader(fr);
             String line;
-            int num = 700;
-            while ((line = br.readLine()) != null  && num >0) {
-                num--;
+            while ((line = br.readLine()) != null) {
                 ITransaction t = ITransaction.parseTransaction(line);
                 if (t == null) {
                     System.out.println("t null");
@@ -385,7 +384,6 @@ public class Node implements INode {
 //        }
         if(isPow) {
 
-
             if (chain.size() == 0 || block.getSeqNum() > chain.get(chain.size() - 1).getSeqNum()) {
                 chain.add(block);
                 System.out.println("chain size: " + chain.size());
@@ -416,25 +414,19 @@ public class Node implements INode {
     public void pow(IBlock block, int difficulty) throws IOException, InterruptedException {
         System.out.println("Working in pow");
         int nonce = 0;
-        block.getHeader().setNonce(nonce);
         String hash = block.getBlockHash();
-
         //String merkleRoot = Utils.getMerkleRoot(block.getTransactions());
         //block.getHeader().setTransactionsHash(merkleRoot);
         String target = Utils.getDificultyString(difficulty); //Create a string with difficulty * "0"
-
         isInterrupt = false;
         while (!hash.substring(0, difficulty).equals(target) && !isInterrupt) {
             nonce++;
             //System.out.println("isInterrupt "+isInterrupt);
             block.getHeader().setNonce(nonce);
-
             block.setHash(null);
             hash = block.getBlockHash();
             System.out.println("loop hash " + hash);
         }
-
-
         if (!isInterrupt) {
             //block.getHeader().setHash(hash);
             //block.getHeader().setNonce(nonce);
@@ -446,7 +438,6 @@ public class Node implements INode {
             isInterrupt = false;
         }
     }
-
 
 
     /*Generate the public and private key for the node*/

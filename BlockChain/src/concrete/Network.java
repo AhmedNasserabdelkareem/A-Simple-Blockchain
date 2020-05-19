@@ -1,6 +1,5 @@
 package concrete;
 
-import interfaces.IAnalyser;
 import interfaces.IBlock;
 import interfaces.IMessage;
 import interfaces.INTW;
@@ -24,7 +23,6 @@ public class Network implements INTW ,Runnable{
     private static ObjectOutputStream outputStream;
     private static ObjectInputStream inputStream;
     private ServerSocket ss;
-    ArrayList<Socket> sockets;
 
     public boolean isPrimary() {
         return isPrimary;
@@ -47,11 +45,12 @@ public class Network implements INTW ,Runnable{
                 m.setPrimaryPublicKey(getPkfromPairPK(getNextPrimary()));
             }
             if (!getExternalIP().equals(getNextPrimary())) {
-                outputStream = new ObjectOutputStream(sockets.get(peers.indexOf(peer)).getOutputStream());
+                Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+                outputStream = new ObjectOutputStream(socket.getOutputStream());
                 outputStream.writeObject(m);
                 outputStream.flush();
-                //outputStream.close();
-                //socket.close();
+                outputStream.close();
+                socket.close();
             }
         }
 
@@ -64,12 +63,12 @@ public class Network implements INTW ,Runnable{
             }else{
 
             }
-                Socket socket = new Socket(InetAddress.getByName(peer), PORT);
-                outputStream = new ObjectOutputStream(socket.getOutputStream());
-                outputStream.writeObject(m);
-                outputStream.flush();
-                //outputStream.close();
-                //socket.close();
+            Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+            outputStream = new ObjectOutputStream(socket.getOutputStream());
+            outputStream.writeObject(m);
+            outputStream.flush();
+            outputStream.close();
+            socket.close();
 
         }
 
@@ -106,8 +105,6 @@ public class Network implements INTW ,Runnable{
         this.node  =node;
         this.ExternalIP = getExternalIP();
         this.sourceIP = InetAddress.getByName(ExternalIP);
-        sockets = new ArrayList<>();
-
     }
 
     @Override
@@ -130,38 +127,35 @@ public class Network implements INTW ,Runnable{
 
     @Override
     public void issueTransaction(Transaction transaction) throws IOException {
-
         for (String peer:peers) {
-
-            System.out.println("sending to "+ peer);
-            System.out.println("sockets.get(peers.indexOf(peer)).getOutputStream()"+sockets.get(peers.indexOf(peer)).getOutputStream());
-            outputStream = new ObjectOutputStream(sockets.get(peers.indexOf(peer)).getOutputStream());
+            Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+            outputStream = new ObjectOutputStream(socket.getOutputStream());
             outputStream.writeObject(transaction);
-            System.out.println("sent..");
-            //outputStream.flush();
-            //outputStream.close();
-
-            //socket.close();
+            outputStream.flush();
+            outputStream.close();
+            socket.close();
         }
     }
 
     @Override
     public void shareBlock(IBlock block, String peer) throws IOException {
-        outputStream = new ObjectOutputStream(sockets.get(peers.indexOf(peer)).getOutputStream());
+        Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+        outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(block);
         outputStream.flush();
-        //outputStream.close();
-        //socket.close();
+        outputStream.close();
+        socket.close();
     }
 
 
     @Override
     public void shareResponse(Response r,String peer) throws IOException {
-        outputStream = new ObjectOutputStream(sockets.get(peers.indexOf(peer)).getOutputStream());
+        Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+        outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(r);
         outputStream.flush();
-        //outputStream.close();
-        //socket.close();
+        outputStream.close();
+        socket.close();
     }
     public void broadcastResponse(Block block,boolean response) throws IOException {
         Response r = new Response(block,response);
@@ -179,7 +173,7 @@ public class Network implements INTW ,Runnable{
         if (node.getNodeType() ==0){
             for (String p : ips) {
                 if (!p.equals(getExternalIP())) {
-                        peers.add(p);
+                    peers.add(p);
                 }
             }
         }else {
@@ -187,7 +181,6 @@ public class Network implements INTW ,Runnable{
                 if (!p.equals(getExternalIP())) {
                     if (!p.equals(ips.get(indexOfIssuer)))
                         peers.add(p);
-
                 }
             }
         }
@@ -216,48 +209,28 @@ public class Network implements INTW ,Runnable{
     }
 
     @Override
-    public void startServer() throws  ClassNotFoundException,IOException{
+    public void startServer() throws IOException, ClassNotFoundException, InterruptedException {
         ss = new ServerSocket(this.PORT);
-        for (String p:peers) {
-            while (true) {
-                try {
-                    Socket so = new Socket(p, PORT);
-                    so.setReceiveBufferSize(4098 * 10);
-                    so.setSendBufferSize(4098 * 10);
-                    sockets.add(so);
-                    System.out.println("Looping");
-                    break;
-                } catch (Exception ignored) {
-                    System.out.println("CATCH");
-                }
+        while(true){
+
+            Socket s =ss.accept();
+            inputStream = new ObjectInputStream(s.getInputStream());
+            Object t = inputStream.readObject();
+            if (t instanceof Transaction){
+                listenForTransactions((Transaction) t);
+            }else if (t instanceof Block){
+                listenForBlocks((Block) t);
+            }else if ( t instanceof Response) {
+                listenForResponses((Response) t);
+            }else if ( t instanceof PairKeyPK) {
+                listenforPublicKey((PairKeyPK) t);
+            }else if (t instanceof HashMap){
+                setPublicKeys((HashMap<Integer, PublicKey>) t);
+            }else if (t instanceof Message) {
+                listenForMessages((IMessage) t);
+            }else {
+                listenForNewConnections((String) t);
             }
-        }
-        try {
-            while (true) {
-                System.out.println("Im in");
-                Socket s = ss.accept();
-                System.out.println("Get socket");
-                inputStream = new ObjectInputStream(s.getInputStream());
-                Object t = inputStream.readObject();
-                System.out.println(t);
-                if (t instanceof Transaction) {
-                    listenForTransactions((Transaction) t);
-                } else if (t instanceof Block) {
-                    listenForBlocks((Block) t);
-                } else if (t instanceof Response) {
-                    listenForResponses((Response) t);
-                } else if (t instanceof PairKeyPK) {
-                    listenforPublicKey((PairKeyPK) t);
-                } else if (t instanceof HashMap) {
-                    setPublicKeys((HashMap<Integer, PublicKey>) t);
-                } else if (t instanceof Message) {
-                    listenForMessages((IMessage) t);
-                } else {
-                    listenForNewConnections((String) t);
-                }
-            }
-        }catch (InterruptedException | IOException e){
-            System.out.println("Interruptes");
         }
 
     }
@@ -289,11 +262,12 @@ public class Network implements INTW ,Runnable{
     }
 
     public void sharepublickeys(HashMap<Integer, PublicKey> keys, String peer) throws IOException {
-        outputStream = new ObjectOutputStream(sockets.get(peers.indexOf(peer)).getOutputStream());
+        Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+        outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(keys);
         outputStream.flush();
-        //outputStream.close();
-        //socket.close();
+        outputStream.close();
+        socket.close();
     }
 
     @Override
@@ -305,12 +279,12 @@ public class Network implements INTW ,Runnable{
 
     @Override
     public void sharepublickeys(PairKeyPK pair, String peer) throws IOException {
-        //outputStream.flush();
-        outputStream = new ObjectOutputStream(sockets.get(peers.indexOf(peer)).getOutputStream());
+        Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+        outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(pair);
         outputStream.flush();
-        //outputStream.close();
-        //socket.close();
+        outputStream.close();
+        socket.close();
     }
 
     @Override
@@ -321,13 +295,13 @@ public class Network implements INTW ,Runnable{
 
     @Override
     public void shareMessage(IMessage message,String peer) throws IOException {
-
-        outputStream = new ObjectOutputStream(sockets.get(peers.indexOf(peer)).getOutputStream());
-        //outputStream.flush();
+        Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+        outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(message);
         //outputStream.reset();
         outputStream.flush();
-        //outputStream.close();
+        outputStream.close();
+        socket.close();
 
     }
 
@@ -344,13 +318,8 @@ public class Network implements INTW ,Runnable{
     public void run() {
         try {
             startServer();
-        } catch (ClassNotFoundException | IOException e) {
+        } catch (IOException | ClassNotFoundException | InterruptedException e) {
             e.printStackTrace();
         }
     }
-
-    @Override
-    public void broadcastAnalytics(IAnalyser.Analytics a) {
-
-    }//TODO and put this         Analyser.getInstance().reportMessageSent(); wherever you send messege related to block/response ...
 }

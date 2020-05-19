@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface INTW {
-    public void broadcastAnalytics(IAnalyser.Analytics a); // on rec call Anal.getins().recData
     public void setNode(Node node) throws IOException, ClassNotFoundException;
     public void listenForNewConnections(String ip) throws IOException; //listens for any new node request and add it to peers List
     public ArrayList<String> getConnectedPeers();
@@ -48,4 +47,4 @@ public interface INTW {
     public PublicKey getPkfromPairPK(String nextPrimary);
     public void sendConfigMessageAtFirst(IMessage m) throws IOException;
 
-    }
+}
