@@ -395,7 +395,7 @@ public class Network implements INTW ,Runnable{
 
     @Override
 
-    synchronized public void shareMessage(IMessage message,String peer) throws IOException {
+     public void shareMessage(IMessage message,String peer) throws IOException {
         l.writeLock().lock();
         Socket socket = new Socket(InetAddress.getByName(peer), PORT);
         socket.setSendBufferSize(4098*10);
