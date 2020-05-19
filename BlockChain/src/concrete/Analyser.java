@@ -141,6 +141,9 @@ public class Analyser implements IAnalyser {
     public String getReport() {
         System.out.println("repoort =============");
         System.out.println(this.blockSize);
+        System.out.println(this.numberOfParticipants);
+        System.out.println(this.difficulty);
+
         System.out.println(this.getAvgMessageComplexity());
         System.out.println(this.getNumberOfStaleBlocks());
         System.out.println(this.getAvgTimeToMine());
