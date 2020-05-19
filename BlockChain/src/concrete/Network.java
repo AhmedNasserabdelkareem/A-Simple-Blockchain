@@ -11,7 +11,9 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Network implements INTW ,Runnable{
@@ -25,7 +27,8 @@ public class Network implements INTW ,Runnable{
     private final static int PORT =5555;
     private static ObjectInputStream inputStream;
     private ServerSocket ss;
-    private ReadWriteLock l;
+
+    private ReentrantLock l;
 
     public boolean isPrimary() {
         return isPrimary;
@@ -123,11 +126,9 @@ public class Network implements INTW ,Runnable{
         this.ExternalIP = getExternalIP();
         this.sourceIP = InetAddress.getByName(ExternalIP);
         System.out.println("Before lock");
-        l= new ReentrantReadWriteLock();
+
+        l = new ReentrantLock();
         System.out.println("afterlock");
-        l.readLock().lock();
-        System.out.println("unlock");
-        l.readLock().unlock();
     }
 
     @Override
@@ -401,18 +402,22 @@ public class Network implements INTW ,Runnable{
     @Override
 
      public void shareMessage(IMessage message,String peer) throws IOException {
-        l.writeLock().lock();
-        Socket socket = new Socket(InetAddress.getByName(peer), PORT);
-        socket.setSendBufferSize(4098*10);
-        socket.setReceiveBufferSize(4098*10);
-        ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
-        outputStream.writeObject(message);
-        //outputStream.reset();
-        outputStream.flush();
-        outputStream.close();
-        socket.close();
-        l.writeLock().unlock();
-        Analyser.getInstance().reportMessageSent();
+
+        l.lock();
+        try {
+            Socket socket = new Socket(InetAddress.getByName(peer), PORT);
+            socket.setSendBufferSize(4098*10);
+            socket.setReceiveBufferSize(4098*10);
+            ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+            outputStream.writeUnshared(message);
+            //outputStream.reset();
+            outputStream.flush();
+            outputStream.close();
+            socket.close();
+        }finally {
+            l.unlock();
+            Analyser.getInstance().reportMessageSent();
+        }
     }
 
     @Override

@@ -647,7 +647,7 @@ public class Node implements INode {
             if (sizeOfNetwork() <= 2) {
                 this.state = "prepare";
                 /*** Acting as malicious***/
-               // generateCommitMessage();
+               generateCommitMessage();
             }
         } else {
             System.out.println("Node is out it won't generate a prepare message");
@@ -736,7 +736,7 @@ public class Node implements INode {
 
 
         /*** Acting as malicious***/
-        //generateCommitMessage();
+        generateCommitMessage();
 
     }
 
@@ -850,7 +850,7 @@ public class Node implements INode {
                 break;
             case "commit":
                 commitMessages.add(t);
-                if (commitMessages.size() == network.getsizeofPeers()-1) {
+                if (commitMessages.size() == network.getsizeofPeers()) {
                     insertCommitMessageInPool(commitMessages);
                     commitMessages.clear();
                 }
