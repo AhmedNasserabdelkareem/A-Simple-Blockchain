@@ -105,6 +105,13 @@ public class Node implements INode {
         generateKeyPair();
         prepare2issue(0, 100);
         System.out.println("is primary constructor :" + getIsPrimary());
+        Analyser.getInstance().setBlockSize(maxTransaction);
+        Analyser.getInstance().setDifficulty(difficulty);
+        Analyser.getInstance().setNumOfParticipants(sizeOfNetwork());
+        if (isPow)
+            Analyser.getInstance().setType(0);
+        else
+            Analyser.getInstance().setType(1);
 //        if (getIsPrimary()) {
 //            IMessage configMessage = new Message("config", false, nodePublicKey);
 //            sendConfigMessageAtFirst(configMessage);
@@ -180,13 +187,6 @@ public class Node implements INode {
         this.maxTransaction = maxNumTransactions;
         this.peers = IPsOfOtherPeers;
         this.difficulty = diff;
-        Analyser.getInstance().setBlockSize(maxTransaction);
-        Analyser.getInstance().setDifficulty(difficulty);
-        Analyser.getInstance().setNumOfParticipants(sizeOfNetwork());
-        if (isPow)
-            Analyser.getInstance().setType(0);
-        else
-            Analyser.getInstance().setType(1);
 
     }
 
@@ -206,6 +206,7 @@ public class Node implements INode {
         if (verifyTransaction(t)) {
             newAddedTs.add(t.getID());
             System.out.println("transaction accepted");
+
             AvOps.put(t.getID(), t);
 
             transactions.add(t);
@@ -268,8 +269,8 @@ public class Node implements INode {
             for (ITransaction.OutputPair p : t.getOPs()) {
                 totalPayed += p.value;
             }
-            System.out.println("totalPayed " + totalPayed);
-            System.out.println("prev.getOPs().get(out-1).available " + prev.getOPs().get(out - 1).available);
+//            System.out.println("totalPayed " + totalPayed);
+//            System.out.println("prev.getOPs().get(out-1).available " + prev.getOPs().get(out - 1).available);
             ArrayList<ITransaction.OutputPair> ops = prev.getOPs();
             boolean av = prev.getOPs().get(out - 1).available - totalPayed >= -0.001;
 
@@ -349,7 +350,7 @@ public class Node implements INode {
             while ((line = br.readLine()) != null) {
                 ITransaction t = ITransaction.parseTransaction(line);
                 if (t == null) {
-                    System.out.println("t null");
+                    //System.out.println("t null");
                     continue;
                 }
                 t.setPrevTransaction(issuedTransactions.get(t.getPrevID()));
@@ -399,17 +400,19 @@ public class Node implements INode {
                 Analyser.getInstance().reportStale();
             }
 
-        }else{
+        } else {
             Analyser.getInstance().reportBlockDone();
             chain.add(block);
-
             System.out.println("chain size: " + chain.size());
         }
 
-        if (chain.size() == 1){
+        if (chain.size() == 1) {
             Analyser.getInstance().broadcastData(network);
-            while (!Analyser.getInstance().isDoneExchanging())
-                Analyser.getInstance().saveReport();
+            while (!Analyser.getInstance().isDoneExchanging()) {
+                System.out.println("hh");
+            }
+            Analyser.getInstance().saveReport();
+
         }
 
     }
@@ -446,7 +449,7 @@ public class Node implements INode {
             block.getHeader().setNonce(nonce);
             block.setHash(null);
             hash = block.getBlockHash();
-            System.out.println("loop hash " + hash);
+            //System.out.println("loop hash " + hash);
         }
         if (!isInterrupt) {
             Analyser.getInstance().reportEndingMiningSuccessfully();
@@ -647,7 +650,7 @@ public class Node implements INode {
      * the node has to receive min 2*f+1 prepare message to be able to move to the next phase*/
     @Override
     public void insertPrepareMessageInPool(ArrayList<IMessage> prepareMessages) throws IOException {
-        System.out.println("Entered prep" + " " + prepareMessages.size() + this.state);
+        System.out.println("Entered prep");
         IMessage prepareMessage;
         for (int i = 0; i < prepareMessages.size(); i++) {
             prepareMessage = prepareMessages.get(i);
@@ -754,6 +757,8 @@ public class Node implements INode {
     public void insertCommitMessageInPool(ArrayList<IMessage> commitMessages) throws IOException {
         IMessage commitMessage;
         Analyser.getInstance().reportStartingBFTVoting();
+
+        System.out.println("commit size : " + commitMessages.size());
 
         for (int i = 0; i < commitMessages.size(); i++) {
             commitMessage = commitMessages.get(i);
@@ -1046,6 +1051,6 @@ public class Node implements INode {
 
     @Override
     public void receiveReport(Object t) {
-
+        Analyser.getInstance().receiveData((IAnalyser.Analytics) t);
     }
 }
