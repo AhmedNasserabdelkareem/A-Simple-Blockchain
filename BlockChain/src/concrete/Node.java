@@ -1044,6 +1044,6 @@ public class Node implements INode {
 
     @Override
     public void receiveReport(Object t) {
-
+        Analyser.getInstance().receiveData((IAnalyser.Analytics) t);
     }
 }
