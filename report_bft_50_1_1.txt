@@ -1,5 +1,0 @@
-FILE
-Type:bft
-NumOfNodes:1
-MC:0.0
-ATA:5.0
